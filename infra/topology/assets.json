@@ -1,0 +1,3047 @@
+[
+  {
+    "asset_id": "NET-FW-01",
+    "hostname": "fg100f-core-gw",
+    "ip_address": "10.10.10.1",
+    "mac_address": "70:4C:A5:11:00:01",
+    "vlan": 10,
+    "network_segment": "Corporate IT",
+    "device_type": "firewall",
+    "os": "FortiOS 7.2.6",
+    "firmware_version": "v7.2.6-build1575",
+    "application": "Border NGFW, NAT, Inter-VLAN Routing & SSL-VPN",
+    "owner_department": "IT Infrastructure",
+    "criticality": "critical",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "NET-SW-CORP01",
+      "CORP-DC-01",
+      "SEC-LOGCOL-01",
+      "SEC-NMS-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "port1.10",
+        "ip": "10.10.10.1",
+        "mac": "70:4C:A5:11:00:01"
+      },
+      {
+        "interface": "port1.20",
+        "ip": "10.10.20.1",
+        "mac": "70:4C:A5:11:00:02"
+      },
+      {
+        "interface": "port1.30",
+        "ip": "10.10.30.1",
+        "mac": "70:4C:A5:11:00:03"
+      },
+      {
+        "interface": "port1.40",
+        "ip": "10.10.40.1",
+        "mac": "70:4C:A5:11:00:04"
+      },
+      {
+        "interface": "port1.50",
+        "ip": "10.10.50.1",
+        "mac": "70:4C:A5:11:00:05"
+      },
+      {
+        "interface": "port1.60",
+        "ip": "10.10.60.1",
+        "mac": "70:4C:A5:11:00:06"
+      },
+      {
+        "interface": "port1.70",
+        "ip": "10.10.70.1",
+        "mac": "70:4C:A5:11:00:07"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-10-15",
+    "notes": "FortiGate 100F HA primary cluster node. Default gateway for all internal subnets."
+  },
+  {
+    "asset_id": "NET-SW-CORP01",
+    "hostname": "sw-c2960x-corp-01",
+    "ip_address": "10.10.10.254",
+    "mac_address": "F8:7B:20:10:00:01",
+    "vlan": 10,
+    "network_segment": "Corporate IT",
+    "device_type": "switch",
+    "os": "Cisco IOS",
+    "firmware_version": "15.2(7)E7",
+    "application": "Corporate Access Switch L2 48-port PoE+",
+    "owner_department": "IT Infrastructure",
+    "criticality": "high",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "NET-FW-01",
+      "SEC-NMS-01",
+      "SEC-LOGCOL-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "Vlan10",
+        "ip": "10.10.10.254",
+        "mac": "F8:7B:20:10:00:01"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-08-20",
+    "notes": "Access switch in Administrative Wing rack. Uplink to Core Catalyst 9300."
+  },
+  {
+    "asset_id": "CORP-DC-01",
+    "hostname": "becpl-dc01.corp.becpl.in",
+    "ip_address": "10.10.10.2",
+    "mac_address": "00:50:56:A1:10:02",
+    "vlan": 10,
+    "network_segment": "Corporate IT",
+    "device_type": "server",
+    "os": "Windows Server 2022 Standard",
+    "firmware_version": null,
+    "application": "Active Directory Domain Services, Kerberos, LDAP, DNS Master",
+    "owner_department": "IT Infrastructure",
+    "criticality": "critical",
+    "identity_classification": "SERVICE_ACCOUNT",
+    "communication_peers": [
+      "CORP-DC-02",
+      "CORP-FS-01",
+      "CORP-WS-001",
+      "CORP-WS-002",
+      "SEC-SIEM-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "Ethernet0",
+        "ip": "10.10.10.2",
+        "mac": "00:50:56:A1:10:02"
+      }
+    ],
+    "vulnerability_exposure": "medium",
+    "last_patched": "2026-10-12",
+    "notes": "PDC Emulator, Schema Master, RID Master. Primary auth authority."
+  },
+  {
+    "asset_id": "CORP-DC-02",
+    "hostname": "becpl-dc02.corp.becpl.in",
+    "ip_address": "10.10.10.3",
+    "mac_address": "00:50:56:A1:10:03",
+    "vlan": 10,
+    "network_segment": "Corporate IT",
+    "device_type": "server",
+    "os": "Windows Server 2022 Standard",
+    "firmware_version": null,
+    "application": "Secondary Active Directory Domain Services, AD Replication, DNS Replica",
+    "owner_department": "IT Infrastructure",
+    "criticality": "critical",
+    "identity_classification": "SERVICE_ACCOUNT",
+    "communication_peers": [
+      "CORP-DC-01",
+      "CORP-FS-01",
+      "SEC-SIEM-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "Ethernet0",
+        "ip": "10.10.10.3",
+        "mac": "00:50:56:A1:10:03"
+      }
+    ],
+    "vulnerability_exposure": "medium",
+    "last_patched": "2026-10-12",
+    "notes": "Secondary domain controller providing high availability."
+  },
+  {
+    "asset_id": "CORP-FS-01",
+    "hostname": "becpl-fs01.corp.becpl.in",
+    "ip_address": "10.10.10.4",
+    "mac_address": "00:50:56:A1:10:04",
+    "vlan": 10,
+    "network_segment": "Corporate IT",
+    "device_type": "server",
+    "os": "Windows Server 2019 Standard",
+    "firmware_version": null,
+    "application": "Distributed File System (DFS), Corporate SMB Shares, Department Data",
+    "owner_department": "IT Infrastructure",
+    "criticality": "high",
+    "identity_classification": "SERVICE_ACCOUNT",
+    "communication_peers": [
+      "CORP-DC-01",
+      "CORP-BACKUP-01",
+      "SEC-SIEM-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "Ethernet0",
+        "ip": "10.10.10.4",
+        "mac": "00:50:56:A1:10:04"
+      }
+    ],
+    "vulnerability_exposure": "medium",
+    "last_patched": "2026-09-18",
+    "notes": "Houses shared drives for HR, Accounts, Admin, and Operations."
+  },
+  {
+    "asset_id": "CORP-DNS-01",
+    "hostname": "becpl-dns01.corp.becpl.in",
+    "ip_address": "10.10.10.5",
+    "mac_address": "00:50:56:A1:10:05",
+    "vlan": 10,
+    "network_segment": "Corporate IT",
+    "device_type": "server",
+    "os": "Ubuntu 22.04 LTS",
+    "firmware_version": null,
+    "application": "ISC BIND9, Kea DHCP Server for Corporate VLAN",
+    "owner_department": "IT Infrastructure",
+    "criticality": "high",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "CORP-DC-01",
+      "CLOUD-PROXY-01",
+      "SEC-DNS-NTP01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "ens160",
+        "ip": "10.10.10.5",
+        "mac": "00:50:56:A1:10:05"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-10-28",
+    "notes": "Internal recursive DNS resolver for corporate workstations."
+  },
+  {
+    "asset_id": "CORP-MGMT-01",
+    "hostname": "becpl-mgmt01.corp.becpl.in",
+    "ip_address": "10.10.10.10",
+    "mac_address": "00:50:56:A1:10:0A",
+    "vlan": 10,
+    "network_segment": "Corporate IT",
+    "device_type": "server",
+    "os": "Windows Server 2022 Standard",
+    "firmware_version": null,
+    "application": "Remote Server Administration Tools (RSAT), PowerShell Remoting Jump Server",
+    "owner_department": "IT Infrastructure",
+    "criticality": "high",
+    "identity_classification": "HUMAN_USER",
+    "communication_peers": [
+      "CORP-DC-01",
+      "CORP-DC-02",
+      "SEC-JUMPHOST-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "Ethernet0",
+        "ip": "10.10.10.10",
+        "mac": "00:50:56:A1:10:0A"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-10-20",
+    "notes": "Internal staging host for sysadmins before hopping to restricted zones."
+  },
+  {
+    "asset_id": "CORP-BACKUP-01",
+    "hostname": "becpl-backup01.corp.becpl.in",
+    "ip_address": "10.10.10.11",
+    "mac_address": "00:50:56:A1:10:0B",
+    "vlan": 10,
+    "network_segment": "Corporate IT",
+    "device_type": "server",
+    "os": "Windows Server 2022 Standard",
+    "firmware_version": null,
+    "application": "Veeam Backup & Replication v12, LTO Tape Library Controller",
+    "owner_department": "IT Infrastructure",
+    "criticality": "critical",
+    "identity_classification": "SERVICE_ACCOUNT",
+    "communication_peers": [
+      "CORP-FS-01",
+      "CORP-DC-01",
+      "CLOUD-AWSVPN-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "Ethernet0",
+        "ip": "10.10.10.11",
+        "mac": "00:50:56:A1:10:0B"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-10-14",
+    "notes": "Daily backups of DC, File Server, and MES. Syncs encrypted snapshots to AWS S3."
+  },
+  {
+    "asset_id": "CORP-PRINT-01",
+    "hostname": "becpl-print01.corp.becpl.in",
+    "ip_address": "10.10.10.6",
+    "mac_address": "00:1E:0B:44:10:06",
+    "vlan": 10,
+    "network_segment": "Corporate IT",
+    "device_type": "printer",
+    "os": "HP FutureSmart Firmware",
+    "firmware_version": "FS4.11.0.1",
+    "application": "Network Print Server, IPP, RAW 9100",
+    "owner_department": "Administration",
+    "criticality": "low",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "CORP-DC-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "eth0",
+        "ip": "10.10.10.6",
+        "mac": "00:1E:0B:44:10:06"
+      }
+    ],
+    "vulnerability_exposure": "high",
+    "last_patched": "2025-11-10",
+    "notes": "Common hallway enterprise multi-function printer."
+  },
+  {
+    "asset_id": "CORP-PRINT-02",
+    "hostname": "becpl-print02.corp.becpl.in",
+    "ip_address": "10.10.10.7",
+    "mac_address": "00:1E:0B:44:10:07",
+    "vlan": 10,
+    "network_segment": "Corporate IT",
+    "device_type": "printer",
+    "os": "Canon MEAP Firmware",
+    "firmware_version": "v3.08",
+    "application": "Finance & HR Secure Print, IPP/IPPS",
+    "owner_department": "Finance",
+    "criticality": "low",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "CORP-DC-01",
+      "CORP-WS-004",
+      "CORP-WS-005"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "eth0",
+        "ip": "10.10.10.7",
+        "mac": "00:1E:0B:44:10:07"
+      }
+    ],
+    "vulnerability_exposure": "medium",
+    "last_patched": "2026-03-15",
+    "notes": "Dedicated printer inside Accounts room with PIN-release printing."
+  },
+  {
+    "asset_id": "CORP-WS-001",
+    "hostname": "corp-ws-it-mgr.corp.becpl.in",
+    "ip_address": "10.10.10.20",
+    "mac_address": "50:76:AF:20:10:14",
+    "vlan": 10,
+    "network_segment": "Corporate IT",
+    "device_type": "workstation",
+    "os": "Windows 11 Pro 23H2",
+    "firmware_version": null,
+    "application": "Office 365, RSAT, Putty, FortiClient VPN, Wazuh Agent",
+    "owner_department": "IT Infrastructure",
+    "criticality": "high",
+    "identity_classification": "HUMAN_USER",
+    "communication_peers": [
+      "CORP-DC-01",
+      "CORP-MGMT-01",
+      "SEC-JUMPHOST-01",
+      "CLOUD-PROXY-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "Ethernet0",
+        "ip": "10.10.10.20",
+        "mac": "50:76:AF:20:10:14"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-11-05",
+    "notes": "Primary workstation of BECPL IT Manager (D. Sharma)."
+  },
+  {
+    "asset_id": "CORP-WS-002",
+    "hostname": "corp-ws-sysadmin1.corp.becpl.in",
+    "ip_address": "10.10.10.21",
+    "mac_address": "50:76:AF:20:10:15",
+    "vlan": 10,
+    "network_segment": "Corporate IT",
+    "device_type": "workstation",
+    "os": "Windows 11 Pro 23H2",
+    "firmware_version": null,
+    "application": "Office 365, Wireshark, Putty, Wazuh Agent, RSAT",
+    "owner_department": "IT Infrastructure",
+    "criticality": "medium",
+    "identity_classification": "HUMAN_USER",
+    "communication_peers": [
+      "CORP-DC-01",
+      "CORP-MGMT-01",
+      "SEC-JUMPHOST-01",
+      "CLOUD-PROXY-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "Ethernet0",
+        "ip": "10.10.10.21",
+        "mac": "50:76:AF:20:10:15"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-11-05",
+    "notes": "Workstation for Network Administrator."
+  },
+  {
+    "asset_id": "CORP-WS-003",
+    "hostname": "corp-ws-sysadmin2.corp.becpl.in",
+    "ip_address": "10.10.10.22",
+    "mac_address": "50:76:AF:20:10:16",
+    "vlan": 10,
+    "network_segment": "Corporate IT",
+    "device_type": "workstation",
+    "os": "Windows 11 Pro 23H2",
+    "firmware_version": null,
+    "application": "Office 365, Helpdesk Console, AnyDesk, Wazuh Agent",
+    "owner_department": "IT Infrastructure",
+    "criticality": "medium",
+    "identity_classification": "HUMAN_USER",
+    "communication_peers": [
+      "CORP-DC-01",
+      "CORP-FS-01",
+      "CLOUD-PROXY-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "Ethernet0",
+        "ip": "10.10.10.22",
+        "mac": "50:76:AF:20:10:16"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-11-05",
+    "notes": "Workstation for Systems Support Engineer."
+  },
+  {
+    "asset_id": "CORP-WS-004",
+    "hostname": "corp-ws-fin-mgr.corp.becpl.in",
+    "ip_address": "10.10.10.30",
+    "mac_address": "50:76:AF:20:10:1E",
+    "vlan": 10,
+    "network_segment": "Corporate IT",
+    "device_type": "workstation",
+    "os": "Windows 11 Pro 23H2",
+    "firmware_version": null,
+    "application": "Tally Prime, SAP Business One Client, MS Excel, Outlook",
+    "owner_department": "Finance",
+    "criticality": "high",
+    "identity_classification": "HUMAN_USER",
+    "communication_peers": [
+      "CORP-DC-01",
+      "CORP-FS-01",
+      "CLOUD-AWSVPN-01",
+      "CORP-PRINT-02"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "Ethernet0",
+        "ip": "10.10.10.30",
+        "mac": "50:76:AF:20:10:1E"
+      }
+    ],
+    "vulnerability_exposure": "medium",
+    "last_patched": "2026-10-22",
+    "notes": "Finance Manager PC. Connects to SAP B1 hosted in AWS India VPC."
+  },
+  {
+    "asset_id": "CORP-WS-005",
+    "hostname": "corp-ws-hr-mgr.corp.becpl.in",
+    "ip_address": "10.10.10.31",
+    "mac_address": "50:76:AF:20:10:1F",
+    "vlan": 10,
+    "network_segment": "Corporate IT",
+    "device_type": "workstation",
+    "os": "Windows 11 Pro 23H2",
+    "firmware_version": null,
+    "application": "Keka HR Portal, MS Office 365, Acrobat Pro",
+    "owner_department": "Human Resources",
+    "criticality": "medium",
+    "identity_classification": "HUMAN_USER",
+    "communication_peers": [
+      "CORP-DC-01",
+      "CORP-FS-01",
+      "CLOUD-PROXY-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "Ethernet0",
+        "ip": "10.10.10.31",
+        "mac": "50:76:AF:20:10:1F"
+      }
+    ],
+    "vulnerability_exposure": "medium",
+    "last_patched": "2026-10-22",
+    "notes": "HR Manager PC. Holds employee confidential records and payroll data."
+  },
+  {
+    "asset_id": "CORP-WS-006",
+    "hostname": "corp-ws-proc-mgr.corp.becpl.in",
+    "ip_address": "10.10.10.32",
+    "mac_address": "50:76:AF:20:10:20",
+    "vlan": 10,
+    "network_segment": "Corporate IT",
+    "device_type": "workstation",
+    "os": "Windows 11 Pro 23H2",
+    "firmware_version": null,
+    "application": "SAP Business One, MS Office, Vendor Portal Web",
+    "owner_department": "Procurement",
+    "criticality": "medium",
+    "identity_classification": "HUMAN_USER",
+    "communication_peers": [
+      "CORP-DC-01",
+      "CORP-FS-01",
+      "CLOUD-AWSVPN-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "Ethernet0",
+        "ip": "10.10.10.32",
+        "mac": "50:76:AF:20:10:20"
+      }
+    ],
+    "vulnerability_exposure": "medium",
+    "last_patched": "2026-10-22",
+    "notes": "Procurement Head. Coordinates BOM purchasing with Taiwan/China suppliers."
+  },
+  {
+    "asset_id": "CORP-WS-007",
+    "hostname": "corp-ws-sales-mgr.corp.becpl.in",
+    "ip_address": "10.10.10.33",
+    "mac_address": "50:76:AF:20:10:21",
+    "vlan": 10,
+    "network_segment": "Corporate IT",
+    "device_type": "workstation",
+    "os": "Windows 11 Pro 23H2",
+    "firmware_version": null,
+    "application": "Zoho CRM Desktop, MS Teams, SAP B1",
+    "owner_department": "Sales & Marketing",
+    "criticality": "medium",
+    "identity_classification": "HUMAN_USER",
+    "communication_peers": [
+      "CORP-DC-01",
+      "CLOUD-PROXY-01",
+      "CLOUD-AWSVPN-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "Ethernet0",
+        "ip": "10.10.10.33",
+        "mac": "50:76:AF:20:10:21"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-10-22",
+    "notes": "Sales lead for automotive tier-1 accounts."
+  },
+  {
+    "asset_id": "CORP-WS-008",
+    "hostname": "corp-ws-md.corp.becpl.in",
+    "ip_address": "10.10.10.34",
+    "mac_address": "50:76:AF:20:10:22",
+    "vlan": 10,
+    "network_segment": "Corporate IT",
+    "device_type": "workstation",
+    "os": "Windows 11 Pro 23H2",
+    "firmware_version": null,
+    "application": "MS Office 365, PowerBI Executive Dashboard, Zoom",
+    "owner_department": "Executive Management",
+    "criticality": "high",
+    "identity_classification": "HUMAN_USER",
+    "communication_peers": [
+      "CORP-DC-01",
+      "CORP-FS-01",
+      "CLOUD-PROXY-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "Ethernet0",
+        "ip": "10.10.10.34",
+        "mac": "50:76:AF:20:10:22"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-11-01",
+    "notes": "Managing Director office PC."
+  },
+  {
+    "asset_id": "CORP-WS-009",
+    "hostname": "corp-ws-accts-clerk.corp.becpl.in",
+    "ip_address": "10.10.10.35",
+    "mac_address": "50:76:AF:20:10:23",
+    "vlan": 10,
+    "network_segment": "Corporate IT",
+    "device_type": "workstation",
+    "os": "Windows 10 Pro 22H2",
+    "firmware_version": null,
+    "application": "Tally Prime, GST Portal offline tool, MS Excel",
+    "owner_department": "Finance",
+    "criticality": "medium",
+    "identity_classification": "HUMAN_USER",
+    "communication_peers": [
+      "CORP-DC-01",
+      "CORP-FS-01",
+      "CORP-PRINT-02"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "Ethernet0",
+        "ip": "10.10.10.35",
+        "mac": "50:76:AF:20:10:23"
+      }
+    ],
+    "vulnerability_exposure": "medium",
+    "last_patched": "2026-09-10",
+    "notes": "Accounts clerk billing workstation."
+  },
+  {
+    "asset_id": "CORP-WS-010",
+    "hostname": "corp-ws-purch-exec.corp.becpl.in",
+    "ip_address": "10.10.10.36",
+    "mac_address": "50:76:AF:20:10:24",
+    "vlan": 10,
+    "network_segment": "Corporate IT",
+    "device_type": "workstation",
+    "os": "Windows 10 Pro 22H2",
+    "firmware_version": null,
+    "application": "SAP B1, MS Office, Chrome",
+    "owner_department": "Procurement",
+    "criticality": "low",
+    "identity_classification": "HUMAN_USER",
+    "communication_peers": [
+      "CORP-DC-01",
+      "CLOUD-PROXY-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "Ethernet0",
+        "ip": "10.10.10.36",
+        "mac": "50:76:AF:20:10:24"
+      }
+    ],
+    "vulnerability_exposure": "medium",
+    "last_patched": "2026-09-10",
+    "notes": "Purchase executive tracking supplier purchase orders."
+  },
+  {
+    "asset_id": "CORP-VOIP-01",
+    "hostname": "corp-voip-reception",
+    "ip_address": "10.10.10.40",
+    "mac_address": "00:64:40:AA:10:28",
+    "vlan": 10,
+    "network_segment": "Corporate IT",
+    "device_type": "workstation",
+    "os": "Cisco SIP Firmware",
+    "firmware_version": "v11.5.1",
+    "application": "Cisco IP Phone 7841, SIP Client",
+    "owner_department": "Administration",
+    "criticality": "low",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "CORP-DC-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "eth0",
+        "ip": "10.10.10.40",
+        "mac": "00:64:40:AA:10:28"
+      }
+    ],
+    "vulnerability_exposure": "medium",
+    "last_patched": "2025-08-10",
+    "notes": "Front desk reception IP telephone."
+  },
+  {
+    "asset_id": "CORP-VOIP-02",
+    "hostname": "corp-voip-confroom",
+    "ip_address": "10.10.10.41",
+    "mac_address": "00:64:40:AA:10:29",
+    "vlan": 10,
+    "network_segment": "Corporate IT",
+    "device_type": "workstation",
+    "os": "Polycom UC Software",
+    "firmware_version": "v6.4.2",
+    "application": "Poly Trio 8800 Conference SIP Phone",
+    "owner_department": "Administration",
+    "criticality": "low",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "CORP-DC-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "eth0",
+        "ip": "10.10.10.41",
+        "mac": "00:64:40:AA:10:29"
+      }
+    ],
+    "vulnerability_exposure": "medium",
+    "last_patched": "2025-08-10",
+    "notes": "Main conference room conference phone."
+  },
+  {
+    "asset_id": "NET-SW-ENG01",
+    "hostname": "sw-c2960x-eng-01",
+    "ip_address": "10.10.20.254",
+    "mac_address": "F8:7B:20:20:00:01",
+    "vlan": 20,
+    "network_segment": "Engineering & Firmware",
+    "device_type": "switch",
+    "os": "Cisco IOS",
+    "firmware_version": "15.2(7)E7",
+    "application": "R&D Switch L2 48-port Gigabit PoE+",
+    "owner_department": "IT Infrastructure",
+    "criticality": "high",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "NET-FW-01",
+      "SEC-NMS-01",
+      "SEC-LOGCOL-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "Vlan20",
+        "ip": "10.10.20.254",
+        "mac": "F8:7B:20:20:00:01"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-08-20",
+    "notes": "Hardware R&D lab access switch."
+  },
+  {
+    "asset_id": "ENG-BUILDSVR-01",
+    "hostname": "eng-jenkins01.rnd.becpl.in",
+    "ip_address": "10.10.20.2",
+    "mac_address": "00:50:56:A2:20:02",
+    "vlan": 20,
+    "network_segment": "Engineering & Firmware",
+    "device_type": "server",
+    "os": "Ubuntu 22.04 LTS",
+    "firmware_version": null,
+    "application": "Jenkins CI/CD, GCC ARM Cross-Compilers, Cppcheck, SonarScanner",
+    "owner_department": "Firmware Engineering",
+    "criticality": "critical",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "ENG-GITSVR-01",
+      "ENG-OTA-STG01",
+      "ENG-WS-002",
+      "SEC-SIEM-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "ens160",
+        "ip": "10.10.20.2",
+        "mac": "00:50:56:A2:20:02"
+      }
+    ],
+    "vulnerability_exposure": "medium",
+    "last_patched": "2026-10-18",
+    "notes": "Firmware compilation and automated unit testing runner."
+  },
+  {
+    "asset_id": "ENG-GITSVR-01",
+    "hostname": "eng-git01.rnd.becpl.in",
+    "ip_address": "10.10.20.3",
+    "mac_address": "00:50:56:A2:20:03",
+    "vlan": 20,
+    "network_segment": "Engineering & Firmware",
+    "device_type": "server",
+    "os": "Debian 12 Bookworm",
+    "firmware_version": null,
+    "application": "GitLab CE, Local Git Mirror, Code Review Engine",
+    "owner_department": "Firmware Engineering",
+    "criticality": "critical",
+    "identity_classification": "SERVICE_ACCOUNT",
+    "communication_peers": [
+      "ENG-BUILDSVR-01",
+      "ENG-WS-001",
+      "ENG-WS-002",
+      "DMZ-BASTION-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "ens160",
+        "ip": "10.10.20.3",
+        "mac": "00:50:56:A2:20:03"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-10-25",
+    "notes": "Houses all embedded firmware C/C++ repos and Gerber PCB source designs."
+  },
+  {
+    "asset_id": "ENG-OTA-STG01",
+    "hostname": "eng-otastage01.rnd.becpl.in",
+    "ip_address": "10.10.20.4",
+    "mac_address": "00:50:56:A2:20:04",
+    "vlan": 20,
+    "network_segment": "Engineering & Firmware",
+    "device_type": "server",
+    "os": "Ubuntu 22.04 LTS",
+    "firmware_version": null,
+    "application": "Mosquitto MQTT-TLS Broker, Cryptographic Firmware Signing Vault, OTA Stager",
+    "owner_department": "Firmware Engineering",
+    "criticality": "critical",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "ENG-BUILDSVR-01",
+      "OT-PLC-SMTA-01",
+      "OT-PLC-SMTB-01",
+      "SEC-SIEM-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "ens160",
+        "ip": "10.10.20.4",
+        "mac": "00:50:56:A2:20:04"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-11-02",
+    "notes": "Sole authorized conduit for pushing binary firmware images into production VLAN 30."
+  },
+  {
+    "asset_id": "ENG-DNS-01",
+    "hostname": "eng-dns01.rnd.becpl.in",
+    "ip_address": "10.10.20.5",
+    "mac_address": "00:50:56:A2:20:05",
+    "vlan": 20,
+    "network_segment": "Engineering & Firmware",
+    "device_type": "server",
+    "os": "Debian 12 Bookworm",
+    "firmware_version": null,
+    "application": "BIND9 DNS Caching Resolver, DHCP Server for Lab Workbenches",
+    "owner_department": "IT Infrastructure",
+    "criticality": "medium",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "CORP-DNS-01",
+      "CLOUD-PROXY-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "ens160",
+        "ip": "10.10.20.5",
+        "mac": "00:50:56:A2:20:05"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-10-20",
+    "notes": "Resolves internal rnd.becpl.in names for lab developers."
+  },
+  {
+    "asset_id": "ENG-NAS-01",
+    "hostname": "eng-nas01.rnd.becpl.in",
+    "ip_address": "10.10.20.6",
+    "mac_address": "00:50:56:A2:20:06",
+    "vlan": 20,
+    "network_segment": "Engineering & Firmware",
+    "device_type": "server",
+    "os": "TrueNAS CORE 13.0",
+    "firmware_version": "U6.1",
+    "application": "ZFS Storage, NFSv4, SMB3, Altium Vault Cache, BOM Archive",
+    "owner_department": "Hardware Engineering",
+    "criticality": "high",
+    "identity_classification": "SERVICE_ACCOUNT",
+    "communication_peers": [
+      "ENG-WS-001",
+      "ENG-WS-004",
+      "CORP-BACKUP-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "ix0",
+        "ip": "10.10.20.6",
+        "mac": "00:50:56:A2:20:06"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-09-05",
+    "notes": "High-capacity storage for CAD models, Gerber layouts, and thermal simulation data."
+  },
+  {
+    "asset_id": "ENG-TESTRIG-01",
+    "hostname": "eng-testrig01.rnd.becpl.in",
+    "ip_address": "10.10.20.20",
+    "mac_address": "00:1A:2B:3C:20:14",
+    "vlan": 20,
+    "network_segment": "Engineering & Firmware",
+    "device_type": "workstation",
+    "os": "Windows 10 Enterprise LTSC 2021",
+    "firmware_version": null,
+    "application": "National Instruments LabVIEW 2023, TestStand, CANalyzer",
+    "owner_department": "QA & Testing",
+    "criticality": "high",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "ENG-BUILDSVR-01",
+      "ENG-NAS-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "eth0",
+        "ip": "10.10.20.20",
+        "mac": "00:1A:2B:3C:20:14"
+      }
+    ],
+    "vulnerability_exposure": "medium",
+    "last_patched": "2026-08-10",
+    "notes": "Automated Hardware-in-the-Loop (HIL) automotive PCB qualification bench."
+  },
+  {
+    "asset_id": "ENG-FLASHER-01",
+    "hostname": "eng-jlink-gang01",
+    "ip_address": "10.10.20.21",
+    "mac_address": "00:1A:2B:3C:20:15",
+    "vlan": 20,
+    "network_segment": "Engineering & Firmware",
+    "device_type": "gateway",
+    "os": "Embedded Linux (Segger)",
+    "firmware_version": "v7.94e",
+    "application": "Segger Flasher ATE / J-Link Gang Production Flasher",
+    "owner_department": "Firmware Engineering",
+    "criticality": "high",
+    "identity_classification": "INDUSTRIAL_DEVICE",
+    "communication_peers": [
+      "ENG-OTA-STG01",
+      "ENG-WS-002"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "eth0",
+        "ip": "10.10.20.21",
+        "mac": "00:1A:2B:3C:20:15"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-05-12",
+    "notes": "Automated multi-target microchip bootloader programmer for sample runs."
+  },
+  {
+    "asset_id": "ENG-EMULATOR-01",
+    "hostname": "eng-arm-emu01.rnd.becpl.in",
+    "ip_address": "10.10.20.22",
+    "mac_address": "00:50:56:A2:20:16",
+    "vlan": 20,
+    "network_segment": "Engineering & Firmware",
+    "device_type": "vm",
+    "os": "Ubuntu 22.04 LTS",
+    "firmware_version": null,
+    "application": "QEMU ARM Cortex-M/A Simulator, Renode Virtual Hardware Simulator",
+    "owner_department": "Firmware Engineering",
+    "criticality": "medium",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "ENG-BUILDSVR-01",
+      "ENG-WS-002"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "ens160",
+        "ip": "10.10.20.22",
+        "mac": "00:50:56:A2:20:16"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-10-15",
+    "notes": "Emulates IoT sensor peripheral buses (I2C, SPI, UART) for firmware unit test."
+  },
+  {
+    "asset_id": "ENG-WS-001",
+    "hostname": "eng-ws-hw-lead.rnd.becpl.in",
+    "ip_address": "10.10.20.10",
+    "mac_address": "50:76:AF:20:20:0A",
+    "vlan": 20,
+    "network_segment": "Engineering & Firmware",
+    "device_type": "workstation",
+    "os": "Ubuntu 22.04 LTS",
+    "firmware_version": null,
+    "application": "KiCad 8, FreeCAD, VS Code, Git, Wazuh Agent",
+    "owner_department": "Hardware Engineering",
+    "criticality": "high",
+    "identity_classification": "HUMAN_USER",
+    "communication_peers": [
+      "ENG-GITSVR-01",
+      "ENG-NAS-01",
+      "CLOUD-PROXY-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "eth0",
+        "ip": "10.10.20.10",
+        "mac": "50:76:AF:20:20:0A"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-11-04",
+    "notes": "Workstation of Lead Hardware Architect (V. Patil)."
+  },
+  {
+    "asset_id": "ENG-WS-002",
+    "hostname": "eng-ws-fw-sr.rnd.becpl.in",
+    "ip_address": "10.10.20.11",
+    "mac_address": "50:76:AF:20:20:0B",
+    "vlan": 20,
+    "network_segment": "Engineering & Firmware",
+    "device_type": "workstation",
+    "os": "Ubuntu 22.04 LTS",
+    "firmware_version": null,
+    "application": "CLion, STM32CubeIDE, GDB, Git, Docker, Wazuh Agent",
+    "owner_department": "Firmware Engineering",
+    "criticality": "high",
+    "identity_classification": "HUMAN_USER",
+    "communication_peers": [
+      "ENG-GITSVR-01",
+      "ENG-BUILDSVR-01",
+      "ENG-OTA-STG01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "eth0",
+        "ip": "10.10.20.11",
+        "mac": "50:76:AF:20:20:0B"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-11-04",
+    "notes": "Senior Firmware Developer (STM32 & ESP32 RTOS stacks)."
+  },
+  {
+    "asset_id": "ENG-WS-003",
+    "hostname": "eng-ws-fw-jr.rnd.becpl.in",
+    "ip_address": "10.10.20.12",
+    "mac_address": "50:76:AF:20:20:0C",
+    "vlan": 20,
+    "network_segment": "Engineering & Firmware",
+    "device_type": "workstation",
+    "os": "Ubuntu 22.04 LTS",
+    "firmware_version": null,
+    "application": "VS Code, Git, PlatformIO, Python, Wazuh Agent",
+    "owner_department": "Firmware Engineering",
+    "criticality": "medium",
+    "identity_classification": "HUMAN_USER",
+    "communication_peers": [
+      "ENG-GITSVR-01",
+      "ENG-BUILDSVR-01",
+      "CLOUD-PROXY-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "eth0",
+        "ip": "10.10.20.12",
+        "mac": "50:76:AF:20:20:0C"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-11-04",
+    "notes": "Junior Firmware Developer (Sensor drivers & MQTT client)."
+  },
+  {
+    "asset_id": "ENG-WS-004",
+    "hostname": "eng-ws-pcb-cad.rnd.becpl.in",
+    "ip_address": "10.10.20.13",
+    "mac_address": "50:76:AF:20:20:0D",
+    "vlan": 20,
+    "network_segment": "Engineering & Firmware",
+    "device_type": "workstation",
+    "os": "Windows 11 Pro 23H2",
+    "firmware_version": null,
+    "application": "Altium Designer 24, Allegro PCB, Ansys SIwave, Wazuh Agent",
+    "owner_department": "Hardware Engineering",
+    "criticality": "high",
+    "identity_classification": "HUMAN_USER",
+    "communication_peers": [
+      "ENG-NAS-01",
+      "ENG-GITSVR-01",
+      "CLOUD-PROXY-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "Ethernet0",
+        "ip": "10.10.20.13",
+        "mac": "50:76:AF:20:20:0D"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-10-30",
+    "notes": "Dedicated High-End CAD Rig for multi-layer PCB routing and impedance analysis."
+  },
+  {
+    "asset_id": "ENG-WS-005",
+    "hostname": "eng-ws-embed-sys.rnd.becpl.in",
+    "ip_address": "10.10.20.14",
+    "mac_address": "50:76:AF:20:20:0E",
+    "vlan": 20,
+    "network_segment": "Engineering & Firmware",
+    "device_type": "workstation",
+    "os": "Windows 11 Pro 23H2",
+    "firmware_version": null,
+    "application": "IAR Embedded Workbench, Saleae Logic, Segger Ozone",
+    "owner_department": "Firmware Engineering",
+    "criticality": "medium",
+    "identity_classification": "HUMAN_USER",
+    "communication_peers": [
+      "ENG-GITSVR-01",
+      "ENG-FLASHER-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "Ethernet0",
+        "ip": "10.10.20.14",
+        "mac": "50:76:AF:20:20:0E"
+      }
+    ],
+    "vulnerability_exposure": "medium",
+    "last_patched": "2026-10-30",
+    "notes": "Embedded systems integration engineer workbench."
+  },
+  {
+    "asset_id": "ENG-WS-006",
+    "hostname": "eng-ws-qa-hw.rnd.becpl.in",
+    "ip_address": "10.10.20.15",
+    "mac_address": "50:76:AF:20:20:0F",
+    "vlan": 20,
+    "network_segment": "Engineering & Firmware",
+    "device_type": "workstation",
+    "os": "Windows 11 Pro 23H2",
+    "firmware_version": null,
+    "application": "LabVIEW Runtime, Keysight BenchVue, Python pyVISA",
+    "owner_department": "QA & Testing",
+    "criticality": "medium",
+    "identity_classification": "HUMAN_USER",
+    "communication_peers": [
+      "ENG-TESTRIG-01",
+      "ENG-NAS-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "Ethernet0",
+        "ip": "10.10.20.15",
+        "mac": "50:76:AF:20:20:0F"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-10-30",
+    "notes": "Hardware QA reliability testing bench workstation."
+  },
+  {
+    "asset_id": "NET-SW-OT01",
+    "hostname": "sw-cisco-ie3300-ot",
+    "ip_address": "10.10.30.254",
+    "mac_address": "CC:D5:39:30:00:01",
+    "vlan": 30,
+    "network_segment": "Manufacturing OT",
+    "device_type": "switch",
+    "os": "Cisco Industrial Ethernet IOS-XE",
+    "firmware_version": "17.9.4a",
+    "application": "Industrial Managed Switch with DIN-Rail Mount, PROFINET & CIP snooping",
+    "owner_department": "Plant Operations",
+    "criticality": "critical",
+    "identity_classification": "INDUSTRIAL_DEVICE",
+    "communication_peers": [
+      "NET-FW-01",
+      "SEC-NMS-01",
+      "OT-NIDS-PROBE01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "Vlan30",
+        "ip": "10.10.30.254",
+        "mac": "CC:D5:39:30:00:01"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-06-15",
+    "notes": "Cisco Catalyst IE-3300 Rugged Series in Shop Floor Panel Rack A. Mirrored SPAN port to NIDS probe."
+  },
+  {
+    "asset_id": "OT-SCADA-GW01",
+    "hostname": "ot-scada-gw01.ot.becpl.in",
+    "ip_address": "10.10.30.2",
+    "mac_address": "00:50:56:A3:30:02",
+    "vlan": 30,
+    "network_segment": "Manufacturing OT",
+    "device_type": "gateway",
+    "os": "Windows Server IoT 2022",
+    "firmware_version": null,
+    "application": "Inductive Automation Ignition SCADA v8.1, OPC-UA Server, Modbus Master",
+    "owner_department": "Plant Operations",
+    "criticality": "critical",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "OT-MES-01",
+      "OT-HISTORIAN-01",
+      "OT-PLC-SMTA-01",
+      "OT-PLC-SMTB-01",
+      "OT-PLC-THT-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "Ethernet0",
+        "ip": "10.10.30.2",
+        "mac": "00:50:56:A3:30:02"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-09-12",
+    "notes": "Core OT SCADA supervisor aggregating PLC registers and publishing to MES."
+  },
+  {
+    "asset_id": "OT-MES-01",
+    "hostname": "ot-mes01.ot.becpl.in",
+    "ip_address": "10.10.30.3",
+    "mac_address": "00:50:56:A3:30:03",
+    "vlan": 30,
+    "network_segment": "Manufacturing OT",
+    "device_type": "server",
+    "os": "Windows Server 2019 Standard",
+    "firmware_version": null,
+    "application": "Siemens Opcenter MES / Camstar, SQL Server 2019 Standard",
+    "owner_department": "Plant Operations",
+    "criticality": "critical",
+    "identity_classification": "SERVICE_ACCOUNT",
+    "communication_peers": [
+      "OT-SCADA-GW01",
+      "OT-AOI-SMTA-01",
+      "OT-AOI-SMTB-01",
+      "OT-ICT-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "Ethernet0",
+        "ip": "10.10.30.3",
+        "mac": "00:50:56:A3:30:03"
+      }
+    ],
+    "vulnerability_exposure": "medium",
+    "last_patched": "2026-08-14",
+    "notes": "Manufacturing Execution System coordinating work orders, serialisation, and yield tracking."
+  },
+  {
+    "asset_id": "OT-HISTORIAN-01",
+    "hostname": "ot-historian01.ot.becpl.in",
+    "ip_address": "10.10.30.4",
+    "mac_address": "00:50:56:A3:30:04",
+    "vlan": 30,
+    "network_segment": "Manufacturing OT",
+    "device_type": "server",
+    "os": "Rocky Linux 9",
+    "firmware_version": null,
+    "application": "InfluxDB Enterprise v2.7, Telegraf Process Metrics Collector",
+    "owner_department": "Plant Operations",
+    "criticality": "high",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "OT-SCADA-GW01",
+      "OT-REFLOW-SMTA",
+      "OT-REFLOW-SMTB"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "ens160",
+        "ip": "10.10.30.4",
+        "mac": "00:50:56:A3:30:04"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-10-10",
+    "notes": "Time-series historian storing thermal profiles, solder paste inspection data, and line throughput."
+  },
+  {
+    "asset_id": "OT-DNS-01",
+    "hostname": "ot-dns01.ot.becpl.in",
+    "ip_address": "10.10.30.5",
+    "mac_address": "00:50:56:A3:30:05",
+    "vlan": 30,
+    "network_segment": "Manufacturing OT",
+    "device_type": "server",
+    "os": "Alpine Linux 3.19",
+    "firmware_version": null,
+    "application": "Dnsmasq (Air-gapped authoritative resolver, no external forwarding)",
+    "owner_department": "IT Infrastructure",
+    "criticality": "high",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "OT-SCADA-GW01",
+      "OT-MES-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "eth0",
+        "ip": "10.10.30.5",
+        "mac": "00:50:56:A3:30:05"
+      }
+    ],
+    "vulnerability_exposure": "none",
+    "last_patched": "2026-10-10",
+    "notes": "Strictly isolated local DNS. Rejects all forward queries."
+  },
+  {
+    "asset_id": "OT-PLC-SMTA-01",
+    "hostname": "ot-plc-smta-01.ot.becpl.in",
+    "ip_address": "10.10.30.10",
+    "mac_address": "00:1B:1B:30:10:0A",
+    "vlan": 30,
+    "network_segment": "Manufacturing OT",
+    "device_type": "plc",
+    "os": "Siemens Proprietary RTOS",
+    "firmware_version": "V4.5.1",
+    "application": "Siemens SIMATIC S7-1200 CPU 1214C DC/DC/DC, S7comm, Modbus TCP",
+    "owner_department": "Plant Operations",
+    "criticality": "critical",
+    "identity_classification": "INDUSTRIAL_DEVICE",
+    "communication_peers": [
+      "OT-HMI-SMTA-01",
+      "OT-SCADA-GW01",
+      "OT-AOI-SMTA-01",
+      "ENG-OTA-STG01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "PROFINET_P1",
+        "ip": "10.10.30.10",
+        "mac": "00:1B:1B:30:10:0A"
+      }
+    ],
+    "vulnerability_exposure": "high",
+    "last_patched": "2025-06-20",
+    "notes": "Master controller for high-speed SMT Line A pick-and-place & conveyor. Cannot be patched during production."
+  },
+  {
+    "asset_id": "OT-PLC-SMTB-01",
+    "hostname": "ot-plc-smtb-01.ot.becpl.in",
+    "ip_address": "10.10.30.11",
+    "mac_address": "00:1B:1B:30:10:0B",
+    "vlan": 30,
+    "network_segment": "Manufacturing OT",
+    "device_type": "plc",
+    "os": "Siemens Proprietary RTOS",
+    "firmware_version": "V4.5.1",
+    "application": "Siemens SIMATIC S7-1200 CPU 1215C DC/DC/DC, S7comm, Modbus TCP",
+    "owner_department": "Plant Operations",
+    "criticality": "critical",
+    "identity_classification": "INDUSTRIAL_DEVICE",
+    "communication_peers": [
+      "OT-HMI-SMTB-01",
+      "OT-SCADA-GW01",
+      "OT-AOI-SMTB-01",
+      "ENG-OTA-STG01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "PROFINET_P1",
+        "ip": "10.10.30.11",
+        "mac": "00:1B:1B:30:10:0B"
+      }
+    ],
+    "vulnerability_exposure": "high",
+    "last_patched": "2025-06-20",
+    "notes": "Master controller for precision automotive-grade SMT Line B."
+  },
+  {
+    "asset_id": "OT-PLC-THT-01",
+    "hostname": "ot-plc-tht-01.ot.becpl.in",
+    "ip_address": "10.10.30.12",
+    "mac_address": "00:1B:1B:30:10:0C",
+    "vlan": 30,
+    "network_segment": "Manufacturing OT",
+    "device_type": "plc",
+    "os": "Siemens Proprietary RTOS",
+    "firmware_version": "V4.4.2",
+    "application": "Siemens SIMATIC S7-1200 CPU 1212C, Wave Soldering Controller",
+    "owner_department": "Plant Operations",
+    "criticality": "high",
+    "identity_classification": "INDUSTRIAL_DEVICE",
+    "communication_peers": [
+      "OT-HMI-THT-01",
+      "OT-SCADA-GW01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "PROFINET_P1",
+        "ip": "10.10.30.12",
+        "mac": "00:1B:1B:30:10:0C"
+      }
+    ],
+    "vulnerability_exposure": "high",
+    "last_patched": "2024-11-15",
+    "notes": "Through-hole wave soldering bath temperature and conveyor speed control."
+  },
+  {
+    "asset_id": "OT-PLC-IOT-01",
+    "hostname": "ot-plc-iot-01.ot.becpl.in",
+    "ip_address": "10.10.30.13",
+    "mac_address": "00:80:F4:30:10:0D",
+    "vlan": 30,
+    "network_segment": "Manufacturing OT",
+    "device_type": "plc",
+    "os": "Schneider EcoStruxure RTOS",
+    "firmware_version": "v4.0.6.41",
+    "application": "Schneider Modicon M241, Modbus TCP port 502, EtherNet/IP",
+    "owner_department": "Plant Operations",
+    "criticality": "high",
+    "identity_classification": "INDUSTRIAL_DEVICE",
+    "communication_peers": [
+      "OT-SCADA-GW01",
+      "OT-BURNIN-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "eth0",
+        "ip": "10.10.30.13",
+        "mac": "00:80:F4:30:10:0D"
+      }
+    ],
+    "vulnerability_exposure": "medium",
+    "last_patched": "2025-03-10",
+    "notes": "IoT sensor assembly, potting, and wire bonding automation cell."
+  },
+  {
+    "asset_id": "OT-PLC-EMB-01",
+    "hostname": "ot-plc-emb-01.ot.becpl.in",
+    "ip_address": "10.10.30.14",
+    "mac_address": "00:26:92:30:10:0E",
+    "vlan": 30,
+    "network_segment": "Manufacturing OT",
+    "device_type": "plc",
+    "os": "Mitsubishi MELSEC RTOS",
+    "firmware_version": "v1.120",
+    "application": "Mitsubishi FX5U MELSEC iQ-F, SLMP / MC Protocol, CC-Link IE Field",
+    "owner_department": "Plant Operations",
+    "criticality": "high",
+    "identity_classification": "INDUSTRIAL_DEVICE",
+    "communication_peers": [
+      "OT-SCADA-GW01",
+      "OT-ICT-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "eth0",
+        "ip": "10.10.30.14",
+        "mac": "00:26:92:30:10:0E"
+      }
+    ],
+    "vulnerability_exposure": "medium",
+    "last_patched": "2025-01-22",
+    "notes": "Embedded module automated test socket insertion and handling."
+  },
+  {
+    "asset_id": "OT-HMI-SMTA-01",
+    "hostname": "ot-hmi-smta-01.ot.becpl.in",
+    "ip_address": "10.10.30.20",
+    "mac_address": "00:0C:C6:30:10:14",
+    "vlan": 30,
+    "network_segment": "Manufacturing OT",
+    "device_type": "hmi",
+    "os": "Weintek EasyBuilder Embedded OS",
+    "firmware_version": "EBPro v6.08.01",
+    "application": "cMT-3162X 15.6-inch Touch HMI, Modbus Master, VNC Server",
+    "owner_department": "Plant Operations",
+    "criticality": "critical",
+    "identity_classification": "INDUSTRIAL_DEVICE",
+    "communication_peers": [
+      "OT-PLC-SMTA-01",
+      "OT-SCADA-GW01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "LAN1",
+        "ip": "10.10.30.20",
+        "mac": "00:0C:C6:30:10:14"
+      }
+    ],
+    "vulnerability_exposure": "high",
+    "last_patched": "2025-04-18",
+    "notes": "Operator terminal on SMT Line A. Default credentials restricted; VNC password enabled."
+  },
+  {
+    "asset_id": "OT-HMI-SMTB-01",
+    "hostname": "ot-hmi-smtb-01.ot.becpl.in",
+    "ip_address": "10.10.30.21",
+    "mac_address": "00:0C:C6:30:10:15",
+    "vlan": 30,
+    "network_segment": "Manufacturing OT",
+    "device_type": "hmi",
+    "os": "Weintek EasyBuilder Embedded OS",
+    "firmware_version": "EBPro v6.08.01",
+    "application": "cMT-3162X 15.6-inch Touch HMI, Modbus Master, VNC Server",
+    "owner_department": "Plant Operations",
+    "criticality": "critical",
+    "identity_classification": "INDUSTRIAL_DEVICE",
+    "communication_peers": [
+      "OT-PLC-SMTB-01",
+      "OT-SCADA-GW01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "LAN1",
+        "ip": "10.10.30.21",
+        "mac": "00:0C:C6:30:10:15"
+      }
+    ],
+    "vulnerability_exposure": "high",
+    "last_patched": "2025-04-18",
+    "notes": "Operator terminal on automotive SMT Line B."
+  },
+  {
+    "asset_id": "OT-HMI-THT-01",
+    "hostname": "ot-hmi-tht-01.ot.becpl.in",
+    "ip_address": "10.10.30.22",
+    "mac_address": "00:1B:1B:30:10:16",
+    "vlan": 30,
+    "network_segment": "Manufacturing OT",
+    "device_type": "hmi",
+    "os": "Siemens WinCC RT Embedded",
+    "firmware_version": "V17.0.0.5",
+    "application": "Siemens SIMATIC KTP700 Basic 7-inch Touch Panel, PROFINET",
+    "owner_department": "Plant Operations",
+    "criticality": "medium",
+    "identity_classification": "INDUSTRIAL_DEVICE",
+    "communication_peers": [
+      "OT-PLC-THT-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "PN-IO",
+        "ip": "10.10.30.22",
+        "mac": "00:1B:1B:30:10:16"
+      }
+    ],
+    "vulnerability_exposure": "medium",
+    "last_patched": "2024-11-15",
+    "notes": "Wave solder conveyor operator panel."
+  },
+  {
+    "asset_id": "OT-AOI-SMTA-01",
+    "hostname": "ot-aoi-smta01.ot.becpl.in",
+    "ip_address": "10.10.30.30",
+    "mac_address": "70:85:C2:30:10:1E",
+    "vlan": 30,
+    "network_segment": "Manufacturing OT",
+    "device_type": "sensor",
+    "os": "Windows 10 IoT Enterprise LTSC",
+    "firmware_version": null,
+    "application": "Koh Young 3D AOI Inspection Suite v5.3, Inspection Image DB",
+    "owner_department": "Quality Assurance",
+    "criticality": "high",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "OT-PLC-SMTA-01",
+      "OT-MES-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "Ethernet0",
+        "ip": "10.10.30.30",
+        "mac": "70:85:C2:30:10:1E"
+      }
+    ],
+    "vulnerability_exposure": "medium",
+    "last_patched": "2026-07-15",
+    "notes": "Automated Optical Inspection post-reflow line A; pushes defective board coordinates to MES."
+  },
+  {
+    "asset_id": "OT-AOI-SMTB-01",
+    "hostname": "ot-aoi-smtb01.ot.becpl.in",
+    "ip_address": "10.10.30.31",
+    "mac_address": "70:85:C2:30:10:1F",
+    "vlan": 30,
+    "network_segment": "Manufacturing OT",
+    "device_type": "sensor",
+    "os": "Windows 10 IoT Enterprise LTSC",
+    "firmware_version": null,
+    "application": "Koh Young 3D AOI Inspection Suite v5.3, IPC-A-610 Class 3 Rules",
+    "owner_department": "Quality Assurance",
+    "criticality": "high",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "OT-PLC-SMTB-01",
+      "OT-MES-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "Ethernet0",
+        "ip": "10.10.30.31",
+        "mac": "70:85:C2:30:10:1F"
+      }
+    ],
+    "vulnerability_exposure": "medium",
+    "last_patched": "2026-07-15",
+    "notes": "Automotive-spec inspection machine line B with IPC Class 3 solder fillet verification."
+  },
+  {
+    "asset_id": "OT-ICT-01",
+    "hostname": "ot-ict01.ot.becpl.in",
+    "ip_address": "10.10.30.40",
+    "mac_address": "70:85:C2:30:10:28",
+    "vlan": 30,
+    "network_segment": "Manufacturing OT",
+    "device_type": "sensor",
+    "os": "Windows 10 IoT Enterprise 2021",
+    "firmware_version": null,
+    "application": "Keysight Medalist i3070 Series 5 In-Circuit Test Software",
+    "owner_department": "Quality Assurance",
+    "criticality": "high",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "OT-MES-01",
+      "OT-PLC-EMB-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "Ethernet0",
+        "ip": "10.10.30.40",
+        "mac": "70:85:C2:30:10:28"
+      }
+    ],
+    "vulnerability_exposure": "medium",
+    "last_patched": "2026-05-18",
+    "notes": "Bed-of-nails in-circuit tester checking short/open and component tolerances."
+  },
+  {
+    "asset_id": "OT-BURNIN-01",
+    "hostname": "ot-burnin01.ot.becpl.in",
+    "ip_address": "10.10.30.41",
+    "mac_address": "00:14:22:30:10:29",
+    "vlan": 30,
+    "network_segment": "Manufacturing OT",
+    "device_type": "sensor",
+    "os": "Embedded Linux",
+    "firmware_version": "v2.4.1",
+    "application": "Chamber Thermal Profiler, Modbus TCP 502 Slave, Cyclic Power Controller",
+    "owner_department": "Quality Assurance",
+    "criticality": "medium",
+    "identity_classification": "INDUSTRIAL_DEVICE",
+    "communication_peers": [
+      "OT-PLC-IOT-01",
+      "OT-SCADA-GW01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "eth0",
+        "ip": "10.10.30.41",
+        "mac": "00:14:22:30:10:29"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2025-02-12",
+    "notes": "70°C accelerated thermal endurance chamber for industrial IoT sensors."
+  },
+  {
+    "asset_id": "OT-REFLOW-SMTA",
+    "hostname": "ot-reflow-smta.ot.becpl.in",
+    "ip_address": "10.10.30.50",
+    "mac_address": "00:04:A3:30:10:32",
+    "vlan": 30,
+    "network_segment": "Manufacturing OT",
+    "device_type": "sensor",
+    "os": "FreeRTOS v10.4",
+    "firmware_version": "v3.1.2",
+    "application": "Heller 1809 MK5 10-Zone Reflow Oven Thermal Interface (MQTT / Modbus)",
+    "owner_department": "Plant Operations",
+    "criticality": "critical",
+    "identity_classification": "INDUSTRIAL_DEVICE",
+    "communication_peers": [
+      "OT-HISTORIAN-01",
+      "OT-SCADA-GW01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "eth0",
+        "ip": "10.10.30.50",
+        "mac": "00:04:A3:30:10:32"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2025-08-14",
+    "notes": "Continuous 10-zone thermocouple monitoring. Critical thermal curve tracking."
+  },
+  {
+    "asset_id": "OT-REFLOW-SMTB",
+    "hostname": "ot-reflow-smtb.ot.becpl.in",
+    "ip_address": "10.10.30.51",
+    "mac_address": "00:04:A3:30:10:33",
+    "vlan": 30,
+    "network_segment": "Manufacturing OT",
+    "device_type": "sensor",
+    "os": "FreeRTOS v10.4",
+    "firmware_version": "v3.1.2",
+    "application": "Heller 1913 MK5 Nitrogen Atmosphere Reflow Oven Thermal Interface",
+    "owner_department": "Plant Operations",
+    "criticality": "critical",
+    "identity_classification": "INDUSTRIAL_DEVICE",
+    "communication_peers": [
+      "OT-HISTORIAN-01",
+      "OT-SCADA-GW01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "eth0",
+        "ip": "10.10.30.51",
+        "mac": "00:04:A3:30:10:33"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2025-08-14",
+    "notes": "Automotive-spec nitrogen reflow oven with residual oxygen ppm monitoring."
+  },
+  {
+    "asset_id": "OT-ENV-SENS-01",
+    "hostname": "ot-env-sens01.ot.becpl.in",
+    "ip_address": "10.10.30.52",
+    "mac_address": "00:04:A3:30:10:34",
+    "vlan": 30,
+    "network_segment": "Manufacturing OT",
+    "device_type": "sensor",
+    "os": "MicroPython v1.22",
+    "firmware_version": "v1.2.0",
+    "application": "Cleanroom Class 100,000 ESD Temperature/Humidity/Particle Telemetry Node",
+    "owner_department": "Plant Operations",
+    "criticality": "medium",
+    "identity_classification": "INDUSTRIAL_DEVICE",
+    "communication_peers": [
+      "OT-HISTORIAN-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "eth0",
+        "ip": "10.10.30.52",
+        "mac": "00:04:A3:30:10:34"
+      }
+    ],
+    "vulnerability_exposure": "none",
+    "last_patched": "2026-01-10",
+    "notes": "Reports ambient cleanroom conditions over Modbus TCP."
+  },
+  {
+    "asset_id": "OT-NIDS-PROBE01",
+    "hostname": "ot-probe01.ot.becpl.in",
+    "ip_address": "10.10.30.60",
+    "mac_address": "00:50:56:A3:30:3C",
+    "vlan": 30,
+    "network_segment": "Manufacturing OT",
+    "device_type": "sensor",
+    "os": "Debian 12 Bookworm (Hardened)",
+    "firmware_version": null,
+    "application": "VaultX Passive OT NIDS Sniffer, Suricata 7.0, Zeek 6.0 OT Parsers",
+    "owner_department": "Security Operations",
+    "criticality": "critical",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "SEC-NIDS-MGR01",
+      "SEC-SIEM-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "eth0",
+        "ip": "10.10.30.60",
+        "mac": "00:50:56:A3:30:3C"
+      },
+      {
+        "interface": "span0",
+        "ip": "0.0.0.0",
+        "mac": "00:50:56:A3:30:3D"
+      }
+    ],
+    "vulnerability_exposure": "none",
+    "last_patched": "2026-11-10",
+    "notes": "Passive network sniffer connected to Cisco IE-3300 SPAN port. Does NOT inject packets into OT."
+  },
+  {
+    "asset_id": "NET-SW-WH01",
+    "hostname": "sw-c2960l-wh-01",
+    "ip_address": "10.10.40.254",
+    "mac_address": "F8:7B:20:40:00:01",
+    "vlan": 40,
+    "network_segment": "Warehouse & Logistics",
+    "device_type": "switch",
+    "os": "Cisco IOS",
+    "firmware_version": "15.2(7)E5",
+    "application": "Warehouse 24-Port Gigabit PoE+ Switch",
+    "owner_department": "IT Infrastructure",
+    "criticality": "medium",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "NET-FW-01",
+      "SEC-NMS-01",
+      "SEC-LOGCOL-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "Vlan40",
+        "ip": "10.10.40.254",
+        "mac": "F8:7B:20:40:00:01"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-07-15",
+    "notes": "Located in Warehouse Dispatch Office Rack."
+  },
+  {
+    "asset_id": "WH-WMS-SVR01",
+    "hostname": "wh-wms01.logistics.becpl.in",
+    "ip_address": "10.10.40.2",
+    "mac_address": "00:50:56:A4:40:02",
+    "vlan": 40,
+    "network_segment": "Warehouse & Logistics",
+    "device_type": "server",
+    "os": "Windows Server 2019 Standard",
+    "firmware_version": null,
+    "application": "Vinculum Vin eRetail WMS, Microsoft SQL Server 2019 Express, REST API",
+    "owner_department": "Logistics",
+    "criticality": "high",
+    "identity_classification": "SERVICE_ACCOUNT",
+    "communication_peers": [
+      "WH-SCAN-001",
+      "WH-SCAN-002",
+      "WH-RFID-GW01",
+      "CLOUD-LOGIST-GW",
+      "SEC-SIEM-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "Ethernet0",
+        "ip": "10.10.40.2",
+        "mac": "00:50:56:A4:40:02"
+      }
+    ],
+    "vulnerability_exposure": "medium",
+    "last_patched": "2026-09-22",
+    "notes": "Core warehouse inventory system. Coordinates with DTDC/BlueDart via Cloud Gateway."
+  },
+  {
+    "asset_id": "WH-DNS-01",
+    "hostname": "wh-dns01.logistics.becpl.in",
+    "ip_address": "10.10.40.5",
+    "mac_address": "00:50:56:A4:40:05",
+    "vlan": 40,
+    "network_segment": "Warehouse & Logistics",
+    "device_type": "server",
+    "os": "Debian 12 Bookworm",
+    "firmware_version": null,
+    "application": "BIND9 DNS Caching Resolver, DHCP Server for Handheld Scanners",
+    "owner_department": "IT Infrastructure",
+    "criticality": "medium",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "CORP-DNS-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "ens160",
+        "ip": "10.10.40.5",
+        "mac": "00:50:56:A4:40:05"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-10-20",
+    "notes": "Local DNS and DHCP for Wi-Fi and wired warehouse devices."
+  },
+  {
+    "asset_id": "WH-SCAN-001",
+    "hostname": "wh-scanner-tc52-01",
+    "ip_address": "10.10.40.10",
+    "mac_address": "84:24:8D:40:10:0A",
+    "vlan": 40,
+    "network_segment": "Warehouse & Logistics",
+    "device_type": "scanner",
+    "os": "Android 11 Industrial (Zebra BSP)",
+    "firmware_version": "11-26-05.00-RG-U00-STD",
+    "application": "Zebra DataWedge, Vinculum WMS Android Client",
+    "owner_department": "Logistics",
+    "criticality": "medium",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "WH-WMS-SVR01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "wlan0",
+        "ip": "10.10.40.10",
+        "mac": "84:24:8D:40:10:0A"
+      }
+    ],
+    "vulnerability_exposure": "medium",
+    "last_patched": "2026-04-12",
+    "notes": "Raw material goods-inward barcode scanner terminal."
+  },
+  {
+    "asset_id": "WH-SCAN-002",
+    "hostname": "wh-scanner-tc52-02",
+    "ip_address": "10.10.40.11",
+    "mac_address": "84:24:8D:40:10:0B",
+    "vlan": 40,
+    "network_segment": "Warehouse & Logistics",
+    "device_type": "scanner",
+    "os": "Android 11 Industrial (Zebra BSP)",
+    "firmware_version": "11-26-05.00-RG-U00-STD",
+    "application": "Zebra DataWedge, Vinculum WMS Android Client",
+    "owner_department": "Logistics",
+    "criticality": "medium",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "WH-WMS-SVR01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "wlan0",
+        "ip": "10.10.40.11",
+        "mac": "84:24:8D:40:10:0B"
+      }
+    ],
+    "vulnerability_exposure": "medium",
+    "last_patched": "2026-04-12",
+    "notes": "SMT feeder loading kit verification scanner."
+  },
+  {
+    "asset_id": "WH-SCAN-003",
+    "hostname": "wh-scanner-datalogic-01",
+    "ip_address": "10.10.40.12",
+    "mac_address": "00:0B:4F:40:10:0C",
+    "vlan": 40,
+    "network_segment": "Warehouse & Logistics",
+    "device_type": "scanner",
+    "os": "Android 10 Enterprise",
+    "firmware_version": "v2.14.02",
+    "application": "Datalogic Memor 10, Dispatch Manifest Scanner",
+    "owner_department": "Logistics",
+    "criticality": "medium",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "WH-WMS-SVR01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "wlan0",
+        "ip": "10.10.40.12",
+        "mac": "00:0B:4F:40:10:0C"
+      }
+    ],
+    "vulnerability_exposure": "high",
+    "last_patched": "2025-09-18",
+    "notes": "Finished goods dispatch verification scanner."
+  },
+  {
+    "asset_id": "WH-RFID-GW01",
+    "hostname": "wh-rfid-speedway01",
+    "ip_address": "10.10.40.20",
+    "mac_address": "00:16:25:40:10:14",
+    "vlan": 40,
+    "network_segment": "Warehouse & Logistics",
+    "device_type": "gateway",
+    "os": "Impinj Speedway Octane OS",
+    "firmware_version": "v7.6.1",
+    "application": "Impinj Speedway R420 UHF RFID Reader, LLRP Protocol port 5084",
+    "owner_department": "Logistics",
+    "criticality": "high",
+    "identity_classification": "INDUSTRIAL_DEVICE",
+    "communication_peers": [
+      "WH-WMS-SVR01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "eth0",
+        "ip": "10.10.40.20",
+        "mac": "00:16:25:40:10:14"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-03-20",
+    "notes": "Component storage reel bin automated inventory gate reader."
+  },
+  {
+    "asset_id": "WH-RFID-GW02",
+    "hostname": "wh-rfid-speedway02",
+    "ip_address": "10.10.40.21",
+    "mac_address": "00:16:25:40:10:15",
+    "vlan": 40,
+    "network_segment": "Warehouse & Logistics",
+    "device_type": "gateway",
+    "os": "Impinj Speedway Octane OS",
+    "firmware_version": "v7.6.1",
+    "application": "Impinj Speedway R420 UHF RFID Reader, LLRP Protocol port 5084",
+    "owner_department": "Logistics",
+    "criticality": "high",
+    "identity_classification": "INDUSTRIAL_DEVICE",
+    "communication_peers": [
+      "WH-WMS-SVR01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "eth0",
+        "ip": "10.10.40.21",
+        "mac": "00:16:25:40:10:15"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-03-20",
+    "notes": "Outbound truck loading dock portal RFID scanner."
+  },
+  {
+    "asset_id": "WH-PC-001",
+    "hostname": "wh-ws-supervisor.logistics.becpl.in",
+    "ip_address": "10.10.40.30",
+    "mac_address": "50:76:AF:20:40:1E",
+    "vlan": 40,
+    "network_segment": "Warehouse & Logistics",
+    "device_type": "workstation",
+    "os": "Windows 11 Pro 23H2",
+    "firmware_version": null,
+    "application": "WMS Web Client, MS Excel, Outlook, BarTender Label Designer",
+    "owner_department": "Logistics",
+    "criticality": "medium",
+    "identity_classification": "HUMAN_USER",
+    "communication_peers": [
+      "WH-WMS-SVR01",
+      "WH-PRINT-001",
+      "CLOUD-PROXY-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "Ethernet0",
+        "ip": "10.10.40.30",
+        "mac": "50:76:AF:20:40:1E"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-10-25",
+    "notes": "Warehouse Supervisor desk PC."
+  },
+  {
+    "asset_id": "WH-PC-002",
+    "hostname": "wh-ws-coord.logistics.becpl.in",
+    "ip_address": "10.10.40.31",
+    "mac_address": "50:76:AF:20:40:1F",
+    "vlan": 40,
+    "network_segment": "Warehouse & Logistics",
+    "device_type": "workstation",
+    "os": "Windows 11 Pro 23H2",
+    "firmware_version": null,
+    "application": "DTDC Portal, BlueDart Waybill System, Chrome, WMS Web",
+    "owner_department": "Logistics",
+    "criticality": "medium",
+    "identity_classification": "HUMAN_USER",
+    "communication_peers": [
+      "WH-WMS-SVR01",
+      "WH-PRINT-001",
+      "CLOUD-PROXY-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "Ethernet0",
+        "ip": "10.10.40.31",
+        "mac": "50:76:AF:20:40:1F"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-10-25",
+    "notes": "Logistics coordinator preparing consignment manifests."
+  },
+  {
+    "asset_id": "WH-PRINT-001",
+    "hostname": "wh-zebra-zt411",
+    "ip_address": "10.10.40.40",
+    "mac_address": "00:07:4D:40:10:28",
+    "vlan": 40,
+    "network_segment": "Warehouse & Logistics",
+    "device_type": "printer",
+    "os": "Zebra Link-OS",
+    "firmware_version": "V84.20.23Z",
+    "application": "ZPL II Barcode & Shipping Label Printer",
+    "owner_department": "Logistics",
+    "criticality": "medium",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "WH-WMS-SVR01",
+      "WH-PC-001",
+      "WH-PC-002"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "eth0",
+        "ip": "10.10.40.40",
+        "mac": "00:07:4D:40:10:28"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-06-12",
+    "notes": "Industrial thermal transfer printer for package labels and waybills."
+  },
+  {
+    "asset_id": "WH-NIDS-PROBE01",
+    "hostname": "wh-probe01.logistics.becpl.in",
+    "ip_address": "10.10.40.50",
+    "mac_address": "00:50:56:A4:40:32",
+    "vlan": 40,
+    "network_segment": "Warehouse & Logistics",
+    "device_type": "sensor",
+    "os": "Debian 12 Bookworm",
+    "firmware_version": null,
+    "application": "VaultX Passive Logistics NIDS Sniffer, Zeek 6.0",
+    "owner_department": "Security Operations",
+    "criticality": "critical",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "SEC-NIDS-MGR01",
+      "SEC-SIEM-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "eth0",
+        "ip": "10.10.40.50",
+        "mac": "00:50:56:A4:40:32"
+      },
+      {
+        "interface": "span0",
+        "ip": "0.0.0.0",
+        "mac": "00:50:56:A4:40:33"
+      }
+    ],
+    "vulnerability_exposure": "none",
+    "last_patched": "2026-11-10",
+    "notes": "Passive sniffer tapping Catalyst 2960-L warehouse traffic."
+  },
+  {
+    "asset_id": "NET-SW-DMZ01",
+    "hostname": "sw-c2960x-dmz-01",
+    "ip_address": "10.10.50.254",
+    "mac_address": "F8:7B:20:50:00:01",
+    "vlan": 50,
+    "network_segment": "DMZ & Vendor Access",
+    "device_type": "switch",
+    "os": "Cisco IOS",
+    "firmware_version": "15.2(7)E7",
+    "application": "DMZ Isolated 24-Port Switch",
+    "owner_department": "IT Infrastructure",
+    "criticality": "high",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "NET-FW-01",
+      "SEC-NMS-01",
+      "SEC-LOGCOL-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "Vlan50",
+        "ip": "10.10.50.254",
+        "mac": "F8:7B:20:50:00:01"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-08-20",
+    "notes": "Isolated DMZ switch in Server Room Rack D."
+  },
+  {
+    "asset_id": "DMZ-BASTION-01",
+    "hostname": "dmz-bastion01.dmz.becpl.in",
+    "ip_address": "10.10.50.2",
+    "mac_address": "00:50:56:A5:50:02",
+    "vlan": 50,
+    "network_segment": "DMZ & Vendor Access",
+    "device_type": "server",
+    "os": "Hardened Ubuntu 22.04 LTS",
+    "firmware_version": null,
+    "application": "Apache Guacamole PAM, Keystroke & Video Session Recorder, Duo MFA",
+    "owner_department": "Security Operations",
+    "criticality": "critical",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "ENG-GITSVR-01",
+      "CORP-MGMT-01",
+      "SEC-SIEM-01",
+      "SEC-LOGCOL-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "ens160",
+        "ip": "10.10.50.2",
+        "mac": "00:50:56:A5:50:02"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-11-08",
+    "notes": "Mandatory proxy for all external vendor access. Auto-terminates sessions at 4h."
+  },
+  {
+    "asset_id": "DMZ-VEND-PORTAL",
+    "hostname": "vendor-portal.becpl.in",
+    "ip_address": "10.10.50.3",
+    "mac_address": "00:50:56:A5:50:03",
+    "vlan": 50,
+    "network_segment": "DMZ & Vendor Access",
+    "device_type": "server",
+    "os": "Rocky Linux 9",
+    "firmware_version": null,
+    "application": "Node.js Vendor Access Request Portal, TOTP Self-Enrollment, Nginx",
+    "owner_department": "IT Infrastructure",
+    "criticality": "high",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "DMZ-WAF-01",
+      "DMZ-BASTION-01",
+      "SEC-SIEM-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "ens160",
+        "ip": "10.10.50.3",
+        "mac": "00:50:56:A5:50:03"
+      }
+    ],
+    "vulnerability_exposure": "medium",
+    "last_patched": "2026-10-22",
+    "notes": "External web portal where vendors request session access approvals."
+  },
+  {
+    "asset_id": "DMZ-REVPROXY01",
+    "hostname": "dmz-revproxy01.dmz.becpl.in",
+    "ip_address": "10.10.50.4",
+    "mac_address": "00:50:56:A5:50:04",
+    "vlan": 50,
+    "network_segment": "DMZ & Vendor Access",
+    "device_type": "server",
+    "os": "Debian 12 Bookworm",
+    "firmware_version": null,
+    "application": "Nginx 1.24 Reverse Proxy, TLS 1.3 Termination, ModSecurity WAF",
+    "owner_department": "IT Infrastructure",
+    "criticality": "high",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "DMZ-VEND-PORTAL",
+      "SEC-LOGCOL-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "ens160",
+        "ip": "10.10.50.4",
+        "mac": "00:50:56:A5:50:04"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-11-01",
+    "notes": "Reverse proxy for external inbound HTTPS services."
+  },
+  {
+    "asset_id": "DMZ-DNS-01",
+    "hostname": "dmz-dns01.dmz.becpl.in",
+    "ip_address": "10.10.50.5",
+    "mac_address": "00:50:56:A5:50:05",
+    "vlan": 50,
+    "network_segment": "DMZ & Vendor Access",
+    "device_type": "server",
+    "os": "Debian 12 Bookworm",
+    "firmware_version": null,
+    "application": "BIND9 Split-Horizon Authoritative DNS for DMZ Zone",
+    "owner_department": "IT Infrastructure",
+    "criticality": "medium",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "CLOUD-DNS-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "ens160",
+        "ip": "10.10.50.5",
+        "mac": "00:50:56:A5:50:05"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-10-20",
+    "notes": "Resolves DMZ hosts without leaking internal corporate names."
+  },
+  {
+    "asset_id": "DMZ-VPN-GW01",
+    "hostname": "dmz-vpn-gw01.dmz.becpl.in",
+    "ip_address": "10.10.50.10",
+    "mac_address": "70:4C:A5:50:00:0A",
+    "vlan": 50,
+    "network_segment": "DMZ & Vendor Access",
+    "device_type": "gateway",
+    "os": "FortiOS 7.2.6",
+    "firmware_version": "v7.2.6-build1575",
+    "application": "FortiGate Virtual Appliance, SSL-VPN & IPsec Portal for Vendors",
+    "owner_department": "IT Infrastructure",
+    "criticality": "critical",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "DMZ-BASTION-01",
+      "SEC-SIEM-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "port1",
+        "ip": "10.10.50.10",
+        "mac": "70:4C:A5:50:00:0A"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-10-15",
+    "notes": "Dedicated vendor VPN endpoint with hardware OTP / App-based TOTP validation."
+  },
+  {
+    "asset_id": "DMZ-WAF-01",
+    "hostname": "dmz-waf01.dmz.becpl.in",
+    "ip_address": "10.10.50.20",
+    "mac_address": "70:4C:A5:50:00:14",
+    "vlan": 50,
+    "network_segment": "DMZ & Vendor Access",
+    "device_type": "firewall",
+    "os": "FortiWeb OS 7.0",
+    "firmware_version": "v7.0.4-build0098",
+    "application": "FortiWeb Web Application Firewall, OWASP Top 10 Rulepack",
+    "owner_department": "Security Operations",
+    "criticality": "high",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "DMZ-REVPROXY01",
+      "SEC-SIEM-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "port1",
+        "ip": "10.10.50.20",
+        "mac": "70:4C:A5:50:00:14"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-09-15",
+    "notes": "WAF inspecting incoming traffic to vendor portal."
+  },
+  {
+    "asset_id": "VEND-ID-SIEMENS",
+    "hostname": "vend-siemens-engineer",
+    "ip_address": "10.10.50.101",
+    "mac_address": "00:50:56:FE:50:01",
+    "vlan": 50,
+    "network_segment": "DMZ & Vendor Access",
+    "device_type": "workstation",
+    "os": "Windows 11 Enterprise (Vendor Managed)",
+    "firmware_version": null,
+    "application": "Siemens TIA Portal v18, S7 Diagnostic Tools",
+    "owner_department": "Plant Operations",
+    "criticality": "high",
+    "identity_classification": "THIRD_PARTY_IDENTITY",
+    "communication_peers": [
+      "DMZ-BASTION-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "eth0",
+        "ip": "10.10.50.101",
+        "mac": "00:50:56:FE:50:01"
+      }
+    ],
+    "vulnerability_exposure": "medium",
+    "last_patched": null,
+    "notes": "VEND-001: Siemens India field engineer identity. Remote access blocked; used during escorted on-site sessions only."
+  },
+  {
+    "asset_id": "VEND-ID-CODEBRIDGE",
+    "hostname": "vend-codebridge-bastion-session",
+    "ip_address": "10.10.50.102",
+    "mac_address": "00:50:56:FE:50:02",
+    "vlan": 50,
+    "network_segment": "DMZ & Vendor Access",
+    "device_type": "workstation",
+    "os": "Linux Bastion Container",
+    "firmware_version": null,
+    "application": "SSH Client, Git, C Development Tools",
+    "owner_department": "Firmware Engineering",
+    "criticality": "high",
+    "identity_classification": "THIRD_PARTY_IDENTITY",
+    "communication_peers": [
+      "DMZ-BASTION-01",
+      "ENG-GITSVR-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "eth0",
+        "ip": "10.10.50.102",
+        "mac": "00:50:56:FE:50:02"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-11-01",
+    "notes": "VEND-002: CodeBridge Firmware Services remote session. Restricted to ENG-GITSVR-01 via SSH with 4h timeout."
+  },
+  {
+    "asset_id": "VEND-ID-NETSOLVE",
+    "hostname": "vend-netsolve-rdp-session",
+    "ip_address": "10.10.50.103",
+    "mac_address": "00:50:56:FE:50:03",
+    "vlan": 50,
+    "network_segment": "DMZ & Vendor Access",
+    "device_type": "workstation",
+    "os": "Windows Session Container",
+    "firmware_version": null,
+    "application": "Remote Desktop Protocol (RDP), MMC, Event Viewer",
+    "owner_department": "IT Infrastructure",
+    "criticality": "high",
+    "identity_classification": "THIRD_PARTY_IDENTITY",
+    "communication_peers": [
+      "DMZ-BASTION-01",
+      "CORP-MGMT-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "eth0",
+        "ip": "10.10.50.103",
+        "mac": "00:50:56:FE:50:03"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-11-01",
+    "notes": "VEND-003: NetSolve IT Infrastructure remote engineer session for Active Directory maintenance."
+  },
+  {
+    "asset_id": "CLOUD-PROXY-01",
+    "hostname": "cloud-proxy01.cloud.becpl.in",
+    "ip_address": "10.10.60.2",
+    "mac_address": "00:50:56:A6:60:02",
+    "vlan": 60,
+    "network_segment": "Cloud & External Integrations",
+    "device_type": "server",
+    "os": "Debian 12 Bookworm",
+    "firmware_version": null,
+    "application": "Squid Forward Proxy v5.9, SSL Bumping / TLS Inspection, ClamAV Antivirus",
+    "owner_department": "IT Infrastructure",
+    "criticality": "critical",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "CORP-WS-001",
+      "ENG-WS-001",
+      "SEC-LOGCOL-01",
+      "SEC-SIEM-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "ens160",
+        "ip": "10.10.60.2",
+        "mac": "00:50:56:A6:60:02"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-11-05",
+    "notes": "Mandatory outbound web proxy for all IT/Engineering internet egress. Enforces URL filtering."
+  },
+  {
+    "asset_id": "CLOUD-MAILGW-01",
+    "hostname": "cloud-mailgw01.cloud.becpl.in",
+    "ip_address": "10.10.60.3",
+    "mac_address": "00:50:56:A6:60:03",
+    "vlan": 60,
+    "network_segment": "Cloud & External Integrations",
+    "device_type": "server",
+    "os": "Ubuntu 22.04 LTS",
+    "firmware_version": null,
+    "application": "Postfix SMTP Relay, Rspamd Antispam, ClamAV, DKIM/SPF/DMARC Signing",
+    "owner_department": "IT Infrastructure",
+    "criticality": "high",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "CORP-DC-01",
+      "CLOUD-M365-GW",
+      "SEC-LOGCOL-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "ens160",
+        "ip": "10.10.60.3",
+        "mac": "00:50:56:A6:60:03"
+      }
+    ],
+    "vulnerability_exposure": "medium",
+    "last_patched": "2026-10-25",
+    "notes": "Sanitises inbound and outbound email before handing off to Microsoft 365 Exchange Online."
+  },
+  {
+    "asset_id": "CLOUD-AWSVPN-01",
+    "hostname": "cloud-awsvpn01.cloud.becpl.in",
+    "ip_address": "10.10.60.4",
+    "mac_address": "00:50:56:A6:60:04",
+    "vlan": 60,
+    "network_segment": "Cloud & External Integrations",
+    "device_type": "gateway",
+    "os": "VyOS 1.4-rolling",
+    "firmware_version": null,
+    "application": "IPsec Site-to-Site VPN Tunnel Endpoint (IKEv2 / AES-GCM-256), BGP Routing",
+    "owner_department": "IT Infrastructure",
+    "criticality": "critical",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "EXT-AWS-APSOUTH1",
+      "CORP-BACKUP-01",
+      "CORP-WS-004",
+      "SEC-NMS-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "eth0",
+        "ip": "10.10.60.4",
+        "mac": "00:50:56:A6:60:04"
+      },
+      {
+        "interface": "vti0",
+        "ip": "169.254.100.1",
+        "mac": "00:50:56:A6:60:05"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-10-18",
+    "notes": "Encrypted IPsec tunnel terminating at AWS India VPC (ap-south-1) for SAP B1 and S3 backups."
+  },
+  {
+    "asset_id": "CLOUD-DNS-01",
+    "hostname": "cloud-dns01.cloud.becpl.in",
+    "ip_address": "10.10.60.5",
+    "mac_address": "00:50:56:A6:60:06",
+    "vlan": 60,
+    "network_segment": "Cloud & External Integrations",
+    "device_type": "server",
+    "os": "Ubuntu 22.04 LTS",
+    "firmware_version": null,
+    "application": "Unbound Recursive DNS Resolver, DNSSEC Validator, DNS-over-TLS (DoT)",
+    "owner_department": "IT Infrastructure",
+    "criticality": "high",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "CORP-DNS-01",
+      "DMZ-DNS-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "ens160",
+        "ip": "10.10.60.5",
+        "mac": "00:50:56:A6:60:06"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-10-25",
+    "notes": "External recursive DNS forwarder querying Root servers, Cloudflare, and Google DNS."
+  },
+  {
+    "asset_id": "CLOUD-M365-GW",
+    "hostname": "cloud-m365gw01.cloud.becpl.in",
+    "ip_address": "10.10.60.10",
+    "mac_address": "00:50:56:A6:60:0A",
+    "vlan": 60,
+    "network_segment": "Cloud & External Integrations",
+    "device_type": "server",
+    "os": "Rocky Linux 9",
+    "firmware_version": null,
+    "application": "Microsoft Entra Connect Sync (Cloud Provisioning Agent), Graph API Proxy",
+    "owner_department": "IT Infrastructure",
+    "criticality": "high",
+    "identity_classification": "SERVICE_ACCOUNT",
+    "communication_peers": [
+      "CORP-DC-01",
+      "CLOUD-MAILGW-01",
+      "SEC-LOGCOL-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "ens160",
+        "ip": "10.10.60.10",
+        "mac": "00:50:56:A6:60:0A"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-10-14",
+    "notes": "Synchronises on-premises Active Directory identities with Microsoft Entra ID."
+  },
+  {
+    "asset_id": "CLOUD-ZOHO-GW",
+    "hostname": "cloud-zohogw01.cloud.becpl.in",
+    "ip_address": "10.10.60.11",
+    "mac_address": "00:50:56:A6:60:0B",
+    "vlan": 60,
+    "network_segment": "Cloud & External Integrations",
+    "device_type": "server",
+    "os": "Rocky Linux 9",
+    "firmware_version": null,
+    "application": "Node.js Microservice, Zoho CRM REST API Connector & Webhook Listener",
+    "owner_department": "Sales & Marketing",
+    "criticality": "medium",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "CORP-WS-007",
+      "SEC-LOGCOL-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "ens160",
+        "ip": "10.10.60.11",
+        "mac": "00:50:56:A6:60:0B"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-09-30",
+    "notes": "Syncs customer RFQs and customer PO status from Zoho CRM to on-premises systems."
+  },
+  {
+    "asset_id": "CLOUD-LOGIST-GW",
+    "hostname": "cloud-logisticsgw01.cloud.becpl.in",
+    "ip_address": "10.10.60.12",
+    "mac_address": "00:50:56:A6:60:0C",
+    "vlan": 60,
+    "network_segment": "Cloud & External Integrations",
+    "device_type": "server",
+    "os": "Rocky Linux 9",
+    "firmware_version": null,
+    "application": "Logistics Middleware Gateway, DTDC & BlueDart Tracking REST Client",
+    "owner_department": "Logistics",
+    "criticality": "high",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "WH-WMS-SVR01",
+      "SEC-LOGCOL-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "ens160",
+        "ip": "10.10.60.12",
+        "mac": "00:50:56:A6:60:0C"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-10-05",
+    "notes": "Rate-limited API gateway communicating with logistics carriers over TLS."
+  },
+  {
+    "asset_id": "EXT-AWS-APSOUTH1",
+    "hostname": "aws-vpc-gw.ap-south-1.amazonaws.com",
+    "ip_address": "10.10.60.200",
+    "mac_address": "02:00:5E:A6:60:C8",
+    "vlan": 60,
+    "network_segment": "Cloud & External Integrations",
+    "device_type": "gateway",
+    "os": "AWS Virtual Private Gateway (VGW)",
+    "firmware_version": null,
+    "application": "AWS Cloud VPC ap-south-1 Gateway, Direct Route to SAP B1 EC2 & S3",
+    "owner_department": "IT Infrastructure",
+    "criticality": "critical",
+    "identity_classification": "THIRD_PARTY_IDENTITY",
+    "communication_peers": [
+      "CLOUD-AWSVPN-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "aws0",
+        "ip": "10.10.60.200",
+        "mac": "02:00:5E:A6:60:C8"
+      }
+    ],
+    "vulnerability_exposure": "none",
+    "last_patched": "2026-11-01",
+    "notes": "VEND-004: Cloud gateway representing AWS India VPC infrastructure."
+  },
+  {
+    "asset_id": "SEC-SIEM-01",
+    "hostname": "sec-siem01.sec.becpl.in",
+    "ip_address": "10.10.70.2",
+    "mac_address": "00:50:56:A7:70:02",
+    "vlan": 70,
+    "network_segment": "Security Management",
+    "device_type": "server",
+    "os": "Rocky Linux 9",
+    "firmware_version": null,
+    "application": "Wazuh Central Manager v4.7, OpenSearch 2.11 Cluster, Filebeat",
+    "owner_department": "Security Operations",
+    "criticality": "critical",
+    "identity_classification": "AI_AGENT",
+    "communication_peers": [
+      "SEC-NIDS-MGR01",
+      "SEC-LOGCOL-01",
+      "SEC-JUMPHOST-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "ens160",
+        "ip": "10.10.70.2",
+        "mac": "00:50:56:A7:70:02"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-11-12",
+    "notes": "Central security analytics and event correlation engine. Ingests logs from all 7 VLANs."
+  },
+  {
+    "asset_id": "SEC-NIDS-MGR01",
+    "hostname": "vaultx-nids-mgr01.sec.becpl.in",
+    "ip_address": "10.10.70.3",
+    "mac_address": "00:50:56:A7:70:03",
+    "vlan": 70,
+    "network_segment": "Security Management",
+    "device_type": "server",
+    "os": "Rocky Linux 9 (Hardened)",
+    "firmware_version": null,
+    "application": "VaultX Manufacturing-Aware Hybrid NIDS Console, ML Anomaly Engine, Eve-Box",
+    "owner_department": "Security Operations",
+    "criticality": "critical",
+    "identity_classification": "AI_AGENT",
+    "communication_peers": [
+      "SEC-SIEM-01",
+      "SEC-PROBE-OT",
+      "SEC-PROBE-WH",
+      "SEC-PROBE-CORP",
+      "SEC-PROBE-ENG"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "ens160",
+        "ip": "10.10.70.3",
+        "mac": "00:50:56:A7:70:03"
+      }
+    ],
+    "vulnerability_exposure": "none",
+    "last_patched": "2026-11-15",
+    "notes": "VaultX Master Manager: aggregates probe telemetry, executes baseline anomaly models."
+  },
+  {
+    "asset_id": "SEC-NMS-01",
+    "hostname": "sec-zabbix01.sec.becpl.in",
+    "ip_address": "10.10.70.4",
+    "mac_address": "00:50:56:A7:70:04",
+    "vlan": 70,
+    "network_segment": "Security Management",
+    "device_type": "server",
+    "os": "Debian 12 Bookworm",
+    "firmware_version": null,
+    "application": "Zabbix Server 7.0 LTS, SNMP Poller, PostgreSQL 16 TimescaleDB",
+    "owner_department": "IT Infrastructure",
+    "criticality": "high",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "NET-FW-01",
+      "NET-SW-CORP01",
+      "NET-SW-OT01",
+      "SEC-JUMPHOST-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "ens160",
+        "ip": "10.10.70.4",
+        "mac": "00:50:56:A7:70:04"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-10-28",
+    "notes": "Monitors switch port statuses, link saturation, temperature, and UPS health."
+  },
+  {
+    "asset_id": "SEC-THREATINTEL01",
+    "hostname": "sec-misp01.sec.becpl.in",
+    "ip_address": "10.10.70.5",
+    "mac_address": "00:50:56:A7:70:05",
+    "vlan": 70,
+    "network_segment": "Security Management",
+    "device_type": "server",
+    "os": "Ubuntu 22.04 LTS",
+    "firmware_version": null,
+    "application": "MISP Threat Sharing Platform v2.4, OTX AlienVault Feed, NCIIPC / CERT-In Advisories",
+    "owner_department": "Security Operations",
+    "criticality": "high",
+    "identity_classification": "AI_AGENT",
+    "communication_peers": [
+      "SEC-NIDS-MGR01",
+      "SEC-SIEM-01",
+      "CLOUD-PROXY-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "ens160",
+        "ip": "10.10.70.5",
+        "mac": "00:50:56:A7:70:05"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-11-05",
+    "notes": "Fetches and curates IOC feeds; correlates threat indicators with network flows."
+  },
+  {
+    "asset_id": "SEC-LOGCOL-01",
+    "hostname": "sec-logcollector01.sec.becpl.in",
+    "ip_address": "10.10.70.6",
+    "mac_address": "00:50:56:A7:70:06",
+    "vlan": 70,
+    "network_segment": "Security Management",
+    "device_type": "server",
+    "os": "Debian 12 Bookworm",
+    "firmware_version": null,
+    "application": "Vector by DataDog, Rsyslog Enterprise, WORM Encrypted Disk Vault",
+    "owner_department": "Security Operations",
+    "criticality": "critical",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "SEC-SIEM-01",
+      "NET-FW-01",
+      "DMZ-BASTION-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "ens160",
+        "ip": "10.10.70.6",
+        "mac": "00:50:56:A7:70:06"
+      }
+    ],
+    "vulnerability_exposure": "none",
+    "last_patched": "2026-11-08",
+    "notes": "Immutable audit log collector ensuring tamper-proof retention for 1 year."
+  },
+  {
+    "asset_id": "SEC-VULN-SCAN01",
+    "hostname": "sec-openvas01.sec.becpl.in",
+    "ip_address": "10.10.70.7",
+    "mac_address": "00:50:56:A7:70:07",
+    "vlan": 70,
+    "network_segment": "Security Management",
+    "device_type": "server",
+    "os": "Debian 12 Bookworm",
+    "firmware_version": null,
+    "application": "Greenbone Community Edition (OpenVAS 22.4), NVT Feed Engine",
+    "owner_department": "Security Operations",
+    "criticality": "medium",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "SEC-JUMPHOST-01",
+      "SEC-SIEM-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "ens160",
+        "ip": "10.10.70.7",
+        "mac": "00:50:56:A7:70:07"
+      }
+    ],
+    "vulnerability_exposure": "low",
+    "last_patched": "2026-10-31",
+    "notes": "Conducts scheduled vulnerability assessments on IT VLANs. Prohibited from scanning OT."
+  },
+  {
+    "asset_id": "SEC-DNS-NTP01",
+    "hostname": "sec-ntp-dns01.sec.becpl.in",
+    "ip_address": "10.10.70.10",
+    "mac_address": "00:50:56:A7:70:0A",
+    "vlan": 70,
+    "network_segment": "Security Management",
+    "device_type": "server",
+    "os": "Alpine Linux 3.19",
+    "firmware_version": null,
+    "application": "Chrony NTP Master (Stratum-2, GPS PPS sync), BIND9 Authoritative Security DNS",
+    "owner_department": "IT Infrastructure",
+    "criticality": "critical",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "CORP-DNS-01",
+      "ENG-DNS-01",
+      "NET-FW-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "eth0",
+        "ip": "10.10.70.10",
+        "mac": "00:50:56:A7:70:0A"
+      }
+    ],
+    "vulnerability_exposure": "none",
+    "last_patched": "2026-11-01",
+    "notes": "Authoritative time source ensuring timestamp synchronisation across forensic logs."
+  },
+  {
+    "asset_id": "SEC-JUMPHOST-01",
+    "hostname": "sec-jumphost01.sec.becpl.in",
+    "ip_address": "10.10.70.11",
+    "mac_address": "00:50:56:A7:70:0B",
+    "vlan": 70,
+    "network_segment": "Security Management",
+    "device_type": "server",
+    "os": "Hardened Ubuntu 22.04 LTS",
+    "firmware_version": null,
+    "application": "Teleport PAM, FIDO2 / Hardware Security Key WebAuthn, Audit Logger",
+    "owner_department": "Security Operations",
+    "criticality": "critical",
+    "identity_classification": "HUMAN_USER",
+    "communication_peers": [
+      "CORP-WS-001",
+      "CORP-WS-002",
+      "SEC-SIEM-01",
+      "SEC-NIDS-MGR01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "ens160",
+        "ip": "10.10.70.11",
+        "mac": "00:50:56:A7:70:0B"
+      }
+    ],
+    "vulnerability_exposure": "none",
+    "last_patched": "2026-11-14",
+    "notes": "Exclusive admin jumpbox for infrastructure configuration. Requires hardware FIDO2 key."
+  },
+  {
+    "asset_id": "SEC-PROBE-OT",
+    "hostname": "sec-probe-ctrl-ot.sec.becpl.in",
+    "ip_address": "10.10.70.20",
+    "mac_address": "00:50:56:A7:70:14",
+    "vlan": 70,
+    "network_segment": "Security Management",
+    "device_type": "sensor",
+    "os": "Debian 12 Bookworm",
+    "firmware_version": null,
+    "application": "VaultX OT Probe Management Agent, gRPC Sensor Control, TLS 1.3",
+    "owner_department": "Security Operations",
+    "criticality": "critical",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "SEC-NIDS-MGR01",
+      "OT-NIDS-PROBE01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "ens160",
+        "ip": "10.10.70.20",
+        "mac": "00:50:56:A7:70:14"
+      }
+    ],
+    "vulnerability_exposure": "none",
+    "last_patched": "2026-11-10",
+    "notes": "Out-of-band management endpoint for the Manufacturing OT NIDS probe."
+  },
+  {
+    "asset_id": "SEC-PROBE-WH",
+    "hostname": "sec-probe-ctrl-wh.sec.becpl.in",
+    "ip_address": "10.10.70.21",
+    "mac_address": "00:50:56:A7:70:15",
+    "vlan": 70,
+    "network_segment": "Security Management",
+    "device_type": "sensor",
+    "os": "Debian 12 Bookworm",
+    "firmware_version": null,
+    "application": "VaultX Warehouse Probe Management Agent, gRPC Sensor Control",
+    "owner_department": "Security Operations",
+    "criticality": "high",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "SEC-NIDS-MGR01",
+      "WH-NIDS-PROBE01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "ens160",
+        "ip": "10.10.70.21",
+        "mac": "00:50:56:A7:70:15"
+      }
+    ],
+    "vulnerability_exposure": "none",
+    "last_patched": "2026-11-10",
+    "notes": "Out-of-band management endpoint for the Warehouse NIDS probe."
+  },
+  {
+    "asset_id": "SEC-PROBE-CORP",
+    "hostname": "sec-probe-ctrl-corp.sec.becpl.in",
+    "ip_address": "10.10.70.22",
+    "mac_address": "00:50:56:A7:70:16",
+    "vlan": 70,
+    "network_segment": "Security Management",
+    "device_type": "sensor",
+    "os": "Debian 12 Bookworm",
+    "firmware_version": null,
+    "application": "VaultX Corporate SPAN Probe, Suricata 7.0 Network Analysis Engine",
+    "owner_department": "Security Operations",
+    "criticality": "high",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "SEC-NIDS-MGR01",
+      "SEC-SIEM-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "ens160",
+        "ip": "10.10.70.22",
+        "mac": "00:50:56:A7:70:16"
+      },
+      {
+        "interface": "span0",
+        "ip": "0.0.0.0",
+        "mac": "00:50:56:A7:70:17"
+      }
+    ],
+    "vulnerability_exposure": "none",
+    "last_patched": "2026-11-10",
+    "notes": "Passive sniffer tapping Catalyst 9300 Corporate VLAN trunk."
+  },
+  {
+    "asset_id": "SEC-PROBE-ENG",
+    "hostname": "sec-probe-ctrl-eng.sec.becpl.in",
+    "ip_address": "10.10.70.23",
+    "mac_address": "00:50:56:A7:70:18",
+    "vlan": 70,
+    "network_segment": "Security Management",
+    "device_type": "sensor",
+    "os": "Debian 12 Bookworm",
+    "firmware_version": null,
+    "application": "VaultX Engineering SPAN Probe, Suricata 7.0 Protocol Decoders",
+    "owner_department": "Security Operations",
+    "criticality": "high",
+    "identity_classification": "AUTOMATION_WORKLOAD",
+    "communication_peers": [
+      "SEC-NIDS-MGR01",
+      "SEC-SIEM-01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "ens160",
+        "ip": "10.10.70.23",
+        "mac": "00:50:56:A7:70:18"
+      },
+      {
+        "interface": "span0",
+        "ip": "0.0.0.0",
+        "mac": "00:50:56:A7:70:19"
+      }
+    ],
+    "vulnerability_exposure": "none",
+    "last_patched": "2026-11-10",
+    "notes": "Passive sniffer tapping Engineering lab switch uplink."
+  },
+  {
+    "asset_id": "SEC-PKI-CA01",
+    "hostname": "sec-ca01.sec.becpl.in",
+    "ip_address": "10.10.70.30",
+    "mac_address": "00:50:56:A7:70:1E",
+    "vlan": 70,
+    "network_segment": "Security Management",
+    "device_type": "server",
+    "os": "Hardened Debian 12 (Offline HSM)",
+    "firmware_version": null,
+    "application": "Smallstep Certificate Authority, X.509 Certificate Engine, SCEP / ACME",
+    "owner_department": "Security Operations",
+    "criticality": "critical",
+    "identity_classification": "SERVICE_ACCOUNT",
+    "communication_peers": [
+      "SEC-JUMPHOST-01",
+      "SEC-NIDS-MGR01"
+    ],
+    "network_interfaces": [
+      {
+        "interface": "ens160",
+        "ip": "10.10.70.30",
+        "mac": "00:50:56:A7:70:1E"
+      }
+    ],
+    "vulnerability_exposure": "none",
+    "last_patched": "2026-10-10",
+    "notes": "Issues TLS certificates for internal services, NIDS probes, and VPN endpoints."
+  }
+]
