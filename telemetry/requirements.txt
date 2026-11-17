@@ -1,0 +1,24 @@
+# VaultX Telemetry & Sensor Engineering Dependencies
+# Bharat Electronics Components Pvt. Ltd. (BECPL), Pune
+
+# Core Async & Storage
+redis>=5.0.0
+aioredis>=2.0.1
+aiofiles>=23.2.1
+
+# Industrial Protocols & Network Traffic Crafting
+pymodbus>=3.6.0
+scapy>=2.5.0
+
+# Configuration & Logging
+pyyaml>=6.0.1
+structlog>=24.1.0
+python-dateutil>=2.8.2
+
+# File Monitoring & Event Handling
+watchdog>=4.0.0
+
+# Data Science / Telemetry Processing (Used by collectors & dataset tools)
+numpy>=1.24.0
+pandas>=2.0.0
+pyarrow>=14.0.0

@@ -1,0 +1,112 @@
+# =============================================================================
+# BECPL Custom Suricata Signatures (VaultX Manufacturing NIDS)
+# Bharat Electronics Components Pvt. Ltd., Pune
+# SIDs: 9001001 - 9001030 (Dedicated SID Range)
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# 1. OT / Industrial Control System Rules (Modbus TCP & Safety Protocol)
+# -----------------------------------------------------------------------------
+
+# Rule 1: Modbus TCP connection attempt from Corporate IT to OT Network
+alert tcp 172.20.10.0/24 any -> 172.20.30.0/24 502 (msg:"BECPL_OT: Unauthorized Modbus TCP connection attempt from Corporate IT to OT"; flow:to_server,established; classtype:policy-violation; sid:9001001; rev:1;)
+
+# Rule 2: Modbus TCP connection from DMZ / Vendor network directly to OT PLCs
+alert tcp 172.20.50.0/24 any -> 172.20.30.0/24 502 (msg:"BECPL_OT: Direct Modbus TCP access from DMZ/Vendor segment to Manufacturing OT"; flow:to_server,established; classtype:bad-unknown; sid:9001002; rev:1;)
+
+# Rule 3: Modbus Write Single Coil / Register from unauthorized IP
+alert tcp !172.20.30.10 any -> 172.20.30.0/24 502 (msg:"BECPL_OT: Modbus Write operation from unauthorized client IP"; flow:to_server,established; content:"|00 00|"; offset:2; depth:2; content:"|05|"; offset:7; depth:1; classtype:attempted-admin; sid:9001003; rev:1;)
+
+# Rule 4: Modbus Write Multiple Registers to Reflow Oven / SMT Safety PLC
+alert tcp any any -> [172.20.30.25,172.20.30.26] 502 (msg:"BECPL_OT: Modbus Write Multiple Registers command directed at Safety PLC"; flow:to_server,established; content:"|10|"; offset:7; depth:1; classtype:critical-infrastructure-attack; sid:9001004; rev:1;)
+
+# Rule 5: Modbus Diagnostic Function Code (0x08) execution attempt
+alert tcp any any -> 172.20.30.0/24 502 (msg:"BECPL_OT: Modbus Diagnostics function code 0x08 observed against OT PLC"; flow:to_server,established; content:"|08|"; offset:7; depth:1; classtype:protocol-command-decode; sid:9001005; rev:1;)
+
+# -----------------------------------------------------------------------------
+# 2. OT Isolation & Outbound Anomaly Rules
+# -----------------------------------------------------------------------------
+
+# Rule 6: Direct outbound internet HTTP/HTTPS traffic from OT network
+alert tcp 172.20.30.0/24 any -> !$HOME_NET [80,443,8080] (msg:"BECPL_OT: Suspicious outbound Web traffic originating from OT subnet"; flow:to_server,established; classtype:policy-violation; sid:9001006; rev:1;)
+
+# Rule 7: Direct outbound DNS query from OT network bypassing internal DNS resolver
+alert udp 172.20.30.0/24 any -> !172.20.10.2 53 (msg:"BECPL_OT: Outbound DNS request from OT network bypassing authorized internal DNS server"; classtype:policy-violation; sid:9001007; rev:1;)
+
+# Rule 8: IRC or non-standard C2 port connection from OT network
+alert tcp 172.20.30.0/24 any -> any [6667,1337,4444,8443] (msg:"BECPL_OT: Suspicious connection from OT network to known C2/Trojan port"; flow:to_server,established; classtype:trojan-activity; sid:9001008; rev:1;)
+
+# -----------------------------------------------------------------------------
+# 3. Lateral Movement & Administrative Protocol Abuse
+# -----------------------------------------------------------------------------
+
+# Rule 9: SSH Brute Force Detection (Threshold: > 6 attempts in 60s)
+alert tcp any any -> $HOME_NET 22 (msg:"BECPL_LATERAL: Potential SSH Brute Force attack detected"; flow:to_server,established; content:"SSH-"; depth:4; threshold:type both, track by_src, count 6, seconds 60; classtype:attempted-admin; sid:9001009; rev:1;)
+
+# Rule 10: Cross-VLAN RDP connection from Warehouse to Engineering Workstations
+alert tcp 172.20.40.0/24 any -> 172.20.20.0/24 3389 (msg:"BECPL_LATERAL: Unauthorized cross-VLAN RDP connection from Warehouse to Engineering"; flow:to_server,established; classtype:policy-violation; sid:9001010; rev:1;)
+
+# Rule 11: Cross-VLAN RDP connection from Corporate IT to OT SCADA HMI
+alert tcp 172.20.10.0/24 any -> 172.20.30.10 3389 (msg:"BECPL_LATERAL: High-risk RDP connection attempt from Corporate IT to OT SCADA Master"; flow:to_server,established; classtype:bad-unknown; sid:9001011; rev:1;)
+
+# Rule 12: SMB / DCE-RPC Lateral Probing sweep across VLANs
+alert tcp 172.20.10.0/24 any -> [172.20.20.0/24,172.20.30.0/24] 445 (msg:"BECPL_LATERAL: Cross-VLAN SMB session initiation targeting sensitive segments"; flow:to_server,established; content:"|ff|SMB"; depth:8; classtype:suspicious-filename-detect; sid:9001012; rev:1;)
+
+# Rule 13: WinRM (Remote Management) cross-subnet lateral connection
+alert tcp 172.20.10.0/24 any -> 172.20.20.0/24 [5985,5986] (msg:"BECPL_LATERAL: WinRM remote management session attempted from Corporate to Engineering"; flow:to_server,established; classtype:policy-violation; sid:9001013; rev:1;)
+
+# -----------------------------------------------------------------------------
+# 4. Intellectual Property & Firmware Repository Protection
+# -----------------------------------------------------------------------------
+
+# Rule 14: Firmware Git/Artifact repository access from non-engineering segment
+alert tcp !172.20.20.0/24 any -> 172.20.20.30 [80,443,9418] (msg:"BECPL_SEC: Unauthorized access attempt to Engineering Firmware Repository"; flow:to_server,established; classtype:policy-violation; sid:9001014; rev:1;)
+
+# Rule 15: Large File Exfiltration via HTTP POST to external IP
+alert http $HOME_NET any -> $EXTERNAL_NET any (msg:"BECPL_DATA: Large HTTP POST payload to external server (Potential Data Exfiltration)"; flow:to_server,established; http.method; content:"POST"; http.header; content:"Content-Length: "; pcre:"/Content-Length:\s*([1-9]\d{7,})/"; classtype:data-exfiltration; sid:9001015; rev:1;)
+
+# -----------------------------------------------------------------------------
+# 5. DNS Anomalies & C2 Communication
+# -----------------------------------------------------------------------------
+
+# Rule 16: DNS request to suspicious / free top-level domains (TLDs)
+alert dns $HOME_NET any -> any 53 (msg:"BECPL_DNS: DNS query for suspicious high-risk TLD (.tk, .ml, .ga, .cf, .top, .buzz)"; dns.query; pcre:"/\.(tk|ml|ga|cf|top|buzz|pw|gq)$/i"; classtype:trojan-activity; sid:9001016; rev:1;)
+
+# Rule 17: Potential DNS tunneling detected via abnormally long query labels
+alert dns $HOME_NET any -> any 53 (msg:"BECPL_DNS: Abnormally long DNS query name (Potential DNS Tunneling / Exfiltration)"; dns.query; pcre:"/^[a-zA-Z0-9_-]{55,}\./"; classtype:data-exfiltration; sid:9001017; rev:1;)
+
+# -----------------------------------------------------------------------------
+# 6. Vendor VPN & DMZ Activity Anomalies
+# -----------------------------------------------------------------------------
+
+# Rule 18: Vendor VPN host accessing internal ERP database directly
+alert tcp 172.20.50.100 any -> 172.20.10.20 [3306,5432,1433] (msg:"BECPL_VENDOR: External Vendor VPN attempting direct connection to Corporate ERP Database"; flow:to_server,established; classtype:policy-violation; sid:9001018; rev:1;)
+
+# Rule 19: Vendor VPN initiating port scan across DMZ subnet
+alert tcp 172.20.50.100 any -> 172.20.50.0/24 any (msg:"BECPL_VENDOR: Vendor host port scanning DMZ internal interface"; flow:to_server; flags:S; threshold:type both, track by_src, count 15, seconds 30; classtype:attempted-recon; sid:9001019; rev:1;)
+
+# Rule 20: Vendor access outside approved change-window/maintenance hours
+alert tcp 172.20.50.100 any -> 172.20.20.0/24 22 (msg:"BECPL_VENDOR: Vendor SSH connection into Engineering segment"; flow:to_server,established; classtype:policy-violation; sid:9001020; rev:1;)
+
+# -----------------------------------------------------------------------------
+# 7. Web Application / API Probing & Exploit Patterns
+# -----------------------------------------------------------------------------
+
+# Rule 21: Common web vulnerability scanner probing patterns (Nikto, sqlmap, gobuster)
+alert http any any -> $HOME_NET $HTTP_PORTS (msg:"BECPL_WEB: Automated vulnerability scanner user-agent detected"; flow:to_server,established; http.user_agent; pcre:"/(nikto|sqlmap|acunetix|nessus|gobuster|dirbuster|wfuzz)/i"; classtype:web-application-attack; sid:9001021; rev:1;)
+
+# Rule 22: SQL Injection attempt in HTTP query or URI string
+alert http any any -> $HOME_NET $HTTP_PORTS (msg:"BECPL_WEB: SQL Injection pattern detected in HTTP URI"; flow:to_server,established; http.uri; pcre:"/(\%27)|(\')|(--)|(\%23)|(#)|(\/\*)|(union.*select)/i"; classtype:web-application-attack; sid:9001022; rev:1;)
+
+# Rule 23: Path Traversal (Directory Traversal) attempt in HTTP request
+alert http any any -> $HOME_NET $HTTP_PORTS (msg:"BECPL_WEB: Directory traversal sequence in URI path"; flow:to_server,established; http.uri; content:"/../"; classtype:web-application-attack; sid:9001023; rev:1;)
+
+# -----------------------------------------------------------------------------
+# 8. Threat Intel / Known Malicious IP Placeholders & Tor Exit Nodes
+# -----------------------------------------------------------------------------
+
+# Rule 24: Outbound connection to known Tor Exit Node / Proxy gateway
+alert tcp $HOME_NET any -> [198.51.100.24,203.0.113.88] [9001,9050,9051,443] (msg:"BECPL_INTEL: Outbound connection to known Tor exit node / anonymizer relay"; flow:to_server,established; classtype:trojan-activity; sid:9001024; rev:1;)
+
+# Rule 25: Known Cobalt Strike / Metasploit default listener port outbound
+alert tcp $HOME_NET any -> $EXTERNAL_NET [50050,4444,8088] (msg:"BECPL_INTEL: Outbound connection to known Cobalt Strike / C2 team server port"; flow:to_server,established; classtype:trojan-activity; sid:9001025; rev:1;)

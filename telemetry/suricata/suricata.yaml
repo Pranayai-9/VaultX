@@ -1,0 +1,195 @@
+# =============================================================================
+# Suricata 6.x / 7.x Configuration File for VaultX Passive Sensor Node
+# Bharat Electronics Components Pvt. Ltd. (BECPL), Pune
+# Mode: PASSIVE NIDS (Detection Only, Not In-Line IPS)
+# =============================================================================
+
+%YAML 1.1
+---
+
+vars:
+  # BECPL Internal Network Segments
+  address-groups:
+    HOME_NET: "[172.20.10.0/24,172.20.20.0/24,172.20.30.0/24,172.20.40.0/24,172.20.50.0/24,172.20.70.0/24]"
+    EXTERNAL_NET: "!$HOME_NET"
+    
+    # Specific BECPL segments
+    VLAN_CORP: "172.20.10.0/24"
+    VLAN_ENG: "172.20.20.0/24"
+    VLAN_OT: "172.20.30.0/24"
+    VLAN_WH: "172.20.40.0/24"
+    VLAN_DMZ: "172.20.50.0/24"
+    VLAN_SEC: "172.20.70.0/24"
+    
+    # OT Critical Assets
+    MODBUS_SERVERS: "[172.20.30.20,172.20.30.21,172.20.30.22,172.20.30.25,172.20.30.26]"
+    MODBUS_CLIENTS: "[172.20.30.10,172.20.30.11,172.20.20.15,172.20.30.50]"
+    FIRMWARE_REPOS: "[172.20.20.30,172.20.20.31]"
+    
+    HTTP_SERVERS: "$HOME_NET"
+    SQL_SERVERS: "[172.20.10.20,172.20.40.20]"
+    DNS_SERVERS: "[172.20.10.2,172.20.70.2]"
+
+  port-groups:
+    HTTP_PORTS: "80,8080,8000,8888,3000,5000"
+    SHELLCODE_PORTS: "!80"
+    ORACLE_PORTS: 1521
+    SSH_PORTS: 22
+    DNP3_PORTS: 20000
+    MODBUS_PORTS: 502
+    RDP_PORTS: 3389
+
+# Default rule path configuration
+default-rule-path: /etc/suricata/rules
+rule-files:
+  - /etc/suricata/rules/becpl_custom.rules
+  - suricata.rules
+
+# Passive capture using AF_PACKET (high performance zero-copy ring buffer)
+af-packet:
+  - interface: eth1
+    threads: auto
+    cluster-id: 99
+    cluster-type: cluster_flow
+    defrag: yes
+    use-mmap: yes
+    mmap-locked: yes
+    tpacket-v3: yes
+    ring-size: 2048
+    block-size: 32768
+    buffer-size: 65536
+    checksum-checks: no
+
+# Global statistics configuration
+stats:
+  enabled: yes
+  interval: 60
+
+# Logging Outputs
+outputs:
+  # Fast log (disabled in production, eve.json preferred)
+  - fast:
+      enabled: no
+      filename: fast.log
+      append: yes
+
+  # EVE JSON Log: Primary telemetry source for VaultX sensor_agent
+  - eve-log:
+      enabled: yes
+      filetype: regular
+      filename: /var/log/suricata/eve.json
+      pcap-file: false
+      community-id: yes
+      community-id-seed: 0
+      xff:
+        enabled: yes
+        mode: extra-data
+        deployment: reverse
+        header: X-Forwarded-For
+
+      types:
+        - alert:
+            payload: yes
+            payload-buffer-size: 4kb
+            payload-printable: yes
+            packet: yes
+            metadata: yes
+            http-body: yes
+            http-body-printable: yes
+            tagged-packets: yes
+        - http:
+            extended: yes
+            custom: [Accept, Accept-Charset, Accept-Encoding, Accept-Language,
+                     Authorization, Cache-Control, Cookie, From, Host,
+                     If-Modified-Since, If-None-Match, If-Range, If-Unmodified-Since,
+                     Max-Forwards, Pragma, Proxy-Authorization, Range, Referer,
+                     TE, User-Agent, Via, X-Authenticated-User]
+        - dns:
+            version: 2
+            requests: yes
+            responses: yes
+        - tls:
+            extended: yes
+            session-resumption: yes
+            custom: [subject, issuer, serial, fingerprint, sni, version, not_before, not_after, ja3, ja3s]
+        - files:
+            force-magic: yes
+            force-hash: [md5, sha1, sha256]
+        - drop:
+            alerts: no # Passive IDS, no drop
+        - flow:
+            netflow: yes
+        - stats:
+            totals: yes
+            threads: no
+            deltas: yes
+
+# Engine Run Mode: Workers mode for multi-core scaling
+runmode: workers
+
+# Defragmentation settings
+defrag:
+  memcap: 64mb
+  hash-size: 65536
+  trackers: 65535
+  max-frags: 65535
+  prealloc: yes
+  timeout: 60
+
+# TCP Stream Engine Tracking
+stream:
+  memcap: 256mb
+  checksum-validation: no
+  inline: no # Strict PASSIVE mode
+  reassembly:
+    memcap: 256mb
+    depth: 1mb
+    toserver-chunk-size: 2560
+    toclient-chunk-size: 2560
+    randomize-chunk-range: 10
+
+# Flow engine configuration
+flow:
+  memcap: 128mb
+  hash-size: 65536
+  prealloc: 10000
+  emergency-recovery: 30
+
+# Application Layer Parsers
+app-layer:
+  protocols:
+    modbus:
+      enabled: yes
+      detection-ports:
+        dp: 502
+    tls:
+      enabled: yes
+      detection-ports:
+        dp: 443
+      ja3-fingerprints: yes
+    dcerpc:
+      enabled: yes
+    ftp:
+      enabled: yes
+    ssh:
+      enabled: yes
+    smtp:
+      enabled: yes
+    dns:
+      global-memcap: 64mb
+      state-memcap: 512kb
+      request-flood: 500
+      tcp:
+        enabled: yes
+        detection-ports:
+          dp: 53
+      udp:
+        enabled: yes
+        detection-ports:
+          dp: 53
+    http:
+      enabled: yes
+      memcap: 128mb
+
+# Logging directory
+default-log-dir: /var/log/suricata/

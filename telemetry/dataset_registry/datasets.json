@@ -1,0 +1,168 @@
+[
+  {
+    "dataset_id": "XIIOTID",
+    "name": "X-IIoTID",
+    "source_url": "https://github.com/Alhawawreh/X-IIoTID",
+    "publication": "Alhawawreh et al., 'X-IIoTID: A New Multi-Tier Industrial IoT Intrusion Detection Dataset', IEEE Access, 2021",
+    "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+    "description": "A comprehensive multi-tier Industrial Internet of Things (IIoT) intrusion dataset that captures device-level, network-level, and application-level activity across diverse industrial protocols and attack stages.",
+    "purpose": "Industrial network traffic, device events, application activity and multi-stage attack behaviour",
+    "features": [
+      "Scr_IP", "Des_IP", "Scr_port", "Des_port", "Duration", "Scr_bytes", "Des_bytes",
+      "Conn_state", "Modbus_Function_Code", "Modbus_Value", "Command_Response",
+      "Entropy", "Payload_Size", "Packet_Rate", "Byte_Rate", "Protocol", "Service"
+    ],
+    "attack_types": [
+      "Modbus_Fuzzing", "Command_Injection", "Backdoor", "Brute_Force",
+      "Port_Scanning", "Denial_of_Service", "Ransomware_WannaCry", "Cryptomining", "MITM"
+    ],
+    "class_imbalance_notes": "Severe class imbalance between benign supervisory polling (approx. 88%) and multi-stage attack artifacts (12%), reflecting realistic industrial deployments.",
+    "missing_fields": [
+      "Physical process telemetry (pressure, RPM, vibration sensor values)",
+      "VLAN tags and segment metadata",
+      "Host memory forensic artifacts"
+    ],
+    "known_limitations": "Simulated multi-tier testbed rather than a live factory floor; does not include proprietary Indian MSME SMT / pick-and-place equipment protocols.",
+    "relevance_to_becpl": "Highly relevant for BECPL VLAN 30 (OT) Modbus TCP attack modeling and multi-stage malware propagation detection.",
+    "download_path": "datasets/raw/xiiotid/",
+    "citation": "Alhawawreh, M., Sitnikova, E., & Aboutorab, N. (2021). X-IIoTID: A New Multi-Tier Industrial IoT Intrusion Detection Dataset. IEEE Access, 9, 32521-32537."
+  },
+  {
+    "dataset_id": "TON_IOT",
+    "name": "ToN_IoT",
+    "source_url": "https://research.unsw.edu.au/projects/toniot-datasets",
+    "publication": "Al-Zewairi et al. / Moustafa, 'A New Distributed Architecture for Evaluating AI-based Security Systems in IoT Environments', IEEE Internet of Things Journal, 2020",
+    "license": "Academic / Non-Commercial Research License (UNSW Canberra)",
+    "description": "Telemetry collected from a realistic testbed combining Industrial IoT devices, fog nodes, Windows/Linux endpoints, and cloud services, capturing heterogeneous telemetry including network pcaps, Zeek logs, and host event logs.",
+    "purpose": "Heterogeneous IoT and network telemetry evaluation with correlated host, network, and industrial sensor data",
+    "features": [
+      "ts", "src_ip", "src_port", "dst_ip", "dst_port", "proto", "service", "duration",
+      "src_bytes", "dst_bytes", "conn_state", "missed_bytes", "src_pkts", "dst_pkts",
+      "dns_query", "http_uri", "http_status_code", "ssl_version", "ssl_cipher"
+    ],
+    "attack_types": [
+      "Scanning", "DoS", "DDoS", "Ransomware", "Backdoor", "Data_Injection",
+      "XSS", "Password_BruteForce", "MITM"
+    ],
+    "class_imbalance_notes": "Imbalanced distribution across 9 attack families; scanning and DoS comprise majority of attack instances while data injection has fewer samples.",
+    "missing_fields": [
+      "Explicit enterprise identity mapping (human user vs service account)",
+      "Continuous Modbus register address maps"
+    ],
+    "known_limitations": "Network topologies reflect a generic smart-city testbed rather than an electronics assembly / PCB fabrication plant.",
+    "relevance_to_becpl": "Provides directly comparable Zeek connection logs and Windows/Linux audit events matching VaultX's sensor pipeline.",
+    "download_path": "datasets/raw/ton_iot/",
+    "citation": "Moustafa, N. (2020). A New Distributed Architecture for Evaluating AI-based Security Systems at the Edge: The Ton_IoT Datasets. IEEE Transactions on Intelligent Transportation Systems."
+  },
+  {
+    "dataset_id": "CSE_CIC_IDS2018",
+    "name": "CSE-CIC-IDS2018",
+    "source_url": "https://www.unb.ca/cic/datasets/ids-2018.html",
+    "publication": "Sharafaldin et al., 'Toward Generating a New Intrusion Detection Dataset and Intrusion Evaluation', ICISSP, 2018",
+    "license": "Open Data License (Communications Security Establishment & Canadian Institute for Cybersecurity)",
+    "description": "Large-scale enterprise network dataset collected from 420 machines across 5 departments with benign user activity profiles and diverse external attack campaigns.",
+    "purpose": "Enterprise-scale lateral movement, brute force, and web application attack modeling",
+    "features": [
+      "Dst Port", "Protocol", "Flow Duration", "Tot Fwd Pkts", "Tot Bwd Pkts",
+      "TotLen Fwd Pkts", "TotLen Bwd Pkts", "Fwd Pkt Len Max", "Fwd Pkt Len Min",
+      "Flow Byts/s", "Flow Pkts/s", "Flow IAT Mean", "Flow IAT Std", "Bwd IAT Mean",
+      "Fwd Header Len", "Bwd Header Len", "Fwd Pkts/s", "Bwd Pkts/s", "Init Fwd Win Byts"
+    ],
+    "attack_types": [
+      "Brute-Force SSH", "Brute-Force FTP", "DoS-Slowloris", "DoS-Hulk",
+      "DDoS-LOIC", "Heartbleed", "Web Attacks (SQLi, XSS)", "Infiltration", "Botnet"
+    ],
+    "class_imbalance_notes": "Benign flows constitute ~83% of total dataset, while Infiltration and Heartbleed constitute < 0.1%.",
+    "missing_fields": [
+      "OT / Modbus / Industrial protocols",
+      "Hardware sensor signals",
+      "Endpoint command-line process parameters"
+    ],
+    "known_limitations": "Massive raw pcap size (~400 GB); network architecture uses Canadian public sector enterprise topology.",
+    "relevance_to_becpl": "Directly models BECPL VLAN 10 (Corporate IT) and VLAN 50 (DMZ) attack vectors like SSH brute forcing and web application probing.",
+    "download_path": "datasets/raw/cse_cic_ids2018/",
+    "citation": "Sharafaldin, I., Lashkari, A. H., & Ghorbani, A. A. (2018). Toward Generating a New Intrusion Detection Dataset and Intrusion Evaluation. In ICISSP (pp. 108-116)."
+  },
+  {
+    "dataset_id": "HAI_22_04",
+    "name": "HAI 22.04 (Hardware-in-the-Loop Augmented ICS Dataset)",
+    "source_url": "https://github.com/icsdataset/hai",
+    "publication": "Shin et al., 'HAI 1.0: Hardware-in-the-Loop Augmented ICS Dataset for Anomaly Detection', IEEE ICPS, 2020",
+    "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+    "description": "Physical process and operational dataset collected from a hardware-in-the-loop industrial testbed consisting of boiler, turbine, water treatment, and HIL simulator.",
+    "purpose": "Industrial cyber-physical anomaly detection and multi-variable sensor correlation",
+    "features": [
+      "time", "P1_B2004", "P1_B2016", "P1_B3004", "P1_B3005", "P1_B4002", "P1_B4005",
+      "P1_B4022", "P1_FCV01D", "P1_FCV01Z", "P1_FCV02D", "P1_FCV02Z", "P1_FCV03D",
+      "P1_FT01", "P1_FT01Z", "P1_FT02", "P1_FT02Z", "P1_FT03", "P1_LCV01D", "P1_LIT01"
+    ],
+    "attack_types": [
+      "Process_Setpoint_Manipulation", "Actuator_Tampering", "Sensor_Falsification",
+      "Reconnaissance_Scanning", "Coordinated_Multi_Loop_Sabotage"
+    ],
+    "class_imbalance_notes": "Highly imbalanced: > 95% continuous operational steady-state physical measurements, < 5% anomalous disturbance windows.",
+    "missing_fields": [
+      "Network packet payload details (EVE / Conn logs)",
+      "Enterprise IT network flows"
+    ],
+    "known_limitations": "Covers thermal, chemical, and fluid dynamics rather than surface mount electronics pick-and-place or reflow soldering machines.",
+    "relevance_to_becpl": "Provides the mathematical benchmark for multivariate process time-series anomaly detection in manufacturing environments.",
+    "download_path": "datasets/raw/hai_22_04/",
+    "citation": "Shin, H. K., Lee, W., Yun, J. H., & Min, B. G. (2020). Two ICS Datasets for Cyber Attack Detection: HAI 1.0 and HAI 2.0. In IEEE ICPS."
+  },
+  {
+    "dataset_id": "CIC_IDS2017",
+    "name": "CIC-IDS2017",
+    "source_url": "https://www.unb.ca/cic/datasets/ids-2017.html",
+    "publication": "Sharafaldin et al., 'Generating Realistic Intrusion Detection Dataset based on Fuzzy Logic', IEEE CSE, 2017",
+    "license": "Open Data License (Canadian Institute for Cybersecurity)",
+    "description": "Standard benchmark dataset capturing 5 days of normal and attack traffic covering contemporary network protocol implementations and attack tools.",
+    "purpose": "Multi-class network intrusion detection benchmarking and baseline flow feature extraction",
+    "features": [
+      "Flow ID", "Source IP", "Source Port", "Destination IP", "Destination Port",
+      "Protocol", "Timestamp", "Flow Duration", "Total Fwd Packets", "Total Backward Packets",
+      "Flow Bytes/s", "Flow Packets/s", "Fwd Packet Length Mean", "Bwd Packet Length Mean"
+    ],
+    "attack_types": [
+      "PortScan", "Botnet", "Infiltration", "Web Attack (Brute Force, XSS, Sql Injection)",
+      "DoS / DDoS", "FTP-Patator", "SSH-Patator"
+    ],
+    "class_imbalance_notes": "Attacks on Tuesday and Wednesday are heavily outnumbered by Monday's purely benign baseline.",
+    "missing_fields": [
+      "OT / Modbus / Industrial traffic",
+      "Process monitoring variables"
+    ],
+    "known_limitations": "Older timestamping (2017); known packet duplication anomalies in some CSV subsets.",
+    "relevance_to_becpl": "Foundational comparison dataset for standard IT classifier accuracy benchmarks.",
+    "download_path": "datasets/raw/cic_ids2017/",
+    "citation": "Sharafaldin, I., Gharib, A., Lashkari, A. H., & Ghorbani, A. A. (2017). Towards generating a new intrusion detection dataset and intrusion evaluation. ICISSP."
+  },
+  {
+    "dataset_id": "UNSW_NB15",
+    "name": "UNSW-NB15",
+    "source_url": "https://research.unsw.edu.au/projects/unsw-nb15-dataset",
+    "publication": "Moustafa & Slay, 'UNSW-NB15: A comprehensive data set for network intrusion detection systems', MilCIS, 2015",
+    "license": "Academic Research License (UNSW Canberra Cyber)",
+    "description": "Hybrid synthetic and real modern network traffic dataset generated via the IXIA PerfectStorm tool, providing low-level network flow features and packet metrics.",
+    "purpose": "Network anomaly classification with realistic low-footprint attack representation",
+    "features": [
+      "dur", "proto", "service", "state", "spkts", "dpkts", "sbytes", "dbytes",
+      "rate", "sttl", "dttl", "sload", "dload", "sloss", "dloss", "sinpkt", "dinpkt",
+      "sjit", "djit", "swin", "stcpb", "dtcpb", "dwin", "tcprtt", "synack", "ackdat"
+    ],
+    "attack_types": [
+      "Fuzzers", "Analysis", "Backdoors", "DoS", "Exploits",
+      "Generic", "Reconnaissance", "Shellcode", "Worms"
+    ],
+    "class_imbalance_notes": "Well-documented train/test split provided by authors (175,341 training records, 82,332 testing records).",
+    "missing_fields": [
+      "Modbus / Fieldbus commands",
+      "Endpoint process telemetry",
+      "DNS text query details"
+    ],
+    "known_limitations": "Synthesized traffic generator artifacts present in TCP window and TTL distributions.",
+    "relevance_to_becpl": "Used to validate the baseline ML flow classifier before manufacturing-specific feature enrichment.",
+    "download_path": "datasets/raw/unsw_nb15/",
+    "citation": "Moustafa, N., & Slay, J. (2015). UNSW-NB15: a comprehensive data set for network intrusion detection systems. In MilCIS (pp. 1-6)."
+  }
+]

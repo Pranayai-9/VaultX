@@ -1,0 +1,81 @@
+# =============================================================================
+# ZeekCtl Configuration for VaultX BECPL Sensor Node
+# Bharat Electronics Components Pvt. Ltd. — Manufacturing-Aware Hybrid NIDS
+# =============================================================================
+# This file: /opt/zeek/etc/zeekctl.cfg
+# Deploy one copy per sensor node; override interface via local env or CLI.
+
+[zeekctl]
+
+##############################################################################
+# Logging
+##############################################################################
+# Primary log directory (JSON logs land here)
+LogDir           = /var/log/zeek/logs
+
+# Spool directory for in-progress logs (staged before rotation)
+SpoolDir         = /var/log/zeek/spool
+
+# Crash reports and core-dump locations
+CrashDir         = /var/log/zeek/spool/crash
+
+# Log rotation interval in seconds (1 hour)
+LogRotationInterval = 3600
+
+# Log expiration in days (keep 90 days on sensor, central server keeps longer)
+LogExpireInterval = 90
+
+##############################################################################
+# Mail / Alerting
+##############################################################################
+# Operational alerts go to the BECPL SOC mailbox
+MailTo           = soc-alerts@becpl.internal
+
+# Mail program (sendmail compatible); empty = disable mail
+# MailProgram    = /usr/sbin/sendmail -t -oi
+
+# Minimum time (seconds) between mails of the same type
+MailConnectionSummaryInterval = 3600
+
+##############################################################################
+# Node management
+##############################################################################
+# How often (seconds) zeekctl checks node health
+TimeFmt          = %d %b %Y %H:%M:%S %Z
+
+# PID file for the zeekctl process manager
+PidFile          = /var/run/zeek/zeekctl.pid
+
+##############################################################################
+# Policy / Script loading
+##############################################################################
+# Scripts directory — custom BECPL scripts are added here
+SitePolicyScripts = /opt/zeek/share/zeek/site
+
+# Allow loading of custom policy scripts from local.zeek
+# (actual load directives live in local.zeek — see below)
+
+##############################################################################
+# Performance tuning
+##############################################################################
+# Worker threads per interface (adjust to match sensor CPU count)
+# For a 4-core sensor: use 3 workers + 1 for management
+# PF_RING / AF_PACKET options set in node.cfg
+TimeMachineHost  =
+TimeMachinePort  =
+
+# Maximum memory per worker (MB) — cap to avoid OOM on small sensors
+# WorkerMemLimit = 2048
+
+##############################################################################
+# node.cfg inline (for single-interface standalone sensor)
+# Full multi-node configuration should be split to node.cfg
+##############################################################################
+# [sensor]
+# type=standalone
+# host=localhost
+# interface=eth1    <-- set per-sensor; override via /etc/zeek/node.cfg
+
+##############################################################################
+# End of zeekctl.cfg
+##############################################################################

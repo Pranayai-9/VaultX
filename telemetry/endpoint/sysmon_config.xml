@@ -1,0 +1,155 @@
+<Sysmon schemaversion="4.90">
+  <!--
+    =============================================================================
+    VaultX Sysmon Configuration for BECPL Windows Endpoints
+    Bharat Electronics Components Pvt. Ltd. (Pune, Maharashtra)
+    Tailored for: Corporate Desktops, Engineering EDA Workstations, SCADA HMIs
+    =============================================================================
+  -->
+  <HashAlgorithms>md5,sha256,IMPHASH</HashAlgorithms>
+  <CheckRevocation/>
+
+  <EventFiltering>
+    <!-- ===================================================================== -->
+    <!-- EVENT ID 1: Process Creation                                          -->
+    <!-- Log all process creations with full command line, excluding noisy OS   -->
+    <!-- ===================================================================== -->
+    <RuleGroup name="ProcessCreation" groupRelation="or">
+      <ProcessCreate onmatch="exclude">
+        <!-- Known-good Windows system noise exclusions -->
+        <Image condition="is">C:\Windows\System32\conhost.exe</Image>
+        <Image condition="is">C:\Program Files\Windows Defender\MsMpEng.exe</Image>
+        <Image condition="is">C:\Windows\System32\wbem\WmiPrvSE.exe</Image>
+        <Image condition="is">C:\Windows\System32\SearchIndexer.exe</Image>
+      </ProcessCreate>
+      <ProcessCreate onmatch="include">
+        <!-- Explicit high-value detections (Living off the Land binaries) -->
+        <Image condition="image">powershell.exe</Image>
+        <Image condition="image">pwsh.exe</Image>
+        <Image condition="image">cmd.exe</Image>
+        <Image condition="image">certutil.exe</Image>
+        <Image condition="image">mshta.exe</Image>
+        <Image condition="image">wscript.exe</Image>
+        <Image condition="image">cscript.exe</Image>
+        <Image condition="image">bitsadmin.exe</Image>
+        <Image condition="image">rundll32.exe</Image>
+        <Image condition="image">regsvr32.exe</Image>
+        <Image condition="image">vssadmin.exe</Image>
+        <Image condition="image">wmic.exe</Image>
+        <Image condition="image">curl.exe</Image>
+        <CommandLine condition="contains">-enc</CommandLine>
+        <CommandLine condition="contains">downloadstring</CommandLine>
+        <CommandLine condition="contains">bypass</CommandLine>
+      </ProcessCreate>
+    </RuleGroup>
+
+    <!-- ===================================================================== -->
+    <!-- EVENT ID 3: Network Connection                                        -->
+    <!-- Log outbound network connections, filter standard OS telemetry       -->
+    <!-- ===================================================================== -->
+    <RuleGroup name="NetworkConnect" groupRelation="or">
+      <NetworkConnect onmatch="exclude">
+        <Image condition="is">C:\Program Files\Windows Defender\MsMpEng.exe</Image>
+        <Image condition="is">C:\Windows\System32\svchost.exe</Image>
+        <DestinationPort condition="is">53</DestinationPort> <!-- Captured by Event 22 -->
+      </NetworkConnect>
+      <NetworkConnect onmatch="include">
+        <!-- Track connections across subnets and unusual ports -->
+        <DestinationPort condition="is">22</DestinationPort>
+        <DestinationPort condition="is">3389</DestinationPort>
+        <DestinationPort condition="is">502</DestinationPort>
+        <DestinationPort condition="is">445</DestinationPort>
+        <DestinationPort condition="is">5985</DestinationPort>
+        <DestinationPort condition="is">5986</DestinationPort>
+        <DestinationPort condition="is">4444</DestinationPort>
+      </NetworkConnect>
+    </RuleGroup>
+
+    <!-- ===================================================================== -->
+    <!-- EVENT ID 7: Image / DLL Load                                          -->
+    <!-- Focus on unsigned binaries and DLL hijacking of sensitive tools       -->
+    <!-- ===================================================================== -->
+    <RuleGroup name="ImageLoad" groupRelation="or">
+      <ImageLoad onmatch="include">
+        <Signed condition="is">false</Signed>
+        <ImageLoaded condition="contains">\AppData\Local\Temp\</ImageLoaded>
+        <ImageLoaded condition="contains">\Windows\Temp\</ImageLoaded>
+      </ImageLoad>
+      <ImageLoad onmatch="exclude">
+        <Signed condition="is">true</Signed>
+      </ImageLoad>
+    </RuleGroup>
+
+    <!-- ===================================================================== -->
+    <!-- EVENT ID 10: Process Access (LSASS Memory Scraping / Mimikatz)        -->
+    <!-- ===================================================================== -->
+    <RuleGroup name="ProcessAccess" groupRelation="or">
+      <ProcessAccess onmatch="include">
+        <TargetImage condition="is">C:\Windows\system32\lsass.exe</TargetImage>
+      </ProcessAccess>
+      <ProcessAccess onmatch="exclude">
+        <SourceImage condition="is">C:\Program Files\Windows Defender\MsMpEng.exe</SourceImage>
+        <SourceImage condition="is">C:\Windows\System32\wbem\WmiPrvSE.exe</SourceImage>
+        <SourceImage condition="is">C:\Windows\System32\services.exe</SourceImage>
+      </ProcessAccess>
+    </RuleGroup>
+
+    <!-- ===================================================================== -->
+    <!-- EVENT ID 11: File Creation                                            -->
+    <!-- Log executable creation, scripts, and dropper paths                   -->
+    <!-- ===================================================================== -->
+    <RuleGroup name="FileCreate" groupRelation="or">
+      <FileCreate onmatch="include">
+        <TargetFilename condition="end with">.exe</TargetFilename>
+        <TargetFilename condition="end with">.dll</TargetFilename>
+        <TargetFilename condition="end with">.ps1</TargetFilename>
+        <TargetFilename condition="end with">.vbs</TargetFilename>
+        <TargetFilename condition="end with">.bat</TargetFilename>
+        <TargetFilename condition="contains">\Start Menu\Programs\Startup\</TargetFilename>
+      </FileCreate>
+      <FileCreate onmatch="exclude">
+        <TargetFilename condition="contains">C:\Windows\System32\DriverStore\</TargetFilename>
+      </FileCreate>
+    </RuleGroup>
+
+    <!-- ===================================================================== -->
+    <!-- EVENT ID 12 & 13: Registry Events (Persistence / Run Keys / Services) -->
+    <!-- ===================================================================== -->
+    <RuleGroup name="RegistryEvents" groupRelation="or">
+      <RegistryEvent onmatch="include">
+        <!-- Autorun / Run key persistence -->
+        <TargetObject condition="contains">\CurrentVersion\Run</TargetObject>
+        <TargetObject condition="contains">\CurrentVersion\RunOnce</TargetObject>
+        <TargetObject condition="contains">\System\CurrentControlSet\Services\</TargetObject>
+        <TargetObject condition="contains">\Software\Microsoft\Windows NT\CurrentVersion\Winlogon</TargetObject>
+        <TargetObject condition="contains">\Software\Microsoft\Windows\CurrentVersion\Policies\System</TargetObject>
+      </RegistryEvent>
+      <RegistryEvent onmatch="exclude">
+        <Image condition="is">C:\Windows\System32\svchost.exe</Image>
+      </RegistryEvent>
+    </RuleGroup>
+
+    <!-- ===================================================================== -->
+    <!-- EVENT ID 22: DNS Query                                                -->
+    <!-- Log suspicious domains, dynamic DNS, free TLDs                        -->
+    <!-- ===================================================================== -->
+    <RuleGroup name="DnsQuery" groupRelation="or">
+      <DnsQuery onmatch="include">
+        <QueryName condition="end with">.tk</QueryName>
+        <QueryName condition="end with">.top</QueryName>
+        <QueryName condition="end with">.xyz</QueryName>
+        <QueryName condition="end with">.ga</QueryName>
+        <QueryName condition="end with">.cf</QueryName>
+        <QueryName condition="end with">.buzz</QueryName>
+        <QueryName condition="contains">pastebin</QueryName>
+        <QueryName condition="contains">githubusercontent</QueryName>
+      </DnsQuery>
+      <DnsQuery onmatch="exclude">
+        <!-- Known internal domain query exclusion -->
+        <QueryName condition="end with">.becpl.internal</QueryName>
+        <QueryName condition="end with">.microsoft.com</QueryName>
+        <QueryName condition="end with">.windowsupdate.com</QueryName>
+      </DnsQuery>
+    </RuleGroup>
+  </EventFiltering>
+</Sysmon>

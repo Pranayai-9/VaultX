@@ -1,0 +1,102 @@
+# =============================================================================
+# VaultX Distributed Sensor Deployment Configuration
+# Bharat Electronics Components Pvt. Ltd. (BECPL), Pune
+# =============================================================================
+
+global_settings:
+  central_redis_primary: "redis://172.20.70.12:6379/0"
+  central_redis_secondary: "redis://172.20.70.13:6379/0"
+  event_stream_raw: "events:raw"
+  health_hash_key: "sensor:health"
+  default_max_buffer_gb: 1
+  health_check_interval_seconds: 60
+  zeek_use_json: true
+  suricata_mode: "passive_afpacket"
+
+sensors:
+  - sensor_id: "SENSOR-CORP-01"
+    description: "Corporate IT segment passive sensor"
+    monitored_vlan: 10
+    monitored_subnet: "172.20.10.0/24"
+    capture_interface: "eth1"
+    zeek_log_dir: "/var/log/zeek/logs"
+    suricata_log_dir: "/var/log/suricata"
+    redis_url: "redis://172.20.70.12:6379/0"
+    buffer_dir: "/var/lib/sensor/buffer"
+    max_buffer_size_gb: 1
+    priority: "medium"
+    enabled_analyzers: ["zeek", "suricata"]
+    notes: "Monitors ERP clients, corporate workstations, and email traffic"
+
+  - sensor_id: "SENSOR-ENG-01"
+    description: "Engineering and R&D Firmware segment sensor"
+    monitored_vlan: 20
+    monitored_subnet: "172.20.20.0/24"
+    capture_interface: "eth1"
+    zeek_log_dir: "/var/log/zeek/logs"
+    suricata_log_dir: "/var/log/suricata"
+    redis_url: "redis://172.20.70.12:6379/0"
+    buffer_dir: "/var/lib/sensor/buffer"
+    max_buffer_size_gb: 1
+    priority: "high"
+    enabled_analyzers: ["zeek", "suricata"]
+    notes: "Monitors CAD/EDA workstations, firmware repositories, build nodes"
+
+  - sensor_id: "SENSOR-OT-01"
+    description: "Manufacturing OT / SMT Production line sensor"
+    monitored_vlan: 30
+    monitored_subnet: "172.20.30.0/24"
+    capture_interface: "eth1"
+    zeek_log_dir: "/var/log/zeek/logs"
+    suricata_log_dir: "/var/log/suricata"
+    redis_url: "redis://172.20.70.12:6379/0"
+    buffer_dir: "/var/lib/sensor/buffer"
+    max_buffer_size_gb: 2
+    priority: "critical"
+    enabled_analyzers: ["zeek", "suricata"]
+    specialized_scripts:
+      - "becpl_ot_monitor.zeek"
+      - "becpl_identity_enrichment.zeek"
+    notes: "Zero-loss buffer priority; monitors Modbus TCP, PLCs, and SCADA HMI"
+
+  - sensor_id: "SENSOR-WH-01"
+    description: "Warehouse & Logistics operational segment sensor"
+    monitored_vlan: 40
+    monitored_subnet: "172.20.40.0/24"
+    capture_interface: "eth1"
+    zeek_log_dir: "/var/log/zeek/logs"
+    suricata_log_dir: "/var/log/suricata"
+    redis_url: "redis://172.20.70.12:6379/0"
+    buffer_dir: "/var/lib/sensor/buffer"
+    max_buffer_size_gb: 1
+    priority: "medium"
+    enabled_analyzers: ["zeek", "suricata"]
+    notes: "Monitors WMS handheld scanners, label printers, dispatch terminals"
+
+  - sensor_id: "SENSOR-DMZ-01"
+    description: "DMZ & Third-party vendor ingress sensor"
+    monitored_vlan: 50
+    monitored_subnet: "172.20.50.0/24"
+    capture_interface: "eth1"
+    zeek_log_dir: "/var/log/zeek/logs"
+    suricata_log_dir: "/var/log/suricata"
+    redis_url: "redis://172.20.70.12:6379/0"
+    buffer_dir: "/var/lib/sensor/buffer"
+    max_buffer_size_gb: 2
+    priority: "high"
+    enabled_analyzers: ["zeek", "suricata"]
+    notes: "Monitors vendor SSL-VPN gateway, external reverse proxy, staging server"
+
+  - sensor_id: "SENSOR-SEC-01"
+    description: "Security Operations & Management VLAN sensor"
+    monitored_vlan: 70
+    monitored_subnet: "172.20.70.0/24"
+    capture_interface: "eth1"
+    zeek_log_dir: "/var/log/zeek/logs"
+    suricata_log_dir: "/var/log/suricata"
+    redis_url: "redis://172.20.70.12:6379/0"
+    buffer_dir: "/var/lib/sensor/buffer"
+    max_buffer_size_gb: 1
+    priority: "high"
+    enabled_analyzers: ["zeek", "suricata"]
+    notes: "Monitors SIEM collectors, Redis cluster nodes, admin jump hosts"
