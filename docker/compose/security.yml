@@ -1,0 +1,288 @@
+# =============================================================================
+# VaultX - Security Management Zone (VLAN 70 / 172.20.70.0/24)
+# =============================================================================
+# Phase 1 placeholders for the VaultX NIDS core infrastructure:
+# central NIDS engine, security database, event transport (Redis Streams),
+# object storage (MinIO), sensor manager, and isolation engine.
+# These will be fleshed out in Phase 2.
+# =============================================================================
+
+version: "3.9"
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # NIDS Central Server - VaultX Core (Phase 1 placeholder)
+  # Will host the ML-based network intrusion detection engine in Phase 2
+  # ---------------------------------------------------------------------------
+  nids-central:
+    image: python:3.11-slim
+    container_name: vaultx-nids-central
+    restart: unless-stopped
+    networks:
+      net_security:
+        ipv4_address: 172.20.70.10
+      net_corporate:
+        ipv4_address: 172.20.10.200
+      net_engineering:
+        ipv4_address: 172.20.20.200
+      net_ot:
+        ipv4_address: 172.20.30.200
+      net_warehouse:
+        ipv4_address: 172.20.40.200
+    command: >
+      sh -c "pip install flask redis --quiet &&
+             python3 -c \"
+from flask import Flask, jsonify
+import os, datetime
+app = Flask(__name__)
+@app.route('/health')
+def health():
+  return jsonify({
+    'status': 'ok',
+    'service': 'VaultX NIDS Central',
+    'phase': '1-placeholder',
+    'version': '0.1.0',
+    'timestamp': datetime.datetime.now().isoformat()
+  })
+@app.route('/status')
+def status():
+  return jsonify({
+    'nids_status': 'INITIALIZING',
+    'monitored_segments': ['net_corporate', 'net_engineering', 'net_ot', 'net_warehouse'],
+    'active_sensors': 0,
+    'events_today': 0,
+    'phase': '1 - placeholder, Phase 2 will add ML engine'
+  })
+@app.route('/alerts')
+def alerts():
+  return jsonify({'alerts': [], 'message': 'Phase 1 placeholder - no detection engine active'})
+if __name__ == '__main__':
+  print('VaultX NIDS Central Server - Phase 1 Placeholder')
+  print('Phase 2 will add: ML models, packet capture, anomaly detection')
+  app.run(host='0.0.0.0', port=8080)
+\""
+    expose:
+      - "8080"
+    ports:
+      - "${NIDS_PORT:-8070}:8080"
+    environment:
+      - REDIS_HOST=172.20.70.12
+      - REDIS_PORT=6379
+      - SECURITY_DB_HOST=172.20.70.11
+      - MINIO_HOST=172.20.70.13
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY:-minio}
+      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY:-minio123}
+    labels:
+      vaultx.segment: "Security Management"
+      vaultx.vlan: "70"
+      vaultx.asset_id: "SEC-NIDS-001"
+      vaultx.criticality: "critical"
+      vaultx.description: "VaultX NIDS Central Server - Phase 1 placeholder"
+      vaultx.role: "nids-central"
+      vaultx.phase: "1"
+
+  # ---------------------------------------------------------------------------
+  # Security Database - PostgreSQL 15
+  # Stores security events, alerts, baseline models, and audit logs
+  # ---------------------------------------------------------------------------
+  security-db:
+    image: postgres:15
+    container_name: vaultx-security-db
+    restart: unless-stopped
+    networks:
+      net_security:
+        ipv4_address: 172.20.70.11
+    environment:
+      - POSTGRES_DB=${SEC_DB_NAME:-vaultx}
+      - POSTGRES_USER=${SEC_DB_USER:-vaultx_user}
+      - POSTGRES_PASSWORD=${SEC_DB_PASSWORD:-vaultx_db_2024}
+    volumes:
+      - security_db_data:/var/lib/postgresql/data
+    expose:
+      - "5432"
+    labels:
+      vaultx.segment: "Security Management"
+      vaultx.vlan: "70"
+      vaultx.asset_id: "SEC-DB-001"
+      vaultx.criticality: "critical"
+      vaultx.description: "VaultX security events and alert database"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${SEC_DB_USER:-vaultx_user}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ---------------------------------------------------------------------------
+  # Redis Streams - Event transport layer
+  # High-performance event bus for real-time alert streaming
+  # ---------------------------------------------------------------------------
+  redis-streams:
+    image: redis:7-alpine
+    container_name: vaultx-redis-streams
+    restart: unless-stopped
+    networks:
+      net_security:
+        ipv4_address: 172.20.70.12
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redis_vaultx_2024}
+    volumes:
+      - redis_data:/data
+    expose:
+      - "6379"
+    labels:
+      vaultx.segment: "Security Management"
+      vaultx.vlan: "70"
+      vaultx.asset_id: "SEC-REDIS-001"
+      vaultx.criticality: "high"
+      vaultx.description: "Redis Streams - real-time security event transport"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ---------------------------------------------------------------------------
+  # MinIO Storage - Object storage for PCAPs, models, and datasets
+  # S3-compatible storage for large security artifacts
+  # ---------------------------------------------------------------------------
+  minio-storage:
+    image: minio/minio:latest
+    container_name: vaultx-minio-storage
+    restart: unless-stopped
+    networks:
+      net_security:
+        ipv4_address: 172.20.70.13
+    command: server /data --console-address ":9001"
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ACCESS_KEY:-minio}
+      - MINIO_ROOT_PASSWORD=${MINIO_SECRET_KEY:-minio123}
+      - MINIO_VOLUMES=/data
+    volumes:
+      - minio_security_data:/data
+    expose:
+      - "9000"
+      - "9001"
+    ports:
+      - "${MINIO_SEC_PORT:-9000}:9000"
+      - "${MINIO_SEC_CONSOLE_PORT:-9001}:9001"
+    labels:
+      vaultx.segment: "Security Management"
+      vaultx.vlan: "70"
+      vaultx.asset_id: "SEC-MINIO-001"
+      vaultx.criticality: "high"
+      vaultx.description: "MinIO object storage - PCAPs, ML models, datasets"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # ---------------------------------------------------------------------------
+  # Sensor Manager - Phase 1 placeholder
+  # Will manage distributed network sensors across all segments in Phase 2
+  # ---------------------------------------------------------------------------
+  sensor-manager:
+    image: python:3.11-slim
+    container_name: vaultx-sensor-manager
+    restart: unless-stopped
+    networks:
+      net_security:
+        ipv4_address: 172.20.70.14
+    command: >
+      sh -c "pip install flask --quiet &&
+             python3 -c \"
+from flask import Flask, jsonify
+import datetime
+app = Flask(__name__)
+@app.route('/health')
+def health():
+  return jsonify({'status': 'ok', 'service': 'VaultX Sensor Manager', 'phase': '1'})
+@app.route('/sensors')
+def sensors():
+  return jsonify({
+    'registered_sensors': [],
+    'active_sensors': 0,
+    'phase': '1-placeholder',
+    'note': 'Phase 2: will register packet capture sensors on each segment'
+  })
+if __name__ == '__main__':
+  print('VaultX Sensor Manager - Phase 1 Placeholder')
+  app.run(host='0.0.0.0', port=8081)
+\""
+    expose:
+      - "8081"
+    environment:
+      - REDIS_HOST=172.20.70.12
+      - NIDS_HOST=172.20.70.10
+    labels:
+      vaultx.segment: "Security Management"
+      vaultx.vlan: "70"
+      vaultx.asset_id: "SEC-SENSOR-MGR-001"
+      vaultx.criticality: "high"
+      vaultx.description: "VaultX sensor manager - Phase 1 placeholder"
+      vaultx.phase: "1"
+
+  # ---------------------------------------------------------------------------
+  # Isolation Engine - Phase 1 placeholder
+  # Will perform automated network isolation of compromised assets in Phase 2
+  # ---------------------------------------------------------------------------
+  isolation-engine:
+    image: python:3.11-slim
+    container_name: vaultx-isolation-engine
+    restart: unless-stopped
+    networks:
+      net_security:
+        ipv4_address: 172.20.70.15
+    command: >
+      sh -c "pip install flask --quiet &&
+             python3 -c \"
+from flask import Flask, jsonify, request
+app = Flask(__name__)
+@app.route('/health')
+def health():
+  return jsonify({'status': 'ok', 'service': 'VaultX Isolation Engine', 'phase': '1'})
+@app.route('/isolate', methods=['POST'])
+def isolate():
+  data = request.get_json() or {}
+  return jsonify({
+    'action': 'SIMULATED_ISOLATION',
+    'target': data.get('target_ip', 'unknown'),
+    'status': 'Phase 1 placeholder - no actual isolation performed',
+    'phase': '1'
+  })
+@app.route('/status')
+def status():
+  return jsonify({'isolated_assets': [], 'pending_actions': 0, 'phase': '1-placeholder'})
+if __name__ == '__main__':
+  print('VaultX Isolation Engine - Phase 1 Placeholder')
+  app.run(host='0.0.0.0', port=8082)
+\""
+    expose:
+      - "8082"
+    environment:
+      - REDIS_HOST=172.20.70.12
+      - NIDS_HOST=172.20.70.10
+    labels:
+      vaultx.segment: "Security Management"
+      vaultx.vlan: "70"
+      vaultx.asset_id: "SEC-ISO-001"
+      vaultx.criticality: "critical"
+      vaultx.description: "VaultX isolation engine - Phase 1 placeholder"
+      vaultx.phase: "1"
+
+networks:
+  net_security:
+    external: true
+  net_corporate:
+    external: true
+  net_engineering:
+    external: true
+  net_ot:
+    external: true
+  net_warehouse:
+    external: true
+
+volumes:
+  security_db_data:
+  redis_data:
+  minio_security_data:

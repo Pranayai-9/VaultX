@@ -1,0 +1,300 @@
+# =============================================================================
+# VaultX - Corporate IT Segment (VLAN 10 / 172.20.10.0/24)
+# =============================================================================
+# Simulates BECPL's corporate IT zone: ERP, LDAP, file servers, DNS,
+# backup, and employee workstations.
+# =============================================================================
+
+version: "3.9"
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # ERP Server - Odoo 16 (Open-source ERP for manufacturing/SME)
+  # Simulates BECPL's enterprise resource planning system
+  # ---------------------------------------------------------------------------
+  erp-server:
+    image: odoo:16
+    container_name: becpl-erp-server
+    restart: unless-stopped
+    networks:
+      net_corporate:
+        ipv4_address: 172.20.10.10
+    environment:
+      - HOST=db-postgres
+      - USER=${POSTGRES_USER:-odoo}
+      - PASSWORD=${POSTGRES_PASSWORD:-odoo_becpl_2024}
+    volumes:
+      - erp_data:/var/lib/odoo
+      - erp_config:/etc/odoo
+    depends_on:
+      - db-postgres
+    expose:
+      - "8069"
+    labels:
+      vaultx.segment: "Corporate IT"
+      vaultx.vlan: "10"
+      vaultx.asset_id: "CORP-ERP-001"
+      vaultx.criticality: "critical"
+      vaultx.description: "Odoo ERP server for BECPL manufacturing operations"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8069/web/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # ---------------------------------------------------------------------------
+  # ERP Database - PostgreSQL 15
+  # Backend database for the Odoo ERP system
+  # ---------------------------------------------------------------------------
+  db-postgres:
+    image: postgres:15
+    container_name: becpl-db-postgres
+    restart: unless-stopped
+    networks:
+      net_corporate:
+        ipv4_address: 172.20.10.11
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-odoo}
+      - POSTGRES_USER=${POSTGRES_USER:-odoo}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-odoo_becpl_2024}
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    expose:
+      - "5432"
+    labels:
+      vaultx.segment: "Corporate IT"
+      vaultx.vlan: "10"
+      vaultx.asset_id: "CORP-DB-001"
+      vaultx.criticality: "critical"
+      vaultx.description: "PostgreSQL 15 database backend for Odoo ERP"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-odoo}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ---------------------------------------------------------------------------
+  # LDAP Server - OpenLDAP
+  # Identity and authentication server for BECPL corporate directory
+  # ---------------------------------------------------------------------------
+  ldap-server:
+    image: osixia/openldap:latest
+    container_name: becpl-ldap-server
+    restart: unless-stopped
+    networks:
+      net_corporate:
+        ipv4_address: 172.20.10.12
+    environment:
+      - LDAP_ORGANISATION=Bharat Electronics Components Pvt Ltd
+      - LDAP_DOMAIN=${LDAP_DOMAIN:-becpl.local}
+      - LDAP_ADMIN_PASSWORD=${LDAP_ADMIN_PASSWORD:-admin_becpl_2024}
+      - LDAP_CONFIG_PASSWORD=${LDAP_CONFIG_PASSWORD:-config_becpl_2024}
+      - LDAP_READONLY_USER=true
+      - LDAP_READONLY_USER_USERNAME=readonly
+      - LDAP_READONLY_USER_PASSWORD=${LDAP_READONLY_PASSWORD:-readonly_2024}
+      - LDAP_TLS=false
+    volumes:
+      - ldap_data:/var/lib/ldap
+      - ldap_config:/etc/ldap/slapd.d
+    expose:
+      - "389"
+      - "636"
+    labels:
+      vaultx.segment: "Corporate IT"
+      vaultx.vlan: "10"
+      vaultx.asset_id: "CORP-LDAP-001"
+      vaultx.criticality: "critical"
+      vaultx.description: "OpenLDAP directory server - corporate identity provider"
+    healthcheck:
+      test: ["CMD", "ldapsearch", "-x", "-H", "ldap://localhost", "-b", "dc=becpl,dc=local"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ---------------------------------------------------------------------------
+  # File Server - nginx serving as a simple corporate file share
+  # Simulates BECPL's internal file/document server
+  # ---------------------------------------------------------------------------
+  file-server:
+    image: nginx:alpine
+    container_name: becpl-file-server
+    restart: unless-stopped
+    networks:
+      net_corporate:
+        ipv4_address: 172.20.10.13
+    volumes:
+      - file_server_data:/usr/share/nginx/html/files
+    command: >
+      sh -c "mkdir -p /usr/share/nginx/html/files/hr
+             /usr/share/nginx/html/files/finance
+             /usr/share/nginx/html/files/procurement
+             /usr/share/nginx/html/files/quality &&
+             echo '<html><body><h2>BECPL Corporate File Server</h2>
+             <ul>
+               <li><a href=\"/files/hr/\">HR Documents</a></li>
+               <li><a href=\"/files/finance/\">Finance</a></li>
+               <li><a href=\"/files/procurement/\">Procurement</a></li>
+               <li><a href=\"/files/quality/\">Quality</a></li>
+             </ul></body></html>' > /usr/share/nginx/html/index.html &&
+             nginx -g 'daemon off;'"
+    expose:
+      - "80"
+    labels:
+      vaultx.segment: "Corporate IT"
+      vaultx.vlan: "10"
+      vaultx.asset_id: "CORP-FS-001"
+      vaultx.criticality: "medium"
+      vaultx.description: "Corporate file server - internal document storage"
+
+  # ---------------------------------------------------------------------------
+  # DNS Server - CoreDNS
+  # Internal DNS resolution for becpl.local domain
+  # ---------------------------------------------------------------------------
+  dns-server:
+    image: coredns/coredns:latest
+    container_name: becpl-dns-server
+    restart: unless-stopped
+    networks:
+      net_corporate:
+        ipv4_address: 172.20.10.5
+    command: ["-conf", "/etc/coredns/Corefile"]
+    volumes:
+      - ./configs/coredns/Corefile:/etc/coredns/Corefile:ro
+      - ./configs/coredns/becpl.local.db:/etc/coredns/becpl.local.db:ro
+    expose:
+      - "53"
+    ports:
+      - "5353:53/udp"
+    labels:
+      vaultx.segment: "Corporate IT"
+      vaultx.vlan: "10"
+      vaultx.asset_id: "CORP-DNS-001"
+      vaultx.criticality: "high"
+      vaultx.description: "CoreDNS internal resolver for becpl.local domain"
+
+  # ---------------------------------------------------------------------------
+  # Backup Server - Alpine with rsync
+  # Simulates BECPL's centralized backup destination
+  # ---------------------------------------------------------------------------
+  backup-server:
+    image: alpine:latest
+    container_name: becpl-backup-server
+    restart: unless-stopped
+    networks:
+      net_corporate:
+        ipv4_address: 172.20.10.20
+    command: >
+      sh -c "apk add --no-cache rsync openssh-server &&
+             mkdir -p /backup/erp /backup/files /backup/db &&
+             echo 'BECPL Backup Server running' &&
+             while true; do
+               echo \"[$(date -Iseconds)] Backup cycle heartbeat - all targets healthy\";
+               sleep 3600;
+             done"
+    volumes:
+      - backup_data:/backup
+    expose:
+      - "22"
+      - "873"
+    labels:
+      vaultx.segment: "Corporate IT"
+      vaultx.vlan: "10"
+      vaultx.asset_id: "CORP-BCK-001"
+      vaultx.criticality: "high"
+      vaultx.description: "Centralized backup server with rsync"
+
+  # ---------------------------------------------------------------------------
+  # Admin Workstation - Alpine Linux
+  # Represents BECPL's IT administrator workstation
+  # ---------------------------------------------------------------------------
+  admin-workstation:
+    image: alpine:latest
+    container_name: becpl-admin-workstation
+    restart: unless-stopped
+    networks:
+      net_corporate:
+        ipv4_address: 172.20.10.30
+    command: >
+      sh -c "apk add --no-cache curl openssh-client nmap &&
+             echo 'Admin workstation ready' &&
+             while true; do sleep 60; done"
+    labels:
+      vaultx.segment: "Corporate IT"
+      vaultx.vlan: "10"
+      vaultx.asset_id: "CORP-ADM-001"
+      vaultx.device_type: "workstation"
+      vaultx.criticality: "high"
+      vaultx.description: "IT Administrator workstation"
+
+  # ---------------------------------------------------------------------------
+  # Corporate Workstation 1 - Employee workstation
+  # ---------------------------------------------------------------------------
+  corp-workstation-1:
+    image: alpine:latest
+    container_name: becpl-corp-ws-1
+    restart: unless-stopped
+    networks:
+      net_corporate:
+        ipv4_address: 172.20.10.31
+    command: sh -c "while true; do sleep 60; done"
+    labels:
+      vaultx.segment: "Corporate IT"
+      vaultx.vlan: "10"
+      vaultx.asset_id: "CORP-WS-001"
+      vaultx.device_type: "workstation"
+      vaultx.criticality: "low"
+      vaultx.description: "Employee workstation - Finance dept"
+
+  # ---------------------------------------------------------------------------
+  # Corporate Workstation 2 - Employee workstation
+  # ---------------------------------------------------------------------------
+  corp-workstation-2:
+    image: alpine:latest
+    container_name: becpl-corp-ws-2
+    restart: unless-stopped
+    networks:
+      net_corporate:
+        ipv4_address: 172.20.10.32
+    command: sh -c "while true; do sleep 60; done"
+    labels:
+      vaultx.segment: "Corporate IT"
+      vaultx.vlan: "10"
+      vaultx.asset_id: "CORP-WS-002"
+      vaultx.device_type: "workstation"
+      vaultx.criticality: "low"
+      vaultx.description: "Employee workstation - HR dept"
+
+  # ---------------------------------------------------------------------------
+  # Corporate Workstation 3 - Employee workstation
+  # ---------------------------------------------------------------------------
+  corp-workstation-3:
+    image: alpine:latest
+    container_name: becpl-corp-ws-3
+    restart: unless-stopped
+    networks:
+      net_corporate:
+        ipv4_address: 172.20.10.33
+    command: sh -c "while true; do sleep 60; done"
+    labels:
+      vaultx.segment: "Corporate IT"
+      vaultx.vlan: "10"
+      vaultx.asset_id: "CORP-WS-003"
+      vaultx.device_type: "workstation"
+      vaultx.criticality: "low"
+      vaultx.description: "Employee workstation - Procurement dept"
+
+networks:
+  net_corporate:
+    external: true
+
+volumes:
+  erp_data:
+  erp_config:
+  postgres_data:
+  ldap_data:
+  ldap_config:
+  file_server_data:
+  backup_data:

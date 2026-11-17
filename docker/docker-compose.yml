@@ -1,0 +1,105 @@
+# =============================================================================
+# VaultX - Manufacturing-Aware Hybrid NIDS for BECPL
+# Main Docker Compose Orchestrator
+# =============================================================================
+# This file is the top-level orchestrator. It includes all segment-specific
+# compose files and defines the shared Docker networks (one per VLAN segment).
+#
+# Network mapping:
+#   net_corporate    -> 172.20.10.0/24  (simulates VLAN 10 Corporate IT)
+#   net_engineering  -> 172.20.20.0/24  (simulates VLAN 20 Engineering)
+#   net_ot           -> 172.20.30.0/24  (simulates VLAN 30 OT/Manufacturing)
+#   net_warehouse    -> 172.20.40.0/24  (simulates VLAN 40 Warehouse)
+#   net_dmz          -> 172.20.50.0/24  (simulates VLAN 50 DMZ)
+#   net_cloud        -> 172.20.60.0/24  (simulates VLAN 60 Cloud/External)
+#   net_security     -> 172.20.70.0/24  (simulates VLAN 70 Security Mgmt)
+# =============================================================================
+
+version: "3.9"
+
+include:
+  - compose/corporate.yml
+  - compose/engineering.yml
+  - compose/ot.yml
+  - compose/warehouse.yml
+  - compose/dmz.yml
+  - compose/security.yml
+  - compose/cloud.yml
+
+networks:
+  net_corporate:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.10.0/24
+          gateway: 172.20.10.1
+    labels:
+      vlan: "10"
+      segment: "Corporate IT"
+      description: "Simulates VLAN 10 - Corporate IT Network (10.10.10.0/24)"
+
+  net_engineering:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.20.0/24
+          gateway: 172.20.20.1
+    labels:
+      vlan: "20"
+      segment: "Engineering"
+      description: "Simulates VLAN 20 - Engineering & Firmware Network (10.10.20.0/24)"
+
+  net_ot:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.30.0/24
+          gateway: 172.20.30.1
+    labels:
+      vlan: "30"
+      segment: "OT Manufacturing"
+      description: "Simulates VLAN 30 - OT/Manufacturing Network (10.10.30.0/24)"
+
+  net_warehouse:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.40.0/24
+          gateway: 172.20.40.1
+    labels:
+      vlan: "40"
+      segment: "Warehouse"
+      description: "Simulates VLAN 40 - Warehouse & Logistics Network (10.10.40.0/24)"
+
+  net_dmz:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.50.0/24
+          gateway: 172.20.50.1
+    labels:
+      vlan: "50"
+      segment: "DMZ"
+      description: "Simulates VLAN 50 - DMZ & Vendor Access Network (10.10.50.0/24)"
+
+  net_cloud:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.60.0/24
+          gateway: 172.20.60.1
+    labels:
+      vlan: "60"
+      segment: "Cloud External"
+      description: "Simulates VLAN 60 - Cloud & External Integrations (10.10.60.0/24)"
+
+  net_security:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.70.0/24
+          gateway: 172.20.70.1
+    labels:
+      vlan: "70"
+      segment: "Security Management"
+      description: "Simulates VLAN 70 - Security Management Zone (10.10.70.0/24)"

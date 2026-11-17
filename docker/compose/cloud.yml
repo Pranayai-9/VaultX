@@ -1,0 +1,134 @@
+# =============================================================================
+# VaultX - Cloud & External Integration Zone (VLAN 60 / 172.20.60.0/24)
+# =============================================================================
+# Simulates BECPL's cloud integration zone: S3-compatible storage,
+# external developer service, and AI/automation service account.
+# =============================================================================
+
+version: "3.9"
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # Cloud Storage Simulation - MinIO (S3-compatible)
+  # Simulates BECPL's AWS India S3 buckets for cloud backup/data exchange
+  # ---------------------------------------------------------------------------
+  cloud-storage-sim:
+    image: minio/minio:latest
+    container_name: becpl-cloud-storage-sim
+    restart: unless-stopped
+    networks:
+      net_cloud:
+        ipv4_address: 172.20.60.10
+    command: server /data --console-address ":9001"
+    environment:
+      - MINIO_ROOT_USER=${CLOUD_STORAGE_ACCESS_KEY:-minio}
+      - MINIO_ROOT_PASSWORD=${CLOUD_STORAGE_SECRET_KEY:-minio123}
+      - MINIO_VOLUMES=/data
+    volumes:
+      - cloud_storage_data:/data
+    expose:
+      - "9000"
+      - "9001"
+    ports:
+      - "${CLOUD_MINIO_PORT:-9010}:9000"
+      - "${CLOUD_MINIO_CONSOLE_PORT:-9011}:9001"
+    labels:
+      vaultx.segment: "Cloud External"
+      vaultx.vlan: "60"
+      vaultx.asset_id: "CLD-S3-001"
+      vaultx.criticality: "high"
+      vaultx.description: "MinIO S3-compatible cloud storage simulation (AWS India)"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # ---------------------------------------------------------------------------
+  # External Dev Service - nginx
+  # Simulates external firmware/software development service access
+  # (represents third-party firmware dev partner)
+  # ---------------------------------------------------------------------------
+  external-dev-service:
+    image: nginx:alpine
+    container_name: becpl-external-dev-service
+    restart: unless-stopped
+    networks:
+      net_cloud:
+        ipv4_address: 172.20.60.11
+    command: >
+      sh -c "echo 'worker_processes 1;
+      events { worker_connections 256; }
+      http {
+        server {
+          listen 80;
+          server_name ext-dev.becpl-partner.com;
+          location /health { return 200 \"External Dev Service OK\"; add_header Content-Type text/plain; }
+          location /api/firmware/submit {
+            return 200 \"{\\\"status\\\": \\\"accepted\\\", \\\"partner\\\": \\\"external-dev\\\", \\\"note\\\": \\\"simulation only\\\"}\";
+            add_header Content-Type application/json;
+          }
+          location / {
+            return 200 \"<html><body><h2>BECPL External Dev Partner Service</h2>
+            <p>Firmware collaboration portal - authorized partners only</p>
+            </body></html>\";
+            add_header Content-Type text/html;
+          }
+        }
+      }' > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
+    expose:
+      - "80"
+    labels:
+      vaultx.segment: "Cloud External"
+      vaultx.vlan: "60"
+      vaultx.asset_id: "CLD-EXT-001"
+      vaultx.criticality: "medium"
+      vaultx.description: "External dev service simulation - third-party firmware partner"
+
+  # ---------------------------------------------------------------------------
+  # AI Service Account - Alpine Linux
+  # Represents BECPL's AI/ML automation service account for cloud workflows
+  # (simulates AI-driven quality inspection or demand forecasting workload)
+  # ---------------------------------------------------------------------------
+  ai-service-account:
+    image: alpine:latest
+    container_name: becpl-ai-service-account
+    restart: unless-stopped
+    networks:
+      net_cloud:
+        ipv4_address: 172.20.60.12
+    command: >
+      sh -c "apk add --no-cache python3 curl &&
+             python3 -c \"
+import time, random, json
+from datetime import datetime
+tasks = ['quality_inspection_batch', 'demand_forecast_update', 'defect_pattern_analysis', 'inventory_optimization']
+print('BECPL AI Service Account - automation workload active')
+while True:
+  job = {
+    'timestamp': datetime.now().isoformat(),
+    'service_account': 'becpl-ai-automation@becpl.cloud',
+    'task': random.choice(tasks),
+    'status': random.choice(['RUNNING', 'COMPLETED', 'QUEUED']),
+    'cloud_region': 'ap-south-1',
+    'provider': 'AWS-India'
+  }
+  print(json.dumps(job), flush=True)
+  time.sleep(30)
+\""
+    labels:
+      vaultx.segment: "Cloud External"
+      vaultx.vlan: "60"
+      vaultx.asset_id: "CLD-AI-001"
+      vaultx.device_type: "vm"
+      vaultx.criticality: "high"
+      vaultx.description: "AI/ML automation service account - quality and demand forecasting"
+      vaultx.identity_classification: "AUTOMATION_WORKLOAD"
+
+networks:
+  net_cloud:
+    external: true
+
+volumes:
+  cloud_storage_data:

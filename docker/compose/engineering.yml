@@ -1,0 +1,257 @@
+# =============================================================================
+# VaultX - Engineering & Firmware Segment (VLAN 20 / 172.20.20.0/24)
+# =============================================================================
+# Simulates BECPL's engineering zone: Git repos, CI/CD, firmware dev
+# workstations, firmware storage, and release management.
+# =============================================================================
+
+version: "3.9"
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # Gitea Server - Self-hosted Git repository
+  # Version control for BECPL firmware, schematics, and software
+  # ---------------------------------------------------------------------------
+  gitea-server:
+    image: gitea/gitea:latest
+    container_name: becpl-gitea-server
+    restart: unless-stopped
+    networks:
+      net_engineering:
+        ipv4_address: 172.20.20.10
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+      - GITEA__database__DB_TYPE=sqlite3
+      - GITEA__database__PATH=/data/gitea/gitea.db
+      - GITEA__server__HTTP_PORT=3000
+      - GITEA__server__DOMAIN=gitea.becpl.local
+      - GITEA__server__ROOT_URL=http://gitea.becpl.local:3000/
+      - GITEA__security__INSTALL_LOCK=true
+      - GITEA__service__DISABLE_REGISTRATION=false
+    volumes:
+      - gitea_data:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    expose:
+      - "3000"
+      - "22"
+    ports:
+      - "${GITEA_PORT:-3000}:3000"
+    labels:
+      vaultx.segment: "Engineering"
+      vaultx.vlan: "20"
+      vaultx.asset_id: "ENG-GIT-001"
+      vaultx.criticality: "high"
+      vaultx.description: "Gitea self-hosted Git - firmware & software version control"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  # ---------------------------------------------------------------------------
+  # CI/CD Server - Jenkins LTS
+  # Automated build and test pipeline for firmware and embedded software
+  # ---------------------------------------------------------------------------
+  ci-server:
+    image: jenkins/jenkins:lts
+    container_name: becpl-ci-server
+    restart: unless-stopped
+    networks:
+      net_engineering:
+        ipv4_address: 172.20.20.11
+    environment:
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
+      - JENKINS_OPTS=--httpPort=8080
+    volumes:
+      - jenkins_data:/var/jenkins_home
+    expose:
+      - "8080"
+      - "50000"
+    ports:
+      - "${JENKINS_PORT:-8080}:8080"
+    labels:
+      vaultx.segment: "Engineering"
+      vaultx.vlan: "20"
+      vaultx.asset_id: "ENG-CI-001"
+      vaultx.criticality: "high"
+      vaultx.description: "Jenkins CI/CD server - firmware build pipeline"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/login"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+
+  # ---------------------------------------------------------------------------
+  # Engineering Workstation 1
+  # Embedded firmware developer workstation
+  # ---------------------------------------------------------------------------
+  eng-workstation-1:
+    image: alpine:latest
+    container_name: becpl-eng-ws-1
+    restart: unless-stopped
+    networks:
+      net_engineering:
+        ipv4_address: 172.20.20.30
+    command: >
+      sh -c "apk add --no-cache git curl make gcc musl-dev &&
+             echo 'Engineering workstation 1 ready' &&
+             while true; do sleep 60; done"
+    labels:
+      vaultx.segment: "Engineering"
+      vaultx.vlan: "20"
+      vaultx.asset_id: "ENG-WS-001"
+      vaultx.device_type: "workstation"
+      vaultx.criticality: "medium"
+      vaultx.description: "Firmware engineer workstation - PCB firmware dev"
+
+  # ---------------------------------------------------------------------------
+  # Engineering Workstation 2
+  # Electronics design engineer workstation
+  # ---------------------------------------------------------------------------
+  eng-workstation-2:
+    image: alpine:latest
+    container_name: becpl-eng-ws-2
+    restart: unless-stopped
+    networks:
+      net_engineering:
+        ipv4_address: 172.20.20.31
+    command: >
+      sh -c "apk add --no-cache git curl python3 py3-pip &&
+             echo 'Engineering workstation 2 ready' &&
+             while true; do sleep 60; done"
+    labels:
+      vaultx.segment: "Engineering"
+      vaultx.vlan: "20"
+      vaultx.asset_id: "ENG-WS-002"
+      vaultx.device_type: "workstation"
+      vaultx.criticality: "medium"
+      vaultx.description: "Electronics design engineer workstation"
+
+  # ---------------------------------------------------------------------------
+  # Firmware Development Workstation
+  # Dedicated firmware/IoT module development
+  # ---------------------------------------------------------------------------
+  firmware-dev-ws:
+    image: alpine:latest
+    container_name: becpl-firmware-dev-ws
+    restart: unless-stopped
+    networks:
+      net_engineering:
+        ipv4_address: 172.20.20.32
+    command: >
+      sh -c "apk add --no-cache git curl python3 py3-pip make gcc musl-dev &&
+             echo 'Firmware dev workstation ready' &&
+             while true; do sleep 60; done"
+    labels:
+      vaultx.segment: "Engineering"
+      vaultx.vlan: "20"
+      vaultx.asset_id: "ENG-FW-WS-001"
+      vaultx.device_type: "workstation"
+      vaultx.criticality: "high"
+      vaultx.description: "Dedicated firmware/IoT development workstation"
+      vaultx.role: "firmware-development"
+
+  # ---------------------------------------------------------------------------
+  # Firmware Storage - nginx static file server
+  # Stores compiled firmware binaries, release packages
+  # ---------------------------------------------------------------------------
+  firmware-storage:
+    image: nginx:alpine
+    container_name: becpl-firmware-storage
+    restart: unless-stopped
+    networks:
+      net_engineering:
+        ipv4_address: 172.20.20.13
+    command: >
+      sh -c "mkdir -p /usr/share/nginx/html/firmware/pcb-controller
+             /usr/share/nginx/html/firmware/iot-sensor
+             /usr/share/nginx/html/firmware/embedded-module &&
+             echo '<html><body><h2>BECPL Firmware Storage</h2>
+             <p>Firmware Repository - Authorized Access Only</p>
+             <ul>
+               <li><a href=\"/firmware/pcb-controller/\">PCB Controller Firmware</a></li>
+               <li><a href=\"/firmware/iot-sensor/\">IoT Sensor Firmware</a></li>
+               <li><a href=\"/firmware/embedded-module/\">Embedded Module Firmware</a></li>
+             </ul></body></html>' > /usr/share/nginx/html/index.html &&
+             nginx -g 'daemon off;'"
+    volumes:
+      - firmware_storage_data:/usr/share/nginx/html/firmware
+    expose:
+      - "80"
+    labels:
+      vaultx.segment: "Engineering"
+      vaultx.vlan: "20"
+      vaultx.asset_id: "ENG-FWST-001"
+      vaultx.criticality: "high"
+      vaultx.description: "Firmware binary storage and distribution server"
+
+  # ---------------------------------------------------------------------------
+  # Engineering File Server - nginx
+  # Technical documentation, schematics, design files
+  # ---------------------------------------------------------------------------
+  eng-file-server:
+    image: nginx:alpine
+    container_name: becpl-eng-file-server
+    restart: unless-stopped
+    networks:
+      net_engineering:
+        ipv4_address: 172.20.20.14
+    command: >
+      sh -c "mkdir -p /usr/share/nginx/html/files/schematics
+             /usr/share/nginx/html/files/bom
+             /usr/share/nginx/html/files/specs &&
+             echo '<html><body><h2>BECPL Engineering Files</h2></body></html>' > /usr/share/nginx/html/index.html &&
+             nginx -g 'daemon off;'"
+    volumes:
+      - eng_files_data:/usr/share/nginx/html/files
+    expose:
+      - "80"
+    labels:
+      vaultx.segment: "Engineering"
+      vaultx.vlan: "20"
+      vaultx.asset_id: "ENG-FS-001"
+      vaultx.criticality: "medium"
+      vaultx.description: "Engineering file server - schematics and design docs"
+
+  # ---------------------------------------------------------------------------
+  # Firmware Release System
+  # Staging and release management for firmware versions
+  # ---------------------------------------------------------------------------
+  firmware-release-system:
+    image: alpine:latest
+    container_name: becpl-firmware-release
+    restart: unless-stopped
+    networks:
+      net_engineering:
+        ipv4_address: 172.20.20.15
+    command: >
+      sh -c "apk add --no-cache curl bash python3 &&
+             echo '#!/bin/sh' > /usr/local/bin/release-firmware.sh &&
+             echo 'echo [$(date -Iseconds)] Firmware release system active' >> /usr/local/bin/release-firmware.sh &&
+             echo 'echo Current staging queue: PCB-FW-v2.3.1, IOT-SENSOR-FW-v1.8.0' >> /usr/local/bin/release-firmware.sh &&
+             chmod +x /usr/local/bin/release-firmware.sh &&
+             while true; do
+               echo \"[$(date -Iseconds)] Release system heartbeat - staging queue nominal\";
+               sleep 300;
+             done"
+    labels:
+      vaultx.segment: "Engineering"
+      vaultx.vlan: "20"
+      vaultx.asset_id: "ENG-RLS-001"
+      vaultx.criticality: "high"
+      vaultx.description: "Firmware release staging and approval system"
+
+networks:
+  net_engineering:
+    external: true
+
+volumes:
+  gitea_data:
+  jenkins_data:
+  firmware_storage_data:
+  eng_files_data:

@@ -1,0 +1,224 @@
+# =============================================================================
+# VaultX - DMZ & Vendor Access Segment (VLAN 50 / 172.20.50.0/24)
+# =============================================================================
+# Simulates BECPL's demilitarized zone: edge firewall boundary,
+# VPN gateway, vendor remote access, reverse proxy, and supplier endpoints.
+# =============================================================================
+
+version: "3.9"
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # Edge Firewall - nginx reverse proxy simulating firewall boundary
+  # Acts as the simulated network perimeter between DMZ and internet
+  # ---------------------------------------------------------------------------
+  edge-firewall:
+    image: nginx:alpine
+    container_name: becpl-edge-firewall
+    restart: unless-stopped
+    networks:
+      net_dmz:
+        ipv4_address: 172.20.50.5
+      net_corporate:
+        ipv4_address: 172.20.10.254
+    command: >
+      sh -c "echo 'worker_processes 1;
+      events { worker_connections 1024; }
+      http {
+        log_format main \"\$$remote_addr - \$$remote_user [\$$time_local] \$$request \$$status\";
+        access_log /var/log/nginx/access.log main;
+        upstream corporate { server 172.20.10.10:8069; }
+        upstream gitea { server 172.20.20.10:3000; }
+        server {
+          listen 80;
+          server_name edge.becpl.local;
+          location /health { return 200 \"Edge Firewall OK\"; add_header Content-Type text/plain; }
+          location /erp/ { proxy_pass http://corporate/; }
+          location / { return 403 \"Access Denied - BECPL Edge Firewall\"; }
+        }
+      }' > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
+    expose:
+      - "80"
+      - "443"
+    ports:
+      - "${EDGE_FW_PORT:-8090}:80"
+    labels:
+      vaultx.segment: "DMZ"
+      vaultx.vlan: "50"
+      vaultx.asset_id: "DMZ-FW-001"
+      vaultx.device_type: "firewall"
+      vaultx.criticality: "critical"
+      vaultx.description: "Simulated edge firewall/reverse proxy - DMZ perimeter"
+
+  # ---------------------------------------------------------------------------
+  # VPN Gateway - WireGuard
+  # Simulates BECPL's VPN endpoint for remote vendor access
+  # ---------------------------------------------------------------------------
+  vpn-gateway:
+    image: linuxserver/wireguard:latest
+    container_name: becpl-vpn-gateway
+    restart: unless-stopped
+    networks:
+      net_dmz:
+        ipv4_address: 172.20.50.10
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Kolkata
+      - SERVERURL=vpn.becpl.local
+      - SERVERPORT=51820
+      - PEERS=vendor-maintenance,vendor-firmware,vendor-logistics
+      - PEERDNS=172.20.10.5
+      - INTERNAL_SUBNET=10.13.13.0
+      - ALLOWEDIPS=0.0.0.0/0
+      - LOG_CONFS=true
+    volumes:
+      - vpn_config:/config
+      - /lib/modules:/lib/modules:ro
+    expose:
+      - "51820"
+    ports:
+      - "${VPN_PORT:-51820}:51820/udp"
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    labels:
+      vaultx.segment: "DMZ"
+      vaultx.vlan: "50"
+      vaultx.asset_id: "DMZ-VPN-001"
+      vaultx.device_type: "gateway"
+      vaultx.criticality: "critical"
+      vaultx.description: "WireGuard VPN gateway - vendor remote access endpoint"
+
+  # ---------------------------------------------------------------------------
+  # Vendor Access Gateway - nginx
+  # Controlled gateway for authorized vendor remote sessions
+  # ---------------------------------------------------------------------------
+  vendor-access-gw:
+    image: nginx:alpine
+    container_name: becpl-vendor-access-gw
+    restart: unless-stopped
+    networks:
+      net_dmz:
+        ipv4_address: 172.20.50.11
+    command: >
+      sh -c "echo 'worker_processes 1;
+      events { worker_connections 256; }
+      http {
+        server {
+          listen 80;
+          server_name vendor-access.becpl.local;
+          location /health { return 200 \"Vendor Access GW OK\"; add_header Content-Type text/plain; }
+          location /vendor/portal {
+            return 200 \"<html><body><h2>BECPL Vendor Access Portal</h2>
+            <p>Authorized vendors: use your credentials to access permitted systems.</p>
+            <p>Session duration: max 4 hours | MFA required</p>
+            </body></html>\";
+            add_header Content-Type text/html;
+          }
+          location / { return 403 \"Unauthorized - Vendor Access Only\"; }
+        }
+      }' > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
+    expose:
+      - "80"
+    labels:
+      vaultx.segment: "DMZ"
+      vaultx.vlan: "50"
+      vaultx.asset_id: "DMZ-VGW-001"
+      vaultx.device_type: "gateway"
+      vaultx.criticality: "high"
+      vaultx.description: "Vendor remote access gateway - controlled vendor portal"
+
+  # ---------------------------------------------------------------------------
+  # Reverse Proxy - nginx
+  # Internal reverse proxy aggregating DMZ services
+  # ---------------------------------------------------------------------------
+  reverse-proxy:
+    image: nginx:alpine
+    container_name: becpl-reverse-proxy
+    restart: unless-stopped
+    networks:
+      net_dmz:
+        ipv4_address: 172.20.50.12
+    command: >
+      sh -c "echo 'worker_processes 1;
+      events { worker_connections 1024; }
+      http {
+        access_log /var/log/nginx/access.log;
+        server {
+          listen 80;
+          server_name proxy.becpl.local;
+          location /health { return 200 \"Reverse Proxy OK\"; add_header Content-Type text/plain; }
+          location /supplier/ { proxy_pass http://172.20.50.13:5000/; }
+          location /vendor/ { proxy_pass http://172.20.50.11/vendor/; }
+          location / { return 404 \"Service Not Found\"; }
+        }
+      }' > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
+    expose:
+      - "80"
+    ports:
+      - "${DMZ_PROXY_PORT:-8095}:80"
+    labels:
+      vaultx.segment: "DMZ"
+      vaultx.vlan: "50"
+      vaultx.asset_id: "DMZ-PRX-001"
+      vaultx.criticality: "high"
+      vaultx.description: "DMZ internal reverse proxy - service aggregation layer"
+
+  # ---------------------------------------------------------------------------
+  # Supplier API Endpoint - Flask
+  # DMZ-facing endpoint for external supplier system integration
+  # ---------------------------------------------------------------------------
+  supplier-api-endpoint:
+    image: python:3.11-alpine
+    container_name: becpl-dmz-supplier-api
+    restart: unless-stopped
+    networks:
+      net_dmz:
+        ipv4_address: 172.20.50.13
+    command: >
+      sh -c "pip install flask --quiet &&
+             python3 -c \"
+from flask import Flask, jsonify, request
+import uuid, random
+from datetime import datetime, timedelta
+app = Flask(__name__)
+@app.route('/health')
+def health(): return jsonify({'status': 'ok', 'zone': 'DMZ', 'service': 'BECPL-Supplier-API'})
+@app.route('/supplier/catalog', methods=['GET'])
+def catalog():
+  return jsonify({'items': [
+    {'sku': 'CAP-100UF-16V', 'description': '100uF Capacitor 16V', 'unit_price': 2.50, 'currency': 'INR', 'lead_time_days': 7},
+    {'sku': 'RES-10K-0402', 'description': '10K Resistor 0402', 'unit_price': 0.15, 'currency': 'INR', 'lead_time_days': 3},
+    {'sku': 'IC-ESP32', 'description': 'ESP32 WiFi/BT Module', 'unit_price': 180, 'currency': 'INR', 'lead_time_days': 14}
+  ]})
+@app.route('/supplier/order', methods=['POST'])
+def order():
+  return jsonify({'order_id': str(uuid.uuid4())[:8].upper(), 'status': 'ACCEPTED', 'eta': (datetime.now()+timedelta(days=random.randint(3,14))).date().isoformat()})
+@app.route('/supplier/status/<order_id>', methods=['GET'])
+def status(order_id):
+  return jsonify({'order_id': order_id, 'status': random.choice(['PROCESSING', 'SHIPPED', 'CUSTOMS_CLEARANCE'])})
+if __name__ == '__main__': app.run(host='0.0.0.0', port=5000)
+\""
+    expose:
+      - "5000"
+    ports:
+      - "${DMZ_SUPPLIER_PORT:-5060}:5000"
+    labels:
+      vaultx.segment: "DMZ"
+      vaultx.vlan: "50"
+      vaultx.asset_id: "DMZ-SUP-001"
+      vaultx.criticality: "medium"
+      vaultx.description: "DMZ supplier API endpoint - external supplier integration"
+
+networks:
+  net_dmz:
+    external: true
+  net_corporate:
+    external: true
+
+volumes:
+  vpn_config:

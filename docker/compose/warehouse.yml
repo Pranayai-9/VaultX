@@ -1,0 +1,227 @@
+# =============================================================================
+# VaultX - Warehouse & Logistics Segment (VLAN 40 / 172.20.40.0/24)
+# =============================================================================
+# Simulates BECPL's warehouse zone: WMS, inventory database, barcode
+# terminals, dispatch workstations, and supplier/logistics integrations.
+# =============================================================================
+
+version: "3.9"
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # WMS Server - Warehouse Management System Flask app
+  # Tracks inventory, shipments, and warehouse operations
+  # ---------------------------------------------------------------------------
+  wms-server:
+    image: python:3.11-alpine
+    container_name: becpl-wms-server
+    restart: unless-stopped
+    networks:
+      net_warehouse:
+        ipv4_address: 172.20.40.10
+    command: >
+      sh -c "pip install flask flask-cors --quiet &&
+             python /app/wms_server.py"
+    volumes:
+      - ../scripts/warehouse:/app:ro
+    expose:
+      - "5000"
+    ports:
+      - "${WMS_PORT:-5030}:5000"
+    environment:
+      - FLASK_ENV=production
+      - WMS_WAREHOUSE=BECPL-PUNE-WH1
+      - DB_HOST=172.20.40.11
+    labels:
+      vaultx.segment: "Warehouse"
+      vaultx.vlan: "40"
+      vaultx.asset_id: "WH-WMS-001"
+      vaultx.criticality: "high"
+      vaultx.description: "Warehouse Management System - inventory and logistics"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://localhost:5000/inventory"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # ---------------------------------------------------------------------------
+  # Inventory Database - PostgreSQL 15
+  # Persistent storage for warehouse inventory and shipment records
+  # ---------------------------------------------------------------------------
+  inventory-db:
+    image: postgres:15
+    container_name: becpl-inventory-db
+    restart: unless-stopped
+    networks:
+      net_warehouse:
+        ipv4_address: 172.20.40.11
+    environment:
+      - POSTGRES_DB=${WH_DB_NAME:-wms}
+      - POSTGRES_USER=${WH_DB_USER:-wms_user}
+      - POSTGRES_PASSWORD=${WH_DB_PASSWORD:-wms_becpl_2024}
+    volumes:
+      - inventory_db_data:/var/lib/postgresql/data
+    expose:
+      - "5432"
+    labels:
+      vaultx.segment: "Warehouse"
+      vaultx.vlan: "40"
+      vaultx.asset_id: "WH-DB-001"
+      vaultx.criticality: "high"
+      vaultx.description: "PostgreSQL inventory database for WMS"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${WH_DB_USER:-wms_user}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ---------------------------------------------------------------------------
+  # Barcode Terminal - Alpine Linux
+  # Simulates warehouse barcode scanner terminal
+  # ---------------------------------------------------------------------------
+  barcode-terminal:
+    image: alpine:latest
+    container_name: becpl-barcode-terminal
+    restart: unless-stopped
+    networks:
+      net_warehouse:
+        ipv4_address: 172.20.40.12
+    command: >
+      sh -c "apk add --no-cache python3 curl &&
+             python3 -c \"
+import time, random, json
+from datetime import datetime
+items = ['PCB-CTRL-A1', 'IOT-SNS-B2', 'EMB-MOD-C3', 'CAP-100UF', 'RES-10K', 'IC-ATM32']
+print('BECPL Barcode Terminal - Warehouse Zone A active')
+while True:
+  scan = {
+    'timestamp': datetime.now().isoformat(),
+    'terminal_id': 'BC-TERM-WH1-01',
+    'location': 'WAREHOUSE-ZONE-A',
+    'item_code': random.choice(items),
+    'quantity': random.randint(1, 50),
+    'operation': random.choice(['RECEIVE', 'DISPATCH', 'STOCKTAKE'])
+  }
+  print(json.dumps(scan), flush=True)
+  time.sleep(15)
+\""
+    labels:
+      vaultx.segment: "Warehouse"
+      vaultx.vlan: "40"
+      vaultx.asset_id: "WH-BC-001"
+      vaultx.device_type: "scanner"
+      vaultx.criticality: "low"
+      vaultx.description: "Barcode scanner terminal - warehouse receiving/dispatch"
+
+  # ---------------------------------------------------------------------------
+  # Dispatch Workstation - Alpine Linux
+  # Shipping and dispatch coordinator workstation
+  # ---------------------------------------------------------------------------
+  dispatch-workstation:
+    image: alpine:latest
+    container_name: becpl-dispatch-workstation
+    restart: unless-stopped
+    networks:
+      net_warehouse:
+        ipv4_address: 172.20.40.13
+    command: >
+      sh -c "apk add --no-cache curl python3 &&
+             echo 'Dispatch workstation ready' &&
+             while true; do sleep 60; done"
+    labels:
+      vaultx.segment: "Warehouse"
+      vaultx.vlan: "40"
+      vaultx.asset_id: "WH-WS-001"
+      vaultx.device_type: "workstation"
+      vaultx.criticality: "low"
+      vaultx.description: "Dispatch coordinator workstation - shipping management"
+
+  # ---------------------------------------------------------------------------
+  # Supplier Integration - Flask endpoint
+  # Simulates supplier EDI/API endpoint for purchase orders
+  # ---------------------------------------------------------------------------
+  supplier-integration:
+    image: python:3.11-alpine
+    container_name: becpl-supplier-integration
+    restart: unless-stopped
+    networks:
+      net_warehouse:
+        ipv4_address: 172.20.40.14
+    command: >
+      sh -c "pip install flask --quiet &&
+             python /app/supplier_integration.py"
+    volumes:
+      - ../scripts/warehouse:/app:ro
+    expose:
+      - "5000"
+    ports:
+      - "${SUPPLIER_INT_PORT:-5040}:5000"
+    environment:
+      - FLASK_ENV=production
+      - SUPPLIER_REGION=IN-CN-TW
+    labels:
+      vaultx.segment: "Warehouse"
+      vaultx.vlan: "40"
+      vaultx.asset_id: "WH-SUP-001"
+      vaultx.criticality: "medium"
+      vaultx.description: "Supplier integration API - component purchase order management"
+
+  # ---------------------------------------------------------------------------
+  # Logistics API - Flask endpoint
+  # Simulates logistics provider (DTDC/BlueDart) API integration
+  # ---------------------------------------------------------------------------
+  logistics-api:
+    image: python:3.11-alpine
+    container_name: becpl-logistics-api
+    restart: unless-stopped
+    networks:
+      net_warehouse:
+        ipv4_address: 172.20.40.15
+    command: >
+      sh -c "pip install flask --quiet &&
+             python3 -c \"
+from flask import Flask, jsonify, request
+import random, uuid
+from datetime import datetime, timedelta
+app = Flask(__name__)
+providers = ['DTDC', 'BlueDart', 'Delhivery', 'FedEx-India']
+statuses = ['IN_TRANSIT', 'OUT_FOR_DELIVERY', 'DELIVERED', 'AT_SORTING_HUB']
+@app.route('/health')
+def health(): return jsonify({'status': 'ok', 'service': 'BECPL-Logistics-API'})
+@app.route('/shipments/track/<tracking_id>', methods=['GET'])
+def track(tracking_id):
+  return jsonify({
+    'tracking_id': tracking_id,
+    'provider': random.choice(providers),
+    'status': random.choice(statuses),
+    'estimated_delivery': (datetime.now() + timedelta(days=random.randint(1,3))).isoformat(),
+    'current_location': random.choice(['Mumbai Hub', 'Pune Depot', 'Nashik Sorting'])
+  })
+@app.route('/shipments/book', methods=['POST'])
+def book():
+  return jsonify({'tracking_id': str(uuid.uuid4())[:12].upper(), 'status': 'BOOKED', 'provider': random.choice(providers)})
+@app.route('/rates', methods=['GET'])
+def rates():
+  return jsonify({'domestic': {'standard': 45, 'express': 95, 'overnight': 180}, 'currency': 'INR'})
+if __name__ == '__main__': app.run(host='0.0.0.0', port=5000)
+\""
+    expose:
+      - "5000"
+    ports:
+      - "${LOGISTICS_PORT:-5050}:5000"
+    environment:
+      - FLASK_ENV=production
+    labels:
+      vaultx.segment: "Warehouse"
+      vaultx.vlan: "40"
+      vaultx.asset_id: "WH-LOG-001"
+      vaultx.criticality: "medium"
+      vaultx.description: "Logistics provider API simulation - DTDC/BlueDart integration"
+
+networks:
+  net_warehouse:
+    external: true
+
+volumes:
+  inventory_db_data:

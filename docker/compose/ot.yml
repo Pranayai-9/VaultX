@@ -1,0 +1,268 @@
+# =============================================================================
+# VaultX - OT / Manufacturing Segment (VLAN 30 / 172.20.30.0/24)
+# =============================================================================
+# SIMULATION ONLY — not connected to real industrial equipment.
+# Simulates BECPL's OT floor: PLC runtime, HMI, MES, Modbus devices,
+# and industrial sensors for security research purposes.
+# =============================================================================
+
+version: "3.9"
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # OpenPLC Runtime - Simulated PLC
+  # Simulates a programmable logic controller for PCB assembly line control
+  # NOTE: Using Alpine as a lightweight PLC simulator since openplcproject
+  # image may not be available; exposes Modbus TCP on 502
+  # ---------------------------------------------------------------------------
+  openplc-runtime:
+    image: alpine:latest
+    container_name: becpl-openplc-runtime
+    restart: unless-stopped
+    networks:
+      net_ot:
+        ipv4_address: 172.20.30.10
+    command: >
+      sh -c "apk add --no-cache python3 py3-pip &&
+             pip3 install pymodbus --quiet &&
+             python3 -c \"
+import asyncio
+import logging
+from pymodbus.server import StartAsyncTcpServer
+from pymodbus.datastore import ModbusSequentialDataBlock, ModbusSlaveContext, ModbusServerContext
+logging.basicConfig(level=logging.INFO)
+store = ModbusSlaveContext(
+    hr=ModbusSequentialDataBlock(0, [0]*100)
+)
+context = ModbusServerContext(slaves=store, single=True)
+print('OpenPLC Runtime simulation starting on port 502')
+asyncio.run(StartAsyncTcpServer(context=context, address=('0.0.0.0', 502)))
+\""
+    expose:
+      - "502"
+      - "8080"
+    ports:
+      - "${OPENPLC_MODBUS_PORT:-502}:502"
+    labels:
+      vaultx.segment: "OT Manufacturing"
+      vaultx.vlan: "30"
+      vaultx.asset_id: "OT-PLC-001"
+      vaultx.device_type: "plc"
+      vaultx.criticality: "critical"
+      vaultx.description: "Simulated OpenPLC runtime - PCB assembly line controller"
+      vaultx.protocol: "Modbus-TCP"
+    cap_add:
+      - NET_BIND_SERVICE
+
+  # ---------------------------------------------------------------------------
+  # HMI - Node-RED
+  # Human-Machine Interface simulation for production floor monitoring
+  # ---------------------------------------------------------------------------
+  hmi-nodered:
+    image: nodered/node-red:latest
+    container_name: becpl-hmi-nodered
+    restart: unless-stopped
+    networks:
+      net_ot:
+        ipv4_address: 172.20.30.11
+    environment:
+      - TZ=Asia/Kolkata
+      - NODE_RED_ENABLE_SAFE_MODE=false
+    volumes:
+      - nodered_data:/data
+    expose:
+      - "1880"
+    ports:
+      - "${NODERED_PORT:-1880}:1880"
+    labels:
+      vaultx.segment: "OT Manufacturing"
+      vaultx.vlan: "30"
+      vaultx.asset_id: "OT-HMI-001"
+      vaultx.device_type: "hmi"
+      vaultx.criticality: "high"
+      vaultx.description: "Node-RED HMI simulation - production floor dashboard"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:1880"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  # ---------------------------------------------------------------------------
+  # MES Server - Custom Flask application
+  # Manufacturing Execution System simulation
+  # ---------------------------------------------------------------------------
+  mes-server:
+    image: python:3.11-alpine
+    container_name: becpl-mes-server
+    restart: unless-stopped
+    networks:
+      net_ot:
+        ipv4_address: 172.20.30.12
+    command: >
+      sh -c "pip install flask --quiet &&
+             python /app/mes_server.py"
+    volumes:
+      - ../scripts/ot:/app:ro
+    expose:
+      - "5000"
+    ports:
+      - "${MES_PORT:-5010}:5000"
+    environment:
+      - FLASK_ENV=production
+      - MES_SITE=BECPL-PUNE-PLANT1
+    labels:
+      vaultx.segment: "OT Manufacturing"
+      vaultx.vlan: "30"
+      vaultx.asset_id: "OT-MES-001"
+      vaultx.criticality: "critical"
+      vaultx.description: "Manufacturing Execution System - production job tracking"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://localhost:5000/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # ---------------------------------------------------------------------------
+  # Production Monitor - Alpine Linux
+  # Logs simulated sensor values to stdout for monitoring
+  # ---------------------------------------------------------------------------
+  production-monitor:
+    image: alpine:latest
+    container_name: becpl-production-monitor
+    restart: unless-stopped
+    networks:
+      net_ot:
+        ipv4_address: 172.20.30.13
+    command: >
+      sh -c "apk add --no-cache python3 &&
+             python3 -c \"
+import time, random, json
+from datetime import datetime
+sensors = {
+  'line1_temp': (220, 240),
+  'line1_speed': (450, 550),
+  'line2_temp': (215, 235),
+  'solder_temp': (250, 270),
+  'ambient_temp': (22, 28),
+  'humidity': (45, 60)
+}
+print('Production Monitor active - BECPL Pune Plant 1')
+while True:
+  reading = {
+    'timestamp': datetime.now().isoformat(),
+    'plant': 'BECPL-PUNE-PLANT1',
+    'line': 'PCB-ASSEMBLY-LINE-1',
+    'readings': {k: round(random.uniform(*v), 2) for k, v in sensors.items()}
+  }
+  print(json.dumps(reading), flush=True)
+  time.sleep(10)
+\""
+    labels:
+      vaultx.segment: "OT Manufacturing"
+      vaultx.vlan: "30"
+      vaultx.asset_id: "OT-MON-001"
+      vaultx.criticality: "medium"
+      vaultx.description: "Production floor sensor aggregator and monitor"
+
+  # ---------------------------------------------------------------------------
+  # Modbus Simulator - pymodbus TCP server
+  # Simulates Modbus registers for OT devices
+  # ---------------------------------------------------------------------------
+  modbus-simulator:
+    image: python:3.11-alpine
+    container_name: becpl-modbus-simulator
+    restart: unless-stopped
+    networks:
+      net_ot:
+        ipv4_address: 172.20.30.14
+    command: >
+      sh -c "pip install pymodbus --quiet &&
+             python /app/modbus_simulator.py"
+    volumes:
+      - ../scripts/ot:/app:ro
+    expose:
+      - "502"
+    ports:
+      - "${MODBUS_PORT:-5020}:502"
+    labels:
+      vaultx.segment: "OT Manufacturing"
+      vaultx.vlan: "30"
+      vaultx.asset_id: "OT-MODBUS-001"
+      vaultx.device_type: "plc"
+      vaultx.criticality: "high"
+      vaultx.description: "Modbus TCP simulator for OT device register simulation"
+      vaultx.protocol: "Modbus-TCP"
+    cap_add:
+      - NET_BIND_SERVICE
+
+  # ---------------------------------------------------------------------------
+  # Industrial Sensor 1 - Temperature/Pressure sensor simulation
+  # Emits synthetic Modbus readings
+  # ---------------------------------------------------------------------------
+  industrial-sensor-1:
+    image: python:3.11-alpine
+    container_name: becpl-industrial-sensor-1
+    restart: unless-stopped
+    networks:
+      net_ot:
+        ipv4_address: 172.20.30.21
+    command: >
+      sh -c "pip install pymodbus --quiet &&
+             python /app/sensor_client.py"
+    volumes:
+      - ../scripts/ot:/app:ro
+    environment:
+      - MODBUS_HOST=172.20.30.14
+      - MODBUS_PORT=502
+      - SENSOR_ID=SENSOR-001
+      - SENSOR_TYPE=temperature-pressure
+      - SENSOR_LOCATION=PCB-LINE-1-ZONE-A
+    depends_on:
+      - modbus-simulator
+    labels:
+      vaultx.segment: "OT Manufacturing"
+      vaultx.vlan: "30"
+      vaultx.asset_id: "OT-SEN-001"
+      vaultx.device_type: "sensor"
+      vaultx.criticality: "medium"
+      vaultx.description: "Industrial sensor 1 - PCB assembly line zone A"
+
+  # ---------------------------------------------------------------------------
+  # Industrial Sensor 2 - Conveyor speed/count sensor simulation
+  # ---------------------------------------------------------------------------
+  industrial-sensor-2:
+    image: python:3.11-alpine
+    container_name: becpl-industrial-sensor-2
+    restart: unless-stopped
+    networks:
+      net_ot:
+        ipv4_address: 172.20.30.22
+    command: >
+      sh -c "pip install pymodbus --quiet &&
+             python /app/sensor_client.py"
+    volumes:
+      - ../scripts/ot:/app:ro
+    environment:
+      - MODBUS_HOST=172.20.30.14
+      - MODBUS_PORT=502
+      - SENSOR_ID=SENSOR-002
+      - SENSOR_TYPE=conveyor-counter
+      - SENSOR_LOCATION=PCB-LINE-2-ZONE-B
+    depends_on:
+      - modbus-simulator
+    labels:
+      vaultx.segment: "OT Manufacturing"
+      vaultx.vlan: "30"
+      vaultx.asset_id: "OT-SEN-002"
+      vaultx.device_type: "sensor"
+      vaultx.criticality: "medium"
+      vaultx.description: "Industrial sensor 2 - PCB assembly line zone B"
+
+networks:
+  net_ot:
+    external: true
+
+volumes:
+  nodered_data:

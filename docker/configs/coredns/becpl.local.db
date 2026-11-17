@@ -1,0 +1,58 @@
+$ORIGIN becpl.local.
+$TTL 3600
+@   IN  SOA ns1.becpl.local. hostmaster.becpl.local. (
+            2026111701 ; serial
+            7200       ; refresh
+            3600       ; retry
+            1209600    ; expire
+            3600       ; minimum
+)
+    IN  NS  ns1.becpl.local.
+
+ns1                 IN  A   172.20.10.5
+dns                 IN  A   172.20.10.5
+
+; Corporate IT (VLAN 10)
+erp                 IN  A   172.20.10.10
+db-postgres         IN  A   172.20.10.11
+ldap                IN  A   172.20.10.12
+files               IN  A   172.20.10.13
+backup              IN  A   172.20.10.20
+admin-ws            IN  A   172.20.10.30
+
+; Engineering & Firmware (VLAN 20)
+gitea               IN  A   172.20.20.10
+ci-jenkins          IN  A   172.20.20.11
+firmware            IN  A   172.20.20.13
+eng-files           IN  A   172.20.20.14
+eng-ws1             IN  A   172.20.20.30
+eng-ws2             IN  A   172.20.20.31
+firmware-dev        IN  A   172.20.20.32
+
+; OT / Manufacturing (VLAN 30)
+plc                 IN  A   172.20.30.10
+hmi                 IN  A   172.20.30.11
+mes                 IN  A   172.20.30.12
+modbus-sim          IN  A   172.20.30.14
+
+; Warehouse & Logistics (VLAN 40)
+wms                 IN  A   172.20.40.10
+wh-db               IN  A   172.20.40.11
+supplier-int        IN  A   172.20.40.14
+logistics           IN  A   172.20.40.15
+
+; DMZ (VLAN 50)
+edge                IN  A   172.20.50.5
+vpn                 IN  A   172.20.50.10
+vendor-access       IN  A   172.20.50.11
+proxy               IN  A   172.20.50.12
+
+; Cloud (VLAN 60)
+s3-cloud            IN  A   172.20.60.10
+ext-dev             IN  A   172.20.60.11
+
+; Security Management (VLAN 70)
+nids-central        IN  A   172.20.70.10
+security-db         IN  A   172.20.70.11
+redis               IN  A   172.20.70.12
+minio-sec           IN  A   172.20.70.13
