@@ -1,0 +1,184 @@
+[
+  {
+    "scenario_id": "SCN-001",
+    "name": "Compromised Third-Party Vendor Access",
+    "description": "Adversary compromises external maintenance vendor credentials, authenticates via SSL-VPN, pivots through DMZ jump host into MES server, and attempts unauthorized Modbus interaction with manufacturing SMT PLCs.",
+    "mitre_techniques": ["T1078.002", "T1021.004", "T1570", "T1018", "T1046", "T0836"],
+    "severity": "high",
+    "affected_segments": ["DMZ", "Corporate_IT", "OT"],
+    "starting_point_asset": "DMZ-VPN-GW01",
+    "pivot_assets": ["DMZ-BASTION01", "OT-MES01"],
+    "target_assets": ["OT-PLC-SMTA-01", "OT-PLC-SMTB-01"],
+    "compromised_identity": "techmaintain_ext_eng",
+    "expected_event_count": 25,
+    "timeline_minutes": 45,
+    "ot_safety_consideration": true,
+    "requires_human_approval_for_isolation": true,
+    "detection_hypothesis": "Multi-stage correlation: Anomaly in vendor auth (off-hours/foreign ASN) followed by cross-VLAN pivot to MES server and unauthorized Modbus/TCP traffic targeting SMT PLCs.",
+    "labelling": {
+      "benign_ratio": 0.70,
+      "malicious_ratio": 0.30
+    },
+    "mitigation_actions": [
+      "Terminate FortiClient SSL-VPN tunnel for vendor session",
+      "Revoke Active Directory vendor user account credentials",
+      "Notify on-duty OT plant engineer for physical line safety confirmation prior to OT isolation"
+    ]
+  },
+  {
+    "scenario_id": "SCN-002",
+    "name": "Service Credential Misuse & API Abuse",
+    "description": "Stolen machine-to-machine service account credentials (svc_erp_integration) reused from an unapproved endpoint to query confidential supplier records and manipulate WMS dispatch orders.",
+    "mitre_techniques": ["T1078.004", "T1041", "T1059", "T1565.001"],
+    "severity": "high",
+    "affected_segments": ["Corporate_IT", "Warehouse", "Cloud_External"],
+    "starting_point_asset": "CORP-WS-005",
+    "pivot_assets": ["ERP-SVR-01"],
+    "target_assets": ["WH-WMS-SVR01", "EXTERNAL-C2"],
+    "compromised_identity": "svc_erp_integration",
+    "expected_event_count": 32,
+    "timeline_minutes": 30,
+    "ot_safety_consideration": false,
+    "requires_human_approval_for_isolation": false,
+    "detection_hypothesis": "API behavioral divergence: Sudden burst of HTTP POST/DELETE requests from a service account normally limited to periodic GET requests, combined with IP binding violation.",
+    "labelling": {
+      "benign_ratio": 0.65,
+      "malicious_ratio": 0.35
+    },
+    "mitigation_actions": [
+      "Invalidate active OAuth2 bearer token in Redis token store",
+      "Quarantine originating host IP via FortiGate dynamic address group",
+      "Place programmatic hold on pending dispatch order batch in WMS"
+    ]
+  },
+  {
+    "scenario_id": "SCN-003",
+    "name": "Suspicious Multi-VLAN Lateral Movement",
+    "description": "Compromised administrative workstation executes high-fanout port scans and credential brute-force attempts across Corporate, Engineering, and Manufacturing subnets.",
+    "mitre_techniques": ["T1021.001", "T1021.002", "T1021.004", "T1018", "T1046", "T1110.001"],
+    "severity": "high",
+    "affected_segments": ["Corporate_IT", "Engineering", "OT", "Warehouse"],
+    "starting_point_asset": "CORP-WS-002",
+    "pivot_assets": [],
+    "target_assets": ["BECPL-FS01", "BECPL-DC01", "ENG-WS-001", "ENG-BUILDSVR01", "WH-WMS-SVR01", "OT-MES01"],
+    "compromised_identity": "becpl\\pune_admin02",
+    "expected_event_count": 23,
+    "timeline_minutes": 8,
+    "ot_safety_consideration": true,
+    "requires_human_approval_for_isolation": true,
+    "detection_hypothesis": "Graph anomaly and fanout detection: Single internal source initiating rapid multi-port connection requests (RDP, SMB, SSH) across 3 or more distinct VLAN boundaries in under 10 minutes.",
+    "labelling": {
+      "benign_ratio": 0.20,
+      "malicious_ratio": 0.80
+    },
+    "mitigation_actions": [
+      "Quarantine workstation switch port Gi1/0/21 via 802.1X re-auth",
+      "Force domain password reset and Kerberos ticket revocation for compromised admin",
+      "Block cross-VLAN route injection on core switch"
+    ]
+  },
+  {
+    "scenario_id": "SCN-004",
+    "name": "Living off the Land (LotL) Execution",
+    "description": "Adversary leverages signed Windows native administrative tools (powershell, certutil, schtasks, net) to download second-stage malware and establish persistence while evading static signatures.",
+    "mitre_techniques": ["T1059.001", "T1140", "T1105", "T1053.005", "T1136.001"],
+    "severity": "critical",
+    "affected_segments": ["Corporate_IT"],
+    "starting_point_asset": "CORP-WS-003",
+    "pivot_assets": [],
+    "target_assets": ["CORP-WS-003", "EXTERNAL-C2-STAGE"],
+    "compromised_identity": "becpl\\admin_ws03",
+    "expected_event_count": 20,
+    "timeline_minutes": 20,
+    "ot_safety_consideration": false,
+    "requires_human_approval_for_isolation": false,
+    "detection_hypothesis": "Endpoint-network fusion: PowerShell with obfuscated base64 command lines followed by CertUtil process making outbound HTTP requests with default CertUtil User-Agent.",
+    "labelling": {
+      "benign_ratio": 0.30,
+      "malicious_ratio": 0.70
+    },
+    "mitigation_actions": [
+      "Automated host network quarantine via FortiGate NAC agent",
+      "Kill suspicious child processes and remove unauthorized scheduled tasks",
+      "Purge rogue local administrative user account"
+    ]
+  },
+  {
+    "scenario_id": "SCN-005",
+    "name": "Encrypted External Exfiltration",
+    "description": "Long-lived encrypted TLS session from an engineering workstation leaking proprietary PCB Gerber design files and MCU firmware to an untrusted external IP without payload inspection.",
+    "mitre_techniques": ["T1041", "T1573.001", "T1008", "T1036.005"],
+    "severity": "critical",
+    "affected_segments": ["Engineering"],
+    "starting_point_asset": "ENG-WS-001",
+    "pivot_assets": [],
+    "target_assets": ["EXTERNAL-BULLETPROOF-VPS"],
+    "compromised_identity": "becpl\\lead_hw_eng",
+    "expected_event_count": 35,
+    "timeline_minutes": 270,
+    "ot_safety_consideration": false,
+    "requires_human_approval_for_isolation": false,
+    "detection_hypothesis": "Statistical flow anomaly: High Byte Asymmetry Index (>0.95 outbound), abnormal session duration (>4 hours), and anomalous JA3/JA3S client fingerprint to newly registered domain.",
+    "labelling": {
+      "benign_ratio": 0.40,
+      "malicious_ratio": 0.60
+    },
+    "mitigation_actions": [
+      "Dynamic firewall drop rule for destination IP on FortiGate perimeter",
+      "Engineering workstation isolated to Remediation VLAN",
+      "Notify R&D Director and initiate intellectual property breach assessment"
+    ]
+  },
+  {
+    "scenario_id": "SCN-006",
+    "name": "Manufacturing OT Network Anomaly",
+    "description": "Unauthorized direct Modbus/TCP write commands from an engineering workstation altering SMT line conveyor drive speed registers, alongside rogue Modbus FC8 diagnostic probes.",
+    "mitre_techniques": ["T0836", "T1565.002", "T0855", "T0846"],
+    "severity": "critical",
+    "affected_segments": ["OT", "Engineering"],
+    "starting_point_asset": "ENG-WS-005",
+    "pivot_assets": ["ROGUE-NODE-01"],
+    "target_assets": ["OT-PLC-SMTA-01"],
+    "compromised_identity": "rogue_modbus_client",
+    "expected_event_count": 28,
+    "timeline_minutes": 25,
+    "ot_safety_consideration": true,
+    "requires_human_approval_for_isolation": true,
+    "detection_hypothesis": "Industrial protocol semantic validation: Modbus FC6/FC16 write commands targeting holding register 40003 originating from an unauthorized IP outside designated HMI controllers.",
+    "labelling": {
+      "benign_ratio": 0.75,
+      "malicious_ratio": 0.25
+    },
+    "mitigation_actions": [
+      "SAFETY LOCK ENGAGED: Automated switchport isolation inhibited for PLC",
+      "Audible and visual alarm triggered in SMT Line A control room",
+      "Isolate originating workstation in Engineering segment away from plant floor",
+      "Require physical plant engineer confirmation before line parameter reset"
+    ]
+  },
+  {
+    "scenario_id": "SCN-007",
+    "name": "Vulnerability Exposure & Active Reconnaissance",
+    "description": "Active network reconnaissance using SYN scanning and aggressive service banner probing discovering unpatched assets (SMBGhost, outdated OpenSSH, Flask debug console).",
+    "mitre_techniques": ["T1595.001", "T1595.002", "T1046", "T1018"],
+    "severity": "medium",
+    "affected_segments": ["DMZ", "Corporate_IT", "Engineering", "OT"],
+    "starting_point_asset": "DMZ-SCAN-NODE",
+    "pivot_assets": [],
+    "target_assets": ["CORP-WS-004", "ENG-WS-002", "OT-MES01", "ENG-NAS01"],
+    "compromised_identity": "external_scanner",
+    "expected_event_count": 45,
+    "timeline_minutes": 15,
+    "ot_safety_consideration": true,
+    "requires_human_approval_for_isolation": false,
+    "detection_hypothesis": "Reconnaissance signature matching: High-frequency TCP SYN packet rate across diverse ports combined with Nmap OS/version fingerprinting probes and known CVE correlation.",
+    "labelling": {
+      "benign_ratio": 0.15,
+      "malicious_ratio": 0.85
+    },
+    "mitigation_actions": [
+      "Firewall drop filter for scanning IP on perimeter and inter-VLAN interfaces",
+      "Issue urgent patch advisory for CVE-2020-0796 on CORP-WS-004 and Flask configuration on OT-MES01"
+    ]
+  }
+]

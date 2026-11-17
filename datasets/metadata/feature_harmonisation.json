@@ -1,0 +1,264 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "VaultX NIDS Feature Harmonisation Matrix",
+  "description": "Standard schema mappings between external benchmark datasets and the BECPL Manufacturing-Aware NIDS feature space.",
+  "becpl_standard_schema": {
+    "flow_id": {"type": "string", "description": "Unique flow identifier or hash (5-tuple + timestamp)"},
+    "timestamp": {"type": "string", "format": "date-time", "description": "ISO 8601 flow start timestamp"},
+    "source_ip": {"type": "string", "description": "Source IPv4/IPv6 address"},
+    "destination_ip": {"type": "string", "description": "Destination IPv4/IPv6 address"},
+    "source_port": {"type": "integer", "description": "Source transport port number (0-65535)"},
+    "destination_port": {"type": "integer", "description": "Destination transport port number (0-65535)"},
+    "protocol": {"type": "string", "description": "L4 protocol string (TCP, UDP, ICMP)"},
+    "connection_duration": {"type": "number", "description": "Flow duration in seconds"},
+    "packets_transferred": {"type": "integer", "description": "Total packets transferred (forward + backward)"},
+    "bytes_transferred": {"type": "integer", "description": "Total bytes transferred (forward + backward)"},
+    "source_vlan": {"type": "integer", "description": "Source VLAN ID in BECPL topology (10, 20, 30, 40, 50, 60, 70)"},
+    "destination_vlan": {"type": "integer", "description": "Destination VLAN ID in BECPL topology"},
+    "identity_classification": {
+      "type": "string",
+      "enum": [
+        "HUMAN_USER",
+        "SERVICE_ACCOUNT",
+        "AUTOMATION_WORKLOAD",
+        "AI_AGENT",
+        "INDUSTRIAL_DEVICE",
+        "THIRD_PARTY_IDENTITY",
+        "UNKNOWN_IDENTITY"
+      ]
+    },
+    "label": {"type": "string", "description": "Multi-class scenario label (BENIGN or Attack Scenario ID)"},
+    "binary_label": {"type": "integer", "enum": [0, 1], "description": "0 = Benign, 1 = Attack"}
+  },
+  "datasets": {
+    "CIC_IDS2017": {
+      "dataset_name": "Canadian Institute for Cybersecurity IDS 2017",
+      "schema_mapping": {
+        "Flow ID": "flow_id",
+        " Timestamp": "timestamp",
+        " Source IP": "source_ip",
+        " Destination IP": "destination_ip",
+        " Source Port": "source_port",
+        " Destination Port": "destination_port",
+        " Protocol": "protocol",
+        " Flow Duration": "connection_duration",
+        " Total Fwd Packets +  Total Backward Packets": "packets_transferred",
+        " Total Length of Bwd Packets + Total Length of Fwd Packets": "bytes_transferred",
+        " Label": "label"
+      },
+      "derived_mappings": {
+        "source_vlan": "Inferred from Source IP CIDR mapping",
+        "destination_vlan": "Inferred from Destination IP CIDR mapping",
+        "identity_classification": "Derived based on port and communication role"
+      },
+      "unmapped_features": [
+        "Flow Bytes/s",
+        "Flow Packets/s",
+        "Flow IAT Mean",
+        "Flow IAT Std",
+        "Flow IAT Max",
+        "Flow IAT Min",
+        "Fwd IAT Total",
+        "Fwd PSH Flags",
+        "Bwd PSH Flags",
+        "FIN Flag Count",
+        "SYN Flag Count",
+        "RST Flag Count",
+        "ACK Flag Count",
+        "Down/Up Ratio",
+        "Init_Win_bytes_forward",
+        "Init_Win_bytes_backward",
+        "min_seg_size_forward"
+      ],
+      "notes": "Original CICFlowMeter extraction contains leading whitespace in header strings. Nan/Inf in Flow Bytes/s must be scrubbed."
+    },
+    "CSE_CIC_IDS2018": {
+      "dataset_name": "CSE-CIC-IDS2018 on AWS",
+      "schema_mapping": {
+        "Dst Port": "destination_port",
+        "Protocol": "protocol",
+        "Timestamp": "timestamp",
+        "Flow Duration": "connection_duration",
+        "Tot Fwd Pkts + Tot Bwd Pkts": "packets_transferred",
+        "TotLen Fwd Pkts + TotLen Bwd Pkts": "bytes_transferred",
+        "Label": "label"
+      },
+      "derived_mappings": {
+        "flow_id": "Generated MD5 hash of 5-tuple and timestamp",
+        "source_ip": "Extracted from paired AWS VPC flow logs where available",
+        "destination_ip": "Extracted from paired AWS VPC flow logs where available",
+        "source_vlan": "Mapped to AWS VPC Cloud Integration VLAN 60",
+        "destination_vlan": "Mapped to AWS Target VM VLAN",
+        "identity_classification": "AUTOMATION_WORKLOAD or UNKNOWN_IDENTITY"
+      },
+      "unmapped_features": [
+        "Fwd Pkt Len Max",
+        "Fwd Pkt Len Min",
+        "Fwd Pkt Len Mean",
+        "Fwd Pkt Len Std",
+        "Bwd Pkt Len Max",
+        "Flow Byts/s",
+        "Flow Pkts/s",
+        "Active Mean",
+        "Idle Mean"
+      ],
+      "notes": "CSV files from AWS omit Source IP in the processed feature CSVs; synthesis joins with VPC flow metadata."
+    },
+    "ToN_IoT": {
+      "dataset_name": "UNSW ToN_IoT Network Telemetry",
+      "schema_mapping": {
+        "ts": "timestamp",
+        "src_ip": "source_ip",
+        "src_port": "source_port",
+        "dst_ip": "destination_ip",
+        "dst_port": "destination_port",
+        "proto": "protocol",
+        "duration": "connection_duration",
+        "src_pkts + dst_pkts": "packets_transferred",
+        "src_bytes + dst_bytes": "bytes_transferred",
+        "type": "label",
+        "label": "binary_label"
+      },
+      "derived_mappings": {
+        "flow_id": "Zeek uid field",
+        "source_vlan": "Mapped from 192.168.1.x IP subnet to BECPL equivalent segment",
+        "destination_vlan": "Mapped to BECPL target segment",
+        "identity_classification": "Assigned INDUSTRIAL_DEVICE for MQTT/Modbus sensors, HUMAN_USER for workstation IPs"
+      },
+      "unmapped_features": [
+        "service",
+        "conn_state",
+        "missed_bytes",
+        "dns_query",
+        "dns_qclass",
+        "dns_qtype",
+        "dns_rcode",
+        "http_trans_depth",
+        "http_method",
+        "http_uri",
+        "http_version",
+        "http_user_agent",
+        "ssl_version",
+        "ssl_cipher"
+      ],
+      "notes": "Contains rich Zeek metadata. Perfect alignment with VaultX Zeek collector."
+    },
+    "X_IIoTID": {
+      "dataset_name": "X-IIoTID Connectivity-Agnostic Industrial Dataset",
+      "schema_mapping": {
+        "Date": "timestamp",
+        "IP_src": "source_ip",
+        "IP_dst": "destination_ip",
+        "Port_src": "source_port",
+        "Port_dst": "destination_port",
+        "Protocol": "protocol",
+        "Duration": "connection_duration",
+        "Packets": "packets_transferred",
+        "Bytes_in + Bytes_out": "bytes_transferred",
+        "class2": "label",
+        "class1": "binary_label"
+      },
+      "derived_mappings": {
+        "flow_id": "Generated composite string",
+        "source_vlan": "Mapped to VLAN 30 (Manufacturing OT) or VLAN 20 (Engineering)",
+        "destination_vlan": "Mapped to VLAN 30 (OT PLC/SCADA)",
+        "identity_classification": "INDUSTRIAL_DEVICE"
+      },
+      "unmapped_features": [
+        "Scr_bytes",
+        "Modbus_Function_Code",
+        "Modbus_Transaction_ID",
+        "MQTT_Topic",
+        "MQTT_Msg_Type",
+        "CoAP_Code",
+        "CPU_Load",
+        "Memory_Usage"
+      ],
+      "notes": "Direct source for industrial Modbus and sensor tampering scenarios (SCN-001, SCN-006)."
+    },
+    "HAI_22_04": {
+      "dataset_name": "Hardware-in-the-loop Augmented ICS Dataset (ETRI)",
+      "schema_mapping": {
+        "time": "timestamp",
+        "attack": "binary_label"
+      },
+      "derived_mappings": {
+        "flow_id": "Synthesized time-window ID",
+        "source_ip": "10.10.30.20 (SMT HMI)",
+        "destination_ip": "10.10.30.10 (SMT PLC)",
+        "source_port": 50201,
+        "destination_port": 502,
+        "protocol": "TCP",
+        "connection_duration": 0.015,
+        "packets_transferred": 2,
+        "bytes_transferred": 35,
+        "source_vlan": 30,
+        "destination_vlan": 30,
+        "identity_classification": "INDUSTRIAL_DEVICE",
+        "label": "Mapped from attack_P1/P2/P3/P4 flags to OT_ANOMALY"
+      },
+      "unmapped_features": [
+        "P1_B3004", "P1_B3005", "P1_B4002", "P1_B4005", "P1_B400B", "P1_B4022",
+        "P1_FCV01D", "P1_FCV01Z", "P1_FCV02D", "P1_FCV02Z", "P1_FCV03D", "P1_FCV03Z",
+        "P1_FT01", "P1_FT01Z", "P1_FT02", "P1_FT02Z", "P1_FT03", "P1_FT03Z",
+        "P1_LCV01D", "P1_LCV01Z", "P1_LIT01", "P1_PCV01D", "P1_PCV01Z", "P1_PCV02D"
+      ],
+      "notes": "Physical sensor dataset. Harmonisation wraps time-series physical measurements into Modbus register polling frames."
+    },
+    "UNSW_NB15": {
+      "dataset_name": "UNSW-NB15 Network Intrusion Dataset",
+      "schema_mapping": {
+        "srcip": "source_ip",
+        "sport": "source_port",
+        "dstip": "destination_ip",
+        "dsport": "destination_port",
+        "proto": "protocol",
+        "dur": "connection_duration",
+        "spkts + dpkts": "packets_transferred",
+        "sbytes + dbytes": "bytes_transferred",
+        "attack_cat": "label",
+        "label": "binary_label"
+      },
+      "derived_mappings": {
+        "flow_id": "Generated composite UUID",
+        "timestamp": "Converted from epoch stime",
+        "source_vlan": "Mapped by IP range",
+        "destination_vlan": "Mapped by IP range",
+        "identity_classification": "HUMAN_USER or AUTOMATION_WORKLOAD based on service"
+      },
+      "unmapped_features": [
+        "state",
+        "sttl",
+        "dttl",
+        "sloss",
+        "dloss",
+        "service",
+        "swin",
+        "dwin",
+        "stcpb",
+        "dtcpb",
+        "smeansz",
+        "dmeansz",
+        "trans_depth",
+        "res_bdy_len",
+        "sintpkt",
+        "dintpkt",
+        "tcprtt",
+        "synack",
+        "ackdat",
+        "ct_state_ttl",
+        "ct_flw_http_mthd",
+        "is_ftp_login",
+        "ct_ftp_cmd",
+        "ct_srv_src",
+        "ct_srv_dst",
+        "ct_dst_ltm",
+        "ct_src_ ltm",
+        "ct_src_dport_ltm",
+        "ct_dst_sport_ltm",
+        "ct_dst_src_ltm"
+      ],
+      "notes": "Argus/Bro feature set. High utility for modeling exploit payload dynamics and scanning."
+    }
+  }
+}
