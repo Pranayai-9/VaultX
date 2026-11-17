@@ -1,0 +1,141 @@
+name: VaultX CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  lint:
+    name: Python Linting (flake8)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8
+
+      - name: Run flake8 check
+        run: |
+          # Stop build if there are Python syntax errors or undefined names
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          # Exit-zero treats all errors as warnings. Max line length is 120.
+          flake8 . --count --exit-zero --max-complexity=15 --max-line-length=120 --statistics
+
+  schema-validate:
+    name: JSON & YAML Schema Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install pyyaml
+        run: pip install pyyaml
+
+      - name: Validate JSON syntax
+        run: |
+          python -c "
+          import json, glob, sys
+          json_files = glob.glob('**/*.json', recursive=True)
+          failed = False
+          for f in json_files:
+              try:
+                  with open(f, 'r', encoding='utf-8') as fp:
+                      json.load(fp)
+                  print(f'VALID JSON: {f}')
+              except Exception as e:
+                  print(f'INVALID JSON: {f} -> {e}', file=sys.stderr)
+                  failed = True
+          if failed:
+              sys.exit(1)
+          "
+
+      - name: Validate YAML syntax
+        run: |
+          python -c "
+          import yaml, glob, sys
+          yaml_files = glob.glob('**/*.yaml', recursive=True) + glob.glob('**/*.yml', recursive=True)
+          failed = False
+          for f in yaml_files:
+              try:
+                  with open(f, 'r', encoding='utf-8') as fp:
+                      yaml.safe_load_all(fp)
+                  print(f'VALID YAML: {f}')
+              except Exception as e:
+                  print(f'INVALID YAML: {f} -> {e}', file=sys.stderr)
+                  failed = True
+          if failed:
+              sys.exit(1)
+          "
+
+  sql-syntax:
+    name: SQL Schema Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install sqlparse
+        run: pip install sqlparse
+
+      - name: Validate SQL files parse without fatal errors
+        run: |
+          python -c "
+          import glob, sys, sqlparse
+          sql_files = glob.glob('database/**/*.sql', recursive=True)
+          failed = False
+          for f in sql_files:
+              try:
+                  with open(f, 'r', encoding='utf-8') as fp:
+                      content = fp.read()
+                  parsed = sqlparse.parse(content)
+                  if not parsed:
+                      print(f'WARNING: Empty or unparsed SQL in {f}')
+                  else:
+                      print(f'VALID SQL: {f} ({len(parsed)} statements parsed)')
+              except Exception as e:
+                  print(f'ERROR parsing SQL {f}: {e}', file=sys.stderr)
+                  failed = True
+          if failed:
+              sys.exit(1)
+          "
+
+  docker-build:
+    name: Docker Compose Syntax & Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Validate Security Compose Configuration
+        run: |
+          if [ -f docker/compose/security.yml ]; then
+            docker compose -f docker/compose/security.yml config --quiet
+            echo "Security compose configuration is valid."
+          fi
+
+      - name: Validate Full Docker Compose Configuration
+        run: |
+          if [ -f docker/docker-compose.yml ]; then
+            docker compose -f docker/docker-compose.yml config --quiet
+            echo "Main docker-compose configuration is valid."
+          fi
