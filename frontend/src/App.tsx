@@ -1,122 +1,93 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import React, { Suspense, lazy, useState } from 'react';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { SocProvider } from './context/SocContext';
+import { Sidebar } from './components/Sidebar';
+import { Header } from './components/Header';
+import { CommandCentreView } from './views/CommandCentreView';
 
-function App() {
-  const [count, setCount] = useState(0)
+const InfrastructureMapView = lazy(() =>
+  import('./views/InfrastructureMapView').then((m) => ({ default: m.InfrastructureMapView })),
+);
+const NetworkMonitoringView = lazy(() =>
+  import('./views/NetworkMonitoringView').then((m) => ({ default: m.NetworkMonitoringView })),
+);
+const ThreatIntelView = lazy(() =>
+  import('./views/ThreatIntelView').then((m) => ({ default: m.ThreatIntelView })),
+);
+const SupplyChainView = lazy(() =>
+  import('./views/SupplyChainView').then((m) => ({ default: m.SupplyChainView })),
+);
+const VulnerabilitiesView = lazy(() =>
+  import('./views/VulnerabilitiesView').then((m) => ({ default: m.VulnerabilitiesView })),
+);
+const IncidentsView = lazy(() =>
+  import('./views/IncidentsView').then((m) => ({ default: m.IncidentsView })),
+);
+const ContainmentView = lazy(() =>
+  import('./views/ContainmentView').then((m) => ({ default: m.ContainmentView })),
+);
+const HistoryAuditView = lazy(() =>
+  import('./views/HistoryAuditView').then((m) => ({ default: m.HistoryAuditView })),
+);
+const ModelsView = lazy(() =>
+  import('./views/ModelsView').then((m) => ({ default: m.ModelsView })),
+);
+const SystemHealthView = lazy(() =>
+  import('./views/SystemHealthView').then((m) => ({ default: m.SystemHealthView })),
+);
+const AdminPoliciesView = lazy(() =>
+  import('./views/AdminPoliciesView').then((m) => ({ default: m.AdminPoliciesView })),
+);
+const AgentDemoView = lazy(() =>
+  import('./views/AgentDemoView').then((m) => ({ default: m.AgentDemoView })),
+);
+
+const ViewFallback: React.FC = () => (
+  <div className="flex h-64 items-center justify-center font-mono text-xs text-cyan-400">
+    Loading VaultX SOC telemetry view...
+  </div>
+);
+
+export const App: React.FC = () => {
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+    <SocProvider>
+      <BrowserRouter>
+        <div className="flex h-screen w-screen overflow-hidden bg-[#090d16] text-slate-100">
+          <Sidebar
+            collapsed={sidebarCollapsed}
+            onToggle={() => setSidebarCollapsed((c) => !c)}
+          />
+          <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+            <Header />
+            <main className="soc-grid-bg flex-1 overflow-y-auto px-6 py-5">
+              <div className="mx-auto max-w-[1680px]">
+                <Suspense fallback={<ViewFallback />}>
+                  <Routes>
+                    <Route path="/" element={<CommandCentreView />} />
+                    <Route path="/infrastructure" element={<InfrastructureMapView />} />
+                    <Route path="/network" element={<NetworkMonitoringView />} />
+                    <Route path="/threat-intel" element={<ThreatIntelView />} />
+                    <Route path="/supply-chain" element={<SupplyChainView />} />
+                    <Route path="/vulnerabilities" element={<VulnerabilitiesView />} />
+                    <Route path="/incidents" element={<IncidentsView />} />
+                    <Route path="/containment" element={<ContainmentView />} />
+                    <Route path="/history" element={<HistoryAuditView />} />
+                    <Route path="/models" element={<ModelsView />} />
+                    <Route path="/health" element={<SystemHealthView />} />
+                    <Route path="/admin" element={<AdminPoliciesView />} />
+                    <Route path="/agent-demo" element={<AgentDemoView />} />
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                  </Routes>
+                </Suspense>
+              </div>
+            </main>
+          </div>
         </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+      </BrowserRouter>
+    </SocProvider>
+  );
+};
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
-}
-
-export default App
+export default App;
