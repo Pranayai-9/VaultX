@@ -135,7 +135,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
                     to={item.to}
                     end={item.to === '/'}
                     title={collapsed ? item.label : undefined}
-                    className={({ isActive }) =>
+                    className={({ isActive }: { isActive: boolean }) =>
                       clsx(
                         'group flex items-center justify-between rounded-lg px-2.5 py-2 text-[13px] font-medium transition-all',
                         isActive
@@ -144,7 +144,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
                       )
                     }
                   >
-                    {({ isActive }) => (
+                    {({ isActive }: { isActive: boolean }) => (
                       <>
                         <div className="flex items-center gap-2.5 min-w-0">
                           <Icon
