@@ -1,0 +1,599 @@
+{
+  "suite_name": "VaultX Phase 3 End-to-End Validation Suite (Section 13)",
+  "organisation": "Bharat Electronics Components Pvt. Ltd. (BECPL), Pune",
+  "executed_at": "2026-11-18T06:20:23.674555+00:00",
+  "total_tests": 10,
+  "passed_tests": 10,
+  "failed_tests": 0,
+  "pass_rate_pct": 100.0,
+  "total_duration_ms": 5042.14,
+  "total_assertions_passed": 59,
+  "total_assertions": 59,
+  "overall_status": "PASS",
+  "results": [
+    {
+      "test_id": "TEST-01",
+      "name": "Third-Party Credential Compromise & Containment",
+      "passed": true,
+      "status": "PASS",
+      "duration_ms": 5.57,
+      "assertions_passed": 9,
+      "assertions_total": 9,
+      "summary": "Vendor VPN compromise correlated to INC-2026-001; MFA-approved session suspension & firewall block enforced and cleanly rolled back.",
+      "metrics": {
+        "incident_reference": "INC-2026-001",
+        "correlation_rule": "RULE-VENDOR-001",
+        "session_id": "vsess-hexacore-001",
+        "scope_violations": 2,
+        "firewall_blocked_then_removed": true,
+        "audit_entries": 7
+      },
+      "assertions": [
+        {
+          "name": "vpn_auth_normalised",
+          "passed": true,
+          "detail": "Normalized VPN auth for vendor_hexacore_dev"
+        },
+        {
+          "name": "vendor_session_scope_violation",
+          "passed": true,
+          "detail": "Detected 2 vendor session policy violations on ENG-WS-002"
+        },
+        {
+          "name": "supply_chain_anomalies_detected",
+          "passed": true,
+          "detail": "SupplyChainMonitor emitted vendor_auth_anomaly and unexpected_resource_access"
+        },
+        {
+          "name": "incident_inc_2026_001_generated",
+          "passed": true,
+          "detail": "Generated INC-2026-001 (RULE-VENDOR-001)"
+        },
+        {
+          "name": "vendor_proposals_pending_in_mode3",
+          "passed": true,
+          "detail": "Proposals created in pending status under MODE 3"
+        },
+        {
+          "name": "third_party_requires_security_manager",
+          "passed": true,
+          "detail": "Tier-1 APPROVER correctly blocked from approving THIRD_PARTY_CONTAINMENT"
+        },
+        {
+          "name": "mfa_approval_succeeded",
+          "passed": true,
+          "detail": "SECURITY_MANAGER approved both vendor session suspension and firewall block via MFA"
+        },
+        {
+          "name": "session_suspended_and_firewall_blocked",
+          "passed": true,
+          "detail": "Vendor VPN session suspended and simulated firewall DROP rule verified active"
+        },
+        {
+          "name": "rollback_restored_state",
+          "passed": true,
+          "detail": "Rollback restored vendor session and deactivated simulated firewall rule"
+        }
+      ],
+      "error": null,
+      "executed_at": "2026-11-18T06:20:18.637994+00:00"
+    },
+    {
+      "test_id": "TEST-02",
+      "name": "Suspicious Lateral Movement",
+      "passed": true,
+      "status": "PASS",
+      "duration_ms": 12.56,
+      "assertions_passed": 5,
+      "assertions_total": 5,
+      "summary": "Multi-VLAN SMB/RDP/SSH lateral fan-out detected, mapped in relationship graph, and CORP-WS-002 isolated with VLAN 70 management access preserved.",
+      "metrics": {
+        "incident_reference": "INC-2026-001",
+        "distinct_targets_scanned": 4,
+        "graph_nodes": 215,
+        "anomalous_edges": 3,
+        "potentially_affected_assets": 7,
+        "quarantine_vlan": 999,
+        "vlan70_management_cidr": "10.10.70.0/24"
+      },
+      "assertions": [
+        {
+          "name": "lateral_flows_normalised",
+          "passed": true,
+          "detail": "Normalized 4 SMB/RDP/SSH lateral scan flows from CORP-WS-002 across VLANs 10 & 20"
+        },
+        {
+          "name": "behavioural_fanout_deviation_detected",
+          "passed": true,
+          "detail": "DeviationDetector raised MEDIUM (score=0.72) with 7 signals"
+        },
+        {
+          "name": "lateral_movement_incident_correlated",
+          "passed": true,
+          "detail": "Correlated INC-2026-001 with MITRE T1021"
+        },
+        {
+          "name": "relationship_graph_and_blast_radius_generated",
+          "passed": true,
+          "detail": "Graph: 215 nodes, 3 anomalous edges, 7 potentially affected assets"
+        },
+        {
+          "name": "endpoint_isolated_vlan70_preserved",
+          "passed": true,
+          "detail": "CORP-WS-002 quarantined to VLAN 999 with VLAN 70 (10.10.70.0/24) preserved"
+        }
+      ],
+      "error": null,
+      "executed_at": "2026-11-18T06:20:18.650591+00:00"
+    },
+    {
+      "test_id": "TEST-03",
+      "name": "Living-off-the-Land (LOTL) Activity",
+      "passed": true,
+      "status": "PASS",
+      "duration_ms": 2.53,
+      "assertions_passed": 3,
+      "assertions_total": 3,
+      "summary": "Sysmon Event ID 1 encoded PowerShell & CertUtil download correlated with 15-min egress flows; MITRE techniques verified: T1041, T1059, T1059.001, T1105, T1566.001.",
+      "metrics": {
+        "powershell_mitre": [
+          "T1059.001",
+          "T1566.001"
+        ],
+        "certutil_mitre": [
+          "T1105"
+        ],
+        "correlated_incident_mitre": [
+          "T1059",
+          "T1041"
+        ],
+        "egress_window_minutes": 15,
+        "lotl_stream_events": 2
+      },
+      "assertions": [
+        {
+          "name": "powershell_encoded_detected_and_mapped",
+          "passed": true,
+          "detail": "Encoded PowerShell mapped to ['T1059.001', 'T1566.001']; correlated with 1 external egress flow"
+        },
+        {
+          "name": "certutil_download_detected_and_mapped",
+          "passed": true,
+          "detail": "CertUtil download mapped to ['T1105']; score=1.00"
+        },
+        {
+          "name": "lotl_chain_correlated_with_mitre",
+          "passed": true,
+          "detail": "Correlated INC-2026-001 (RULE-CORP-003) with MITRE ['T1059', 'T1041']"
+        }
+      ],
+      "error": null,
+      "executed_at": "2026-11-18T06:20:18.653139+00:00"
+    },
+    {
+      "test_id": "TEST-04",
+      "name": "Encrypted Data Transfer Without Decryption",
+      "passed": true,
+      "status": "PASS",
+      "duration_ms": 3.48,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "summary": "TLS 1.3 4.5h exfiltration (upload ratio 0.9934) and C2 beacon (r=1.000) detected purely from encrypted flow metadata.",
+      "metrics": {
+        "upload_ratio": 0.9934,
+        "flow_duration_hours": 4.5,
+        "tls_version": "TLSv1.3",
+        "payload_decrypted": false,
+        "signals_triggered": [
+          "high_upload_ratio",
+          "large_volume_critical_asset",
+          "long_duration_unseen_external",
+          "malicious_destination_reputation",
+          "suspicious_tls_certificate",
+          "unseen_ja3_fingerprint",
+          "unusual_hour_external_connection"
+        ],
+        "beacon_autocorrelation": 1.0,
+        "correlation_rule": "RULE-EXFIL-001"
+      },
+      "assertions": [
+        {
+          "name": "zero_payload_decryption_input",
+          "passed": true,
+          "detail": "Upload ratio=0.9934 (>0.99), duration=4.5h, TLSv1.3, payload absent"
+        },
+        {
+          "name": "encrypted_exfil_detected_without_decryption",
+          "passed": true,
+          "detail": "Triggered 7 metadata signals without decryption: ['high_upload_ratio', 'large_volume_critical_asset', 'long_duration_unseen_external', 'malicious_destination_reputation', 'suspicious_tls_certificate', 'unseen_ja3_fingerprint', 'unusual_hour_external_connection']"
+        },
+        {
+          "name": "c2_beacon_autocorrelation_detected",
+          "passed": true,
+          "detail": "C2 beacon autocorrelation=1.000 (>=0.70), signal c2_beacon_pattern fired"
+        },
+        {
+          "name": "exfil_incident_correlated",
+          "passed": true,
+          "detail": "Correlated INC-2026-001 via RULE-EXFIL-001"
+        }
+      ],
+      "error": null,
+      "executed_at": "2026-11-18T06:20:18.656640+00:00"
+    },
+    {
+      "test_id": "TEST-05",
+      "name": "Unknown Attack Behaviour (Held-Out Attack Family)",
+      "passed": true,
+      "status": "PASS",
+      "duration_ms": 406.07,
+      "assertions_passed": 3,
+      "assertions_total": 3,
+      "summary": "Unsupervised Isolation Forest achieved 37.5% overall recall across 4 held-out attack families (100.0% on ENCRYPTED_EXFIL) at 10.1% benign FPR with zero auto-alerts.",
+      "metrics": {
+        "benign_train_samples": 4000,
+        "benign_holdout_fpr": 0.101,
+        "overall_held_out_recall": 0.375,
+        "per_family_recall": {
+          "ENCRYPTED_EXFIL": 1.0,
+          "VENDOR_COMPROMISE": 0.4333,
+          "LOTL": 0.0567,
+          "SERVICE_MISUSE": 0.01
+        },
+        "creates_alert_invariant_preserved": true,
+        "top_anomalous_feature": "total_fwd_bytes"
+      },
+      "assertions": [
+        {
+          "name": "training_dataset_available",
+          "passed": true,
+          "detail": "Loaded dataset becpl_synthetic_traffic_50k.csv"
+        },
+        {
+          "name": "held_out_attack_detection_measured",
+          "passed": true,
+          "detail": "Held-out overall recall=37.50%, ENCRYPTED_EXFIL=100.00%, benign FPR=10.10%"
+        },
+        {
+          "name": "anomaly_detector_never_auto_alerts_and_explains",
+          "passed": true,
+          "detail": "AnomalyDetector emitted explainable anomaly evidence and investigation suggestion with creates_alert=False"
+        }
+      ],
+      "error": null,
+      "executed_at": "2026-11-18T06:20:19.062741+00:00"
+    },
+    {
+      "test_id": "TEST-06",
+      "name": "Vulnerability Exposure & Exploitation Indicators",
+      "passed": true,
+      "status": "PASS",
+      "duration_ms": 7.12,
+      "assertions_passed": 7,
+      "assertions_total": 7,
+      "summary": "All 4 intentionally vulnerable BECPL assets correlated and progressed cleanly through the 4-stage exploitation ladder.",
+      "metrics": {
+        "vulnerable_assets_matched": [
+          "CORP-WS-004:CVE-2020-0796",
+          "ENG-WS-002:CVE-2016-10009",
+          "MES-SERVER:CVE-2018-1000656",
+          "FIRMWARE-STORAGE:CVE-2019-9511"
+        ],
+        "ladder_progression": [
+          "VULNERABILITY_EXPOSED",
+          "ATTACK_ATTEMPT_DETECTED",
+          "POTENTIAL_EXPLOITATION",
+          "CONFIRMED_COMPROMISE"
+        ],
+        "smbghost_risk_score": 15.0,
+        "kev_escalated_severity": "high"
+      },
+      "assertions": [
+        {
+          "name": "all_4_vulnerable_assets_correlated",
+          "passed": true,
+          "detail": "Matched all 4 intentionally vulnerable assets (4 total findings)"
+        },
+        {
+          "name": "smbghost_kev_and_risk_score_verified",
+          "passed": true,
+          "detail": "CORP-WS-004 CVE-2020-0796 is_kev=True, risk_score=15.0"
+        },
+        {
+          "name": "stage_1_exposed",
+          "passed": true,
+          "detail": "Stage 1 reached: VULNERABILITY_EXPOSED"
+        },
+        {
+          "name": "stage_2_attack_attempt",
+          "passed": true,
+          "detail": "Stage 2 reached: ATTACK_ATTEMPT_DETECTED"
+        },
+        {
+          "name": "stage_3_potential_exploitation_no_auto_confirm",
+          "passed": true,
+          "detail": "Stage 3 reached: POTENTIAL_EXPLOITATION (auto-escalation to CONFIRMED_COMPROMISE blocked)"
+        },
+        {
+          "name": "stage_4_confirmed_compromise_manual_only",
+          "passed": true,
+          "detail": "Stage 4 reached via analyst confirmation: CONFIRMED_COMPROMISE"
+        },
+        {
+          "name": "rule_scan_001_kev_escalation",
+          "passed": true,
+          "detail": "RULE-SCAN-001 escalated CISA KEV target to severity=high"
+        }
+      ],
+      "error": null,
+      "executed_at": "2026-11-18T06:20:19.069891+00:00"
+    },
+    {
+      "test_id": "TEST-07",
+      "name": "Industrial Network Anomaly (Modbus Safety Interlock)",
+      "passed": true,
+      "status": "PASS",
+      "duration_ms": 3.22,
+      "assertions_passed": 8,
+      "assertions_total": 8,
+      "summary": "Unauthorized Modbus FC6 write (reg 40003) triggered RULE-OT-001; MODE 4 auto-isolation blocked by OT safety interlock and enforced Two-Person MFA approval.",
+      "metrics": {
+        "incident_reference": "INC-2026-001",
+        "correlation_rule": "RULE-OT-001",
+        "modbus_function_code": 6,
+        "holding_register": 40003,
+        "ot_safety_override_applied": true,
+        "two_person_approvers": [
+          "ciso@becpl.in",
+          "approver1@becpl.in"
+        ]
+      },
+      "assertions": [
+        {
+          "name": "modbus_fc6_signature_detected",
+          "passed": true,
+          "detail": "Suricata SignatureEngine detected critical Modbus FC6 write to register 40003"
+        },
+        {
+          "name": "rule_ot_001_triggered_with_safety_flag",
+          "passed": true,
+          "detail": "Triggered INC-2026-001 (RULE-OT-001), ot_safety_flag=True, MITRE T0855"
+        },
+        {
+          "name": "ot_safety_invariant_immutable",
+          "passed": true,
+          "detail": "OT_ALWAYS_HUMAN_APPROVAL safety invariant cannot be disabled"
+        },
+        {
+          "name": "automated_isolation_blocked_by_ot_safety_flag",
+          "passed": true,
+          "detail": "MODE 4 automation BLOCKED; forced to pending with Two-Person Rule required"
+        },
+        {
+          "name": "first_approval_awaits_second_person",
+          "passed": true,
+          "detail": "1st approval by SECURITY_MANAGER held in pending awaiting 2nd distinct approver"
+        },
+        {
+          "name": "same_signer_blocked_two_person_rule",
+          "passed": true,
+          "detail": "Duplicate signer blocked by Two-Person Rule"
+        },
+        {
+          "name": "two_person_approval_completed",
+          "passed": true,
+          "detail": "Two-Person approval completed by ciso@becpl.in + approver1@becpl.in"
+        },
+        {
+          "name": "ot_boundary_enforced_and_rolled_back",
+          "passed": true,
+          "detail": "OTBoundaryAdapter enforced Modbus restriction after two-person signoff and rolled back safely"
+        }
+      ],
+      "error": null,
+      "executed_at": "2026-11-18T06:20:19.073124+00:00"
+    },
+    {
+      "test_id": "TEST-08",
+      "name": "High Network Load Stress Test",
+      "passed": true,
+      "status": "PASS",
+      "duration_ms": 4593.1,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "summary": "Ingested & scored 5,000 burst flows at 1,102.9 FPS / 64,309.7 PPS (P50=0.76ms, P95=1.28ms, P99=1.46ms, Peak Mem=11.6 MB).",
+      "metrics": {
+        "flows_requested": 5000,
+        "flows_processed": 5000,
+        "flows_completed": 5000,
+        "total_packets": 291537,
+        "total_bytes": 512191307,
+        "burst_size": 250,
+        "bursts_executed": 20,
+        "pipeline_duration_sec": 4.3272,
+        "ml_inference_duration_sec": 0.2061,
+        "total_duration_sec": 4.5333,
+        "fps": 1102.94,
+        "pps": 64309.65,
+        "ml_inference_fps": 24261.19,
+        "latency_ms": {
+          "min_ms": 0.6235,
+          "mean_ms": 0.857,
+          "p50_ms": 0.7621,
+          "p95_ms": 1.284,
+          "p99_ms": 1.4612,
+          "max_ms": 4.2037
+        },
+        "peak_queue_depth": 491,
+        "mean_queue_depth": 241.29,
+        "backpressure_threshold": 500,
+        "backpressure_triggered_count": 0,
+        "routing_tier_counts": {
+          "immediate_ml": 2010,
+          "ml_queue": 2990
+        },
+        "ml_predictions_count": 5000,
+        "anomaly_scores_count": 5000,
+        "memory_current_mb": 6.767,
+        "memory_peak_mb": 11.618,
+        "rss_mb": null,
+        "error_count": 0,
+        "passed": true
+      },
+      "assertions": [
+        {
+          "name": "all_synthetic_flows_processed_zero_errors",
+          "passed": true,
+          "detail": "Processed 5000/5000 flows with 0 errors"
+        },
+        {
+          "name": "throughput_fps_and_pps_measured",
+          "passed": true,
+          "detail": "FPS=1102.9, PPS=64309.7, ML_FPS=24261.2"
+        },
+        {
+          "name": "latency_percentiles_within_sla",
+          "passed": true,
+          "detail": "Latency P50=0.762ms, P95=1.284ms, P99=1.461ms"
+        },
+        {
+          "name": "queue_depth_and_memory_measured",
+          "passed": true,
+          "detail": "Peak queue depth=491, Peak traced memory=11.62 MB"
+        }
+      ],
+      "error": null,
+      "executed_at": "2026-11-18T06:20:23.666248+00:00"
+    },
+    {
+      "test_id": "TEST-09",
+      "name": "Human vs Service vs Agent Identity Classification",
+      "passed": true,
+      "status": "PASS",
+      "duration_ms": 4.92,
+      "assertions_passed": 10,
+      "assertions_total": 10,
+      "summary": "7-way identity classification verified across mixed auth telemetry with 0/60 false AI_AGENT attributions from packet analysis alone.",
+      "metrics": {
+        "identity_categories_verified": [
+          "AI_AGENT",
+          "AUTOMATION_WORKLOAD",
+          "HUMAN_USER",
+          "INDUSTRIAL_DEVICE",
+          "SERVICE_ACCOUNT",
+          "THIRD_PARTY_IDENTITY",
+          "UNKNOWN_IDENTITY"
+        ],
+        "packet_only_flows_tested": 60,
+        "false_agent_attributions": 0,
+        "ai_agent_boundary_anomalies_detected": 3
+      },
+      "assertions": [
+        {
+          "name": "classify_human_user",
+          "passed": true,
+          "detail": "rahul.sharma (mfa) -> HUMAN_USER"
+        },
+        {
+          "name": "classify_service_account",
+          "passed": true,
+          "detail": "svc_erp_sync (certificate) -> SERVICE_ACCOUNT"
+        },
+        {
+          "name": "classify_automation_workload",
+          "passed": true,
+          "detail": "ci_firmware_runner (api_key) -> AUTOMATION_WORKLOAD"
+        },
+        {
+          "name": "classify_ai_agent",
+          "passed": true,
+          "detail": "agent_procurement_ai (api_key) -> AI_AGENT"
+        },
+        {
+          "name": "classify_industrial_device",
+          "passed": true,
+          "detail": "plc_smt_line1 (certificate) -> INDUSTRIAL_DEVICE"
+        },
+        {
+          "name": "classify_third_party_identity",
+          "passed": true,
+          "detail": "vendor_hexacore_dev (mfa) -> THIRD_PARTY_IDENTITY"
+        },
+        {
+          "name": "classify_unknown_identity",
+          "passed": true,
+          "detail": "unregistered_actor (password) -> UNKNOWN_IDENTITY"
+        },
+        {
+          "name": "all_7_identity_categories_verified",
+          "passed": true,
+          "detail": "Verified all 7 identity categories"
+        },
+        {
+          "name": "ai_agent_boundary_enforced",
+          "passed": true,
+          "detail": "Benign agent calls=0 anomalies; out-of-scope OT call raised 3 anomalies"
+        },
+        {
+          "name": "zero_false_agent_attributions_from_packets",
+          "passed": true,
+          "detail": "Evaluated 60 packet-only flows (including from AI_AGENT host IP 10.10.60.20): 0 false AI_AGENT attributions, 100% UNKNOWN_IDENTITY"
+        }
+      ],
+      "error": null,
+      "executed_at": "2026-11-18T06:20:23.671195+00:00"
+    },
+    {
+      "test_id": "TEST-10",
+      "name": "Isolation, Authorization & Rollback Life Cycle",
+      "passed": true,
+      "status": "PASS",
+      "duration_ms": 3.33,
+      "assertions_passed": 6,
+      "assertions_total": 6,
+      "summary": "Full containment lifecycle validated: 10-field ActionProposal -> RBAC/MFA gates -> execution -> PostgreSQL audit_log persistence -> clean rollback & state restoration.",
+      "metrics": {
+        "incident_reference": "INC-2026-001",
+        "mandatory_proposal_fields_verified": 10,
+        "postgresql_audit_log_inserts": 6,
+        "postgresql_commits": 13,
+        "active_firewall_rules_after_rollback": 0,
+        "final_action_status": "rolled_back"
+      },
+      "assertions": [
+        {
+          "name": "high_priority_incident_triggered",
+          "passed": true,
+          "detail": "Triggered INC-2026-001 (severity=high)"
+        },
+        {
+          "name": "all_10_mandatory_action_proposal_fields_present",
+          "passed": true,
+          "detail": "Verified all 10 mandatory ActionProposal fields (10/10)"
+        },
+        {
+          "name": "rbac_and_mfa_guards_enforced",
+          "passed": true,
+          "detail": "RBAC blocked ANALYST & OPERATOR; invalid MFA token '999999' rejected"
+        },
+        {
+          "name": "mfa_approved_and_enforced",
+          "passed": true,
+          "detail": "MFA-approved block rule executed; firewall rule active & incident marked contained"
+        },
+        {
+          "name": "postgresql_audit_logging_confirmed",
+          "passed": true,
+          "detail": "PostgreSQL captured 5 audit_log INSERTs and 4 response_actions writes"
+        },
+        {
+          "name": "rollback_and_state_restoration_verified",
+          "passed": true,
+          "detail": "Rollback restored firewall state (0 active rules), updated incident to investigating, and wrote rollback audit_log entry (6 total)"
+        }
+      ],
+      "error": null,
+      "executed_at": "2026-11-18T06:20:23.674543+00:00"
+    }
+  ]
+}
