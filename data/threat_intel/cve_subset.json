@@ -1,0 +1,214 @@
+{
+  "metadata": {
+    "source": "VaultX SIMULATED NVD CVE Subset for BECPL",
+    "simulated": true,
+    "last_updated": "2026-11-01T00:00:00Z",
+    "description": "Offline CVE catalog relevant to BECPL IT, Engineering, OT, DMZ, and Phase 1 vulnerable assets."
+  },
+  "cves": [
+    {
+      "cve_id": "CVE-2020-0796",
+      "title": "SMBGhost - Windows 10 1909 SMBv3 Compression RCE",
+      "description": "A remote code execution vulnerability exists in the way Microsoft Server Message Block 3.1.1 (SMBv3) handles certain crafted compressed packets on Windows 10 version 1909.",
+      "cvss_score": 10.0,
+      "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+      "severity": "critical",
+      "affected_products": [
+        {
+          "vendor": "microsoft",
+          "product": "windows_10",
+          "version": "1909",
+          "cpe": "cpe:2.3:o:microsoft:windows_10:1909:*:*:*:*:*:*:*"
+        }
+      ],
+      "affected_ports": [445],
+      "affected_protocol": "SMB",
+      "patch_available": true,
+      "remediation": "Apply KB4551762 or upgrade Windows 10 past build 1909; disable SMBv3 compression.",
+      "target_scenario_assets": ["CORP-WS-004"]
+    },
+    {
+      "cve_id": "CVE-2016-10009",
+      "title": "OpenSSH 7.4 Untrusted Search Path in ssh-agent PKCS#11",
+      "description": "Untrusted search path vulnerability in ssh-agent.c in OpenSSH before 7.4p1 allows remote attackers to execute arbitrary local PKCS#11 modules via forwarded agent sockets.",
+      "cvss_score": 7.5,
+      "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+      "severity": "high",
+      "affected_products": [
+        {
+          "vendor": "openbsd",
+          "product": "openssh",
+          "version": "7.4",
+          "cpe": "cpe:2.3:a:openbsd:openssh:7.4:*:*:*:*:*:*:*"
+        }
+      ],
+      "affected_ports": [22],
+      "affected_protocol": "SSH",
+      "patch_available": true,
+      "remediation": "Upgrade OpenSSH to >= 8.9p1 and restrict agent forwarding on engineering workstations.",
+      "target_scenario_assets": ["ENG-WS-002"]
+    },
+    {
+      "cve_id": "CVE-2018-1000656",
+      "title": "Flask 1.0 Improper Input Validation DoS / JSON Memory Exhaustion",
+      "description": "Pallets Project Flask before 0.12.3 / unpatched 1.0 dev builds contain improper input validation allowing denial of service via crafted JSON payloads with unexpected encoding.",
+      "cvss_score": 7.5,
+      "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+      "severity": "high",
+      "affected_products": [
+        {
+          "vendor": "palletsprojects",
+          "product": "flask",
+          "version": "1.0",
+          "cpe": "cpe:2.3:a:palletsprojects:flask:1.0:*:*:*:*:*:*:*"
+        }
+      ],
+      "affected_ports": [5000, 5010],
+      "affected_protocol": "HTTP",
+      "patch_available": true,
+      "remediation": "Upgrade Flask to >= 2.3.x and enforce strict request body limits at MES gateway.",
+      "target_scenario_assets": ["MES-SERVER", "OT-MES-01"]
+    },
+    {
+      "cve_id": "CVE-2019-9511",
+      "title": "nginx 1.14 HTTP/2 Data Dribble Resource Exhaustion",
+      "description": "nginx 1.14 HTTP/2 implementation allows excessive CPU and memory usage via small window updates leading to denial of service on firmware storage web server.",
+      "cvss_score": 7.5,
+      "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+      "severity": "high",
+      "affected_products": [
+        {
+          "vendor": "nginx",
+          "product": "nginx",
+          "version": "1.14",
+          "cpe": "cpe:2.3:a:nginx:nginx:1.14:*:*:*:*:*:*:*"
+        }
+      ],
+      "affected_ports": [80, 443, 3000],
+      "affected_protocol": "HTTP",
+      "patch_available": true,
+      "remediation": "Upgrade nginx to >= 1.24.0 and enforce HTTP/2 rate limits.",
+      "target_scenario_assets": ["FIRMWARE-STORAGE", "ENG-FWST-001"]
+    },
+    {
+      "cve_id": "CVE-2023-27997",
+      "title": "FortiOS SSL-VPN Heap Buffer Overflow",
+      "description": "Heap-based buffer overflow in FortiOS SSL-VPN allowing remote code execution via crafted requests.",
+      "cvss_score": 9.8,
+      "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+      "severity": "critical",
+      "affected_products": [
+        {
+          "vendor": "fortinet",
+          "product": "fortios",
+          "version": "7.2.4",
+          "cpe": "cpe:2.3:o:fortinet:fortios:7.2.4:*:*:*:*:*:*:*"
+        }
+      ],
+      "affected_ports": [443, 10443],
+      "affected_protocol": "TLS",
+      "patch_available": true,
+      "remediation": "Upgrade FortiOS to 7.2.5 or newer."
+    },
+    {
+      "cve_id": "CVE-2024-23897",
+      "title": "Jenkins CLI Arbitrary File Read",
+      "description": "Jenkins controller CLI parser expands @file arguments allowing unauthenticated file read.",
+      "cvss_score": 9.8,
+      "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+      "severity": "critical",
+      "affected_products": [
+        {
+          "vendor": "jenkins",
+          "product": "jenkins",
+          "version": "2.441",
+          "cpe": "cpe:2.3:a:jenkins:jenkins:2.441:*:*:*:*:*:*:*"
+        }
+      ],
+      "affected_ports": [8080, 8443],
+      "affected_protocol": "HTTP",
+      "patch_available": true,
+      "remediation": "Upgrade Jenkins to >= 2.442 / LTS 2.426.3."
+    },
+    {
+      "cve_id": "CVE-2023-2825",
+      "title": "GitLab CE/EE Path Traversal",
+      "description": "Unauthenticated malicious user can read arbitrary files when attachment exists in nested public project.",
+      "cvss_score": 10.0,
+      "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:N/A:N",
+      "severity": "critical",
+      "affected_products": [
+        {
+          "vendor": "gitlab",
+          "product": "gitlab",
+          "version": "16.0.0",
+          "cpe": "cpe:2.3:a:gitlab:gitlab:16.0.0:*:*:*:*:*:*:*"
+        }
+      ],
+      "affected_ports": [443, 3000],
+      "affected_protocol": "HTTPS",
+      "patch_available": true,
+      "remediation": "Upgrade GitLab CE to >= 16.0.1."
+    },
+    {
+      "cve_id": "CVE-2019-10915",
+      "title": "Siemens SIMATIC S7-1500 PLC Protection Bypass",
+      "description": "Industrial PLC protocol weakness permitting unauthorized state inspection or manipulation when network segmentation is absent.",
+      "cvss_score": 8.1,
+      "cvss_vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
+      "severity": "high",
+      "affected_products": [
+        {
+          "vendor": "siemens",
+          "product": "simatic_s7_1500",
+          "version": "2.9",
+          "cpe": "cpe:2.3:o:siemens:simatic_s7_1500_cpu_firmware:2.9:*:*:*:*:*:*:*"
+        }
+      ],
+      "affected_ports": [102, 502],
+      "affected_protocol": "S7COMM",
+      "patch_available": true,
+      "remediation": "Isolate VLAN 30, enforce engineering allowlist, upgrade PLC firmware in planned downtime."
+    },
+    {
+      "cve_id": "CVE-2021-34527",
+      "title": "Windows Print Spooler RCE (PrintNightmare)",
+      "description": "Windows Print Spooler improperly performs privileged file operations.",
+      "cvss_score": 8.8,
+      "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+      "severity": "high",
+      "affected_products": [
+        {
+          "vendor": "microsoft",
+          "product": "windows_server_2019",
+          "version": "1809",
+          "cpe": "cpe:2.3:o:microsoft:windows_server_2019:1809:*:*:*:*:*:*:*"
+        }
+      ],
+      "affected_ports": [445, 135],
+      "affected_protocol": "SMB",
+      "patch_available": true,
+      "remediation": "Disable Print Spooler on servers and apply cumulative Windows security updates."
+    },
+    {
+      "cve_id": "CVE-2023-23397",
+      "title": "Microsoft Outlook NTLM Credential Disclosure",
+      "description": "Crafted email or calendar reminder forces outbound SMB connection leaking Net-NTLMv2 hash.",
+      "cvss_score": 9.8,
+      "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+      "severity": "critical",
+      "affected_products": [
+        {
+          "vendor": "microsoft",
+          "product": "outlook",
+          "version": "2019",
+          "cpe": "cpe:2.3:a:microsoft:outlook:2019:*:*:*:*:*:*:*"
+        }
+      ],
+      "affected_ports": [445],
+      "affected_protocol": "SMB",
+      "patch_available": true,
+      "remediation": "Patch Microsoft Office/Outlook and block outbound TCP/445 at perimeter firewall."
+    }
+  ]
+}
