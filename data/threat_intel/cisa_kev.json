@@ -1,0 +1,230 @@
+{
+  "title": "VaultX SIMULATED CISA Known Exploited Vulnerabilities (KEV) Catalog",
+  "catalogVersion": "2026.11.01-SIMULATED",
+  "dateReleased": "2026-11-01T00:00:00Z",
+  "simulated": true,
+  "disclaimer": "SIMULATED subset of 20 representative CVEs for VaultX BECPL NIDS Phase 2 lab/testing.",
+  "count": 20,
+  "vulnerabilities": [
+    {
+      "cveID": "CVE-2020-0796",
+      "vendorProject": "Microsoft",
+      "product": "Windows 10 / SMBv3",
+      "vulnerabilityName": "Microsoft SMBv3 Remote Code Execution Vulnerability (SMBGhost)",
+      "dateAdded": "2021-11-03",
+      "shortDescription": "SMBv3 compression buffer overflow allowing unauthenticated RCE on Windows 10 1903/1909.",
+      "requiredAction": "Apply Microsoft security updates or disable SMBv3 compression.",
+      "dueDate": "2022-05-03",
+      "knownRansomwareCampaignUse": "Known"
+    },
+    {
+      "cveID": "CVE-2019-9511",
+      "vendorProject": "nginx",
+      "product": "nginx HTTP/2",
+      "vulnerabilityName": "nginx HTTP/2 Data Dribble Denial-of-Service Vulnerability",
+      "dateAdded": "2022-03-15",
+      "shortDescription": "HTTP/2 implementations allow excessive CPU and memory consumption via small window updates.",
+      "requiredAction": "Upgrade nginx to patched release >= 1.16.1 / 1.17.3.",
+      "dueDate": "2022-04-05",
+      "knownRansomwareCampaignUse": "Unknown"
+    },
+    {
+      "cveID": "CVE-2021-44228",
+      "vendorProject": "Apache",
+      "product": "Log4j2",
+      "vulnerabilityName": "Apache Log4j2 Remote Code Execution Vulnerability (Log4Shell)",
+      "dateAdded": "2021-12-10",
+      "shortDescription": "JNDI lookup injection allowing arbitrary remote code execution.",
+      "requiredAction": "Upgrade Log4j2 to 2.17.1 or later.",
+      "dueDate": "2021-12-24",
+      "knownRansomwareCampaignUse": "Known"
+    },
+    {
+      "cveID": "CVE-2021-34527",
+      "vendorProject": "Microsoft",
+      "product": "Windows Print Spooler",
+      "vulnerabilityName": "Microsoft Windows Print Spooler Remote Code Execution Vulnerability (PrintNightmare)",
+      "dateAdded": "2021-11-03",
+      "shortDescription": "Improper privileged file operations in Print Spooler service.",
+      "requiredAction": "Apply updates and disable Print Spooler on domain controllers.",
+      "dueDate": "2021-11-17",
+      "knownRansomwareCampaignUse": "Known"
+    },
+    {
+      "cveID": "CVE-2017-0144",
+      "vendorProject": "Microsoft",
+      "product": "Windows SMBv1",
+      "vulnerabilityName": "Microsoft SMBv1 Remote Code Execution Vulnerability (EternalBlue)",
+      "dateAdded": "2021-11-03",
+      "shortDescription": "SMBv1 server mishandles specially crafted packets enabling RCE and worm propagation.",
+      "requiredAction": "Disable SMBv1 and apply MS17-010 updates.",
+      "dueDate": "2022-05-03",
+      "knownRansomwareCampaignUse": "Known"
+    },
+    {
+      "cveID": "CVE-2019-0708",
+      "vendorProject": "Microsoft",
+      "product": "Remote Desktop Services",
+      "vulnerabilityName": "Microsoft Remote Desktop Services Remote Code Execution Vulnerability (BlueKeep)",
+      "dateAdded": "2021-11-03",
+      "shortDescription": "Pre-authentication RDP use-after-free vulnerability.",
+      "requiredAction": "Apply updates and enforce Network Level Authentication (NLA).",
+      "dueDate": "2022-05-03",
+      "knownRansomwareCampaignUse": "Known"
+    },
+    {
+      "cveID": "CVE-2020-1472",
+      "vendorProject": "Microsoft",
+      "product": "Netlogon",
+      "vulnerabilityName": "Microsoft Netlogon Elevation of Privilege Vulnerability (Zerologon)",
+      "dateAdded": "2021-11-03",
+      "shortDescription": "Cryptographic flaw in Netlogon allows Domain Controller takeover.",
+      "requiredAction": "Apply patches and enable Netlogon enforcement mode.",
+      "dueDate": "2021-11-17",
+      "knownRansomwareCampaignUse": "Known"
+    },
+    {
+      "cveID": "CVE-2022-40684",
+      "vendorProject": "Fortinet",
+      "product": "FortiOS",
+      "vulnerabilityName": "Fortinet FortiOS Authentication Bypass Vulnerability",
+      "dateAdded": "2022-10-11",
+      "shortDescription": "Authentication bypass on administrative interface using alternate path.",
+      "requiredAction": "Upgrade FortiOS and restrict management interface access.",
+      "dueDate": "2022-10-18",
+      "knownRansomwareCampaignUse": "Known"
+    },
+    {
+      "cveID": "CVE-2023-27997",
+      "vendorProject": "Fortinet",
+      "product": "FortiOS SSL-VPN",
+      "vulnerabilityName": "Fortinet FortiOS SSL-VPN Heap-Based Buffer Overflow Vulnerability",
+      "dateAdded": "2023-06-13",
+      "shortDescription": "Pre-authentication heap-based buffer overflow in SSL-VPN.",
+      "requiredAction": "Upgrade FortiOS immediately.",
+      "dueDate": "2023-07-04",
+      "knownRansomwareCampaignUse": "Known"
+    },
+    {
+      "cveID": "CVE-2021-22205",
+      "vendorProject": "GitLab",
+      "product": "GitLab CE/EE",
+      "vulnerabilityName": "GitLab CE/EE Improper Validation of User-Provided Images RCE",
+      "dateAdded": "2021-11-03",
+      "shortDescription": "Unauthenticated RCE via ExifTool parsing of uploaded images.",
+      "requiredAction": "Upgrade GitLab CE/EE to patched version.",
+      "dueDate": "2021-11-17",
+      "knownRansomwareCampaignUse": "Unknown"
+    },
+    {
+      "cveID": "CVE-2023-2825",
+      "vendorProject": "GitLab",
+      "product": "GitLab CE/EE",
+      "vulnerabilityName": "GitLab Path Traversal Vulnerability",
+      "dateAdded": "2023-06-01",
+      "shortDescription": "Unauthenticated path traversal permitting arbitrary file read.",
+      "requiredAction": "Upgrade GitLab CE/EE.",
+      "dueDate": "2023-06-22",
+      "knownRansomwareCampaignUse": "Unknown"
+    },
+    {
+      "cveID": "CVE-2024-23897",
+      "vendorProject": "Jenkins",
+      "product": "Jenkins",
+      "vulnerabilityName": "Jenkins Arbitrary File Read Vulnerability",
+      "dateAdded": "2024-02-29",
+      "shortDescription": "args4j CLI command parser allows reading arbitrary files on Jenkins controller.",
+      "requiredAction": "Upgrade Jenkins controller and disable CLI if unused.",
+      "dueDate": "2024-03-21",
+      "knownRansomwareCampaignUse": "Unknown"
+    },
+    {
+      "cveID": "CVE-2023-34362",
+      "vendorProject": "Progress",
+      "product": "MOVEit Transfer",
+      "vulnerabilityName": "Progress MOVEit Transfer SQL Injection Vulnerability",
+      "dateAdded": "2023-06-02",
+      "shortDescription": "SQL injection enabling unauthorized database access and remote code execution.",
+      "requiredAction": "Apply vendor security patches.",
+      "dueDate": "2023-06-23",
+      "knownRansomwareCampaignUse": "Known"
+    },
+    {
+      "cveID": "CVE-2023-4966",
+      "vendorProject": "Citrix",
+      "product": "NetScaler ADC and Gateway",
+      "vulnerabilityName": "Citrix NetScaler Sensitive Information Disclosure (Citrix Bleed)",
+      "dateAdded": "2023-10-18",
+      "shortDescription": "Buffer over-read leaking active session tokens.",
+      "requiredAction": "Apply patches and terminate active sessions.",
+      "dueDate": "2023-11-08",
+      "knownRansomwareCampaignUse": "Known"
+    },
+    {
+      "cveID": "CVE-2024-21887",
+      "vendorProject": "Ivanti",
+      "product": "Connect Secure",
+      "vulnerabilityName": "Ivanti Connect Secure Command Injection Vulnerability",
+      "dateAdded": "2024-01-10",
+      "shortDescription": "Web component command injection allowing arbitrary command execution.",
+      "requiredAction": "Apply Ivanti mitigation and upgrade.",
+      "dueDate": "2024-01-31",
+      "knownRansomwareCampaignUse": "Known"
+    },
+    {
+      "cveID": "CVE-2021-40444",
+      "vendorProject": "Microsoft",
+      "product": "MSHTML",
+      "vulnerabilityName": "Microsoft MSHTML Remote Code Execution Vulnerability",
+      "dateAdded": "2021-11-03",
+      "shortDescription": "Remote code execution via malicious Office documents invoking MSHTML.",
+      "requiredAction": "Apply Microsoft updates.",
+      "dueDate": "2021-11-17",
+      "knownRansomwareCampaignUse": "Known"
+    },
+    {
+      "cveID": "CVE-2023-23397",
+      "vendorProject": "Microsoft",
+      "product": "Outlook",
+      "vulnerabilityName": "Microsoft Outlook Privilege Escalation Vulnerability",
+      "dateAdded": "2023-03-14",
+      "shortDescription": "Zero-click NTLM credential leak via crafted calendar reminder.",
+      "requiredAction": "Patch Outlook and block outbound SMB TCP/445.",
+      "dueDate": "2023-04-04",
+      "knownRansomwareCampaignUse": "Unknown"
+    },
+    {
+      "cveID": "CVE-2022-26134",
+      "vendorProject": "Atlassian",
+      "product": "Confluence",
+      "vulnerabilityName": "Atlassian Confluence OGNL Injection Vulnerability",
+      "dateAdded": "2022-06-02",
+      "shortDescription": "Unauthenticated OGNL injection leading to remote code execution.",
+      "requiredAction": "Upgrade Confluence.",
+      "dueDate": "2022-06-23",
+      "knownRansomwareCampaignUse": "Known"
+    },
+    {
+      "cveID": "CVE-2019-10915",
+      "vendorProject": "Siemens",
+      "product": "SIMATIC S7-1500",
+      "vulnerabilityName": "Siemens SIMATIC S7 PLC Protection Mechanism Bypass (SIMULATED KEV Entry)",
+      "dateAdded": "2023-04-10",
+      "shortDescription": "Weak cryptographic protection on industrial PLC communication channels.",
+      "requiredAction": "Restrict VLAN 30 access and upgrade PLC firmware during scheduled plant maintenance.",
+      "dueDate": "2023-05-01",
+      "knownRansomwareCampaignUse": "Unknown"
+    },
+    {
+      "cveID": "CVE-2023-38831",
+      "vendorProject": "RARLAB",
+      "product": "WinRAR",
+      "vulnerabilityName": "WinRAR Code Execution Vulnerability",
+      "dateAdded": "2023-08-29",
+      "shortDescription": "Crafted archive executes arbitrary code when benign file entry is opened.",
+      "requiredAction": "Upgrade WinRAR to version 6.23 or later.",
+      "dueDate": "2023-09-19",
+      "knownRansomwareCampaignUse": "Unknown"
+    }
+  ]
+}

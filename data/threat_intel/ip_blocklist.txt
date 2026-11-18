@@ -1,0 +1,47 @@
+# VaultX NIDS - IP Blocklist
+# SIMULATED DATA - NOT REAL THREAT INTELLIGENCE
+# Format: ip_address|source|threat_type|added_date
+# Last updated: 2026-11-01
+
+# --- Known C2 (SIMULATED) ---
+185.220.101.10|simulated_c2_feed|command_and_control|2026-10-01
+185.220.101.11|simulated_c2_feed|command_and_control|2026-10-01
+185.220.101.45|simulated_c2_feed|command_and_control|2026-10-15
+192.0.2.100|simulated_c2_feed|command_and_control|2026-09-01
+198.51.100.5|simulated_c2_feed|command_and_control|2026-09-20
+198.51.100.17|simulated_c2_feed|command_and_control|2026-10-02
+203.0.113.50|simulated_c2_feed|command_and_control|2026-10-10
+203.0.113.99|simulated_c2_feed|command_and_control|2026-10-25
+45.141.84.10|simulated_c2_feed|command_and_control|2026-11-01
+91.108.4.5|simulated_c2_feed|command_and_control|2026-10-05
+
+# --- Tor Exit Nodes (SIMULATED) ---
+104.244.72.100|simulated_tor_list|tor_exit_node|2026-10-01
+162.247.72.201|simulated_tor_list|tor_exit_node|2026-10-01
+171.25.193.9|simulated_tor_list|tor_exit_node|2026-10-01
+176.10.99.200|simulated_tor_list|tor_exit_node|2026-10-15
+185.220.100.252|simulated_tor_list|tor_exit_node|2026-10-15
+185.220.100.253|simulated_tor_list|tor_exit_node|2026-10-15
+185.220.100.254|simulated_tor_list|tor_exit_node|2026-10-15
+185.220.100.255|simulated_tor_list|tor_exit_node|2026-10-15
+51.15.208.25|simulated_tor_list|tor_exit_node|2026-10-20
+77.247.181.165|simulated_tor_list|tor_exit_node|2026-10-20
+
+# --- Scanner / Mass-Scan IPs (SIMULATED) ---
+89.248.165.10|simulated_scanner_feed|internet_scanner|2026-10-01
+89.248.165.11|simulated_scanner_feed|internet_scanner|2026-10-01
+141.212.123.1|simulated_scanner_feed|internet_scanner|2026-10-10
+141.212.123.2|simulated_scanner_feed|internet_scanner|2026-10-10
+198.20.69.74|simulated_scanner_feed|internet_scanner|2026-09-15
+198.20.69.75|simulated_scanner_feed|internet_scanner|2026-09-15
+204.79.197.200|simulated_scanner_feed|internet_scanner|2026-10-05
+66.240.192.138|simulated_scanner_feed|internet_scanner|2026-10-05
+71.6.135.131|simulated_scanner_feed|internet_scanner|2026-09-20
+80.82.77.139|simulated_scanner_feed|internet_scanner|2026-09-20
+
+# --- Phishing / Malware Hosting (SIMULATED) ---
+5.188.86.100|simulated_malware_feed|malware_distribution|2026-10-01
+5.188.86.101|simulated_malware_feed|malware_distribution|2026-10-01
+31.184.198.23|simulated_malware_feed|phishing|2026-10-10
+45.142.212.50|simulated_malware_feed|phishing|2026-10-20
+95.213.173.100|simulated_malware_feed|malware_distribution|2026-11-01
